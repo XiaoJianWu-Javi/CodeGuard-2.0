@@ -62,8 +62,5 @@ class DataSourceConfigTest {
         assertFalse(wizardsDataSource.getConnection().isClosed());
         assertFalse(deadWizardsDataSource.getConnection().isClosed());
         assertFalse(passwordDataSource.getConnection().isClosed());
-
     }
-
-
 }

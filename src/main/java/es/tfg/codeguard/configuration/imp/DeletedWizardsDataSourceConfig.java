@@ -1,5 +1,6 @@
-package es.tfg.codeguard.configuration;
+package es.tfg.codeguard.configuration.imp;
 
+import es.tfg.codeguard.configuration.DataSourceConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -18,11 +19,11 @@ import javax.sql.DataSource;
         basePackages = "es.tfg.codeguard",
         entityManagerFactoryRef = "deadWizardsEntityManagerFactory"
 )
-public class DeletedWizardsDataSourceConfig {
+public class DeletedWizardsDataSourceConfig implements DataSourceConfig {
 
     @Bean(name = "deadWizardsDataSource")
     @ConfigurationProperties(prefix = "spring.deleted.datasource")
-    public DataSource deadWizardsDataSource(){
+    public DataSource dataSource(){
         return DataSourceBuilder.create()
                 .url("jdbc:h2:mem:deletedWizards")
                 .username("deleted")
@@ -32,7 +33,7 @@ public class DeletedWizardsDataSourceConfig {
     }
 
     @Bean(name = "deadWizardsEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean deadWizardsEntityManagerFactory(
+    public LocalContainerEntityManagerFactoryBean entityManager(
             EntityManagerFactoryBuilder builder,
             @Qualifier("deadWizardsDataSource")DataSource dataSource) {
         return builder
