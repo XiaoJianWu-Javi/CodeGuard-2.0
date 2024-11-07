@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class TestCompiler {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        File jsonFile = new File("src/main/java/es/tfg/codeguard/compilerTest/test.json");
+        File jsonFile = new File("src/main/java/es/tfg/codeguard/compilerTest/json/test.json");
         JsonObject jsonObject;
         try(FileReader fr = new FileReader(jsonFile)){
             jsonObject = JsonParser.parseReader(fr).getAsJsonObject();
