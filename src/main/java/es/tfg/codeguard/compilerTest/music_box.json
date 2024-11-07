@@ -1,0 +1,335 @@
+{
+
+    "javaCode" : 
+    "
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Stream;
+public class MagicMusicBox {
+    public static String[] magicMusicBox(String[] words) {
+    	if (words == null || words.length == 0) {
+			return new String[] {};
+		}
+		String[] notes = new String[] { \"DO\", \"RE\", \"MI\", \"FA\", \"SOL\", \"LA\", \"SI\" };
+		String[] filteredWords = Stream.of(words)
+				.filter(w -> w.matches(\".*(?:DO|RE|MI|FA|SOL|LA|SI).*\"))
+				.toArray(String[]::new);
+		Set<String> solvedWords = new LinkedHashSet<>();
+		boolean searching = true;
+		int noteCount = 0;
+		while (searching) {
+			searching = false;
+			for (String word : filteredWords) {
+				if (word.contains(notes[noteCount]) && solvedWords.add(word)) {
+					searching = true;
+					noteCount = (++noteCount)%notes.length;
+				}
+			}
+		}
+		return solvedWords.toArray(new String[0]);
+    }
+}
+
+    "
+    ,
+    "testCode" :
+    "
+
+    import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Stream;
+
+class MusicTest {
+
+	@Test
+	void emptyInputTest() {
+
+		String[] expectedWords = new String[] {};
+		String[] inputWords = new String[] {};
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+	}
+
+	@Test
+	void sampleTestSimpleCase() {
+
+		String[] expectedWords = new String[] { \"DOWN\", \"REPTILE\", \"AMIDST\", \"SOFA\" };
+		String[] inputWords = new String[] { \"DOWN\", \"REPTILE\", \"AMIDST\", \"SOFA\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+	}
+
+	@Test
+	void sampleTestCase() {
+
+		String[] expectedWords = new String[] { \"DOWN\", \"REPTILE\", \"AMIDST\", \"SOFA\", \"SOLAR\", \"PLANE\", \"SILENCE\",
+				\"MARKDOWN\" };
+		String[] inputWords = new String[] { \"DOWN\", \"PLANE\", \"AMIDST\", \"REPTILE\", \"SOFA\", \"SOLAR\", \"SILENCE\", \"DOWN\",
+				\"MARKDOWN\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+	}
+
+	@Test
+	void duplicateWordsTest() {
+
+		String[] expectedWords = new String[] { \"DOOR\", \"REPTILE\", \"SIMILAR\", \"SOFA\", \"DISSOLVED\", \"LAPTOP\", \"RESIST\" };
+		String[] inputWords = new String[] { \"DOOR\", \"DOOR\", \"REPTILE\", \"REPTILE\", \"SIMILAR\", \"SIMILAR\", \"SOFA\", \"SOFA\",
+				\"DISSOLVED\", \"DISSOLVED\", \"LAPTOP\", \"LAPTOP\", \"RESIST\", \"RESIST\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+	}
+	
+	  @Test
+		void sampleTestWrongShiftCase() {
+
+			String[] expectedWords = new String[] { \"DOWN\"};
+			String[] inputWords = new String[] { \"DOWN\", \"AMIDST\", \"SOFA\", \"FACTION\"};
+
+			assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)), magicMessage(inputWords));
+
+		}
+
+	@Test
+	void fixedTest() {
+
+		String[] expectedWords = new String[] {};
+		String[] inputWords = new String[] { \"PLANE\", \"AMIDST\", \"REPTILE\", \"SOFA\", \"SOLAR\", \"FLOOR\", \"SIMILAR\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\" };
+		inputWords = new String[] { \"TABLE\", \"LAPTOP\", \"DOWN\", \"CAR\", \"MOUSE\", \"DINNER\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\" };
+		inputWords = new String[] { \"RECORD\", \"LAPTOP\", \"DOWN\", \"CAR\", \"MOUSE\", \"DINNER\", \"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\", \"COMIC\" };
+		inputWords = new String[] { \"RECORD\", \"COMIC\", \"LAPTOP\", \"DOWN\", \"CAR\", \"MOUSE\", \"DINNER\", \"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\", \"COMIC\", \"FAMILY\" };
+		inputWords = new String[] { \"RECORD\", \"COMIC\", \"LAPTOP\", \"DOWN\", \"CAR\", \"FAMILY\", \"MOUSE\", \"DINNER\",
+				\"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\", \"COMIC\", \"FAMILY\", \"DISSOLVED\" };
+		inputWords = new String[] { \"RECORD\", \"COMIC\", \"DOWN\", \"CAR\", \"FAMILY\", \"MOUSE\", \"DISSOLVED\", \"DINNER\",
+				\"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\", \"COMIC\", \"FAMILY\", \"DISSOLVED\", \"LAPTOP\" };
+		inputWords = new String[] { \"RECORD\", \"COMIC\", \"LAPTOP\", \"SYLLABLE\", \"DOWN\", \"CAR\", \"FAMILY\", \"MOUSE\",
+				\"DISSOLVED\", \"DINNER\", \"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOWN\", \"CORRECT\", \"COMIC\", \"FAMILY\", \"DISSOLVED\", \"LAPTOP\", \"RESIST\" };
+		inputWords = new String[] { \"RECORD\", \"RESIST\", \"COMIC\", \"LAPTOP\", \"SYLLABLE\", \"DOWN\", \"CAR\", \"FAMILY\", \"MOUSE\",
+				\"DISSOLVED\", \"DINNER\", \"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+		expectedWords = new String[] { \"DOOR\", \"RECORD\", \"COMIC\", \"FAMILY\", \"DISSOLVED\", \"LAPTOP\", \"RESIST\", \"DOWN\",
+				\"CORRECT\" };
+		inputWords = new String[] { \"DOOR\", \"RECORD\", \"RESIST\", \"COMIC\", \"LAPTOP\", \"SYLLABLE\", \"DOWN\", \"CAR\", \"FAMILY\",
+				\"MOUSE\", \"DISSOLVED\", \"DINNER\", \"CORRECT\" };
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+	}
+
+	@RepeatedTest(1000)
+	void randomTest() {
+
+		String[] inputWords = generateRandomWordsArray();
+		String[] expectedWords = magicResolution(inputWords);
+
+		assertEquals(Arrays.toString(expectedWords), Arrays.toString(MagicMusicBox.magicMusicBox(inputWords)),
+				magicMessage(inputWords));
+
+	}
+
+	private String[] magicResolution(String[] inputWords) {
+		if (inputWords == null || inputWords.length == 0) {
+			return new String[] {};
+		}
+		String[] notes = new String[] { \"DO\", \"RE\", \"MI\", \"FA\", \"SOL\", \"LA\", \"SI\" };
+		String[] filteredWords = Stream.of(inputWords)
+				.filter(w -> w.matches(\".*(?:DO|RE|MI|FA|SOL|LA|SI).*\"))
+				.toArray(String[]::new);
+		Set<String> solvedWords = new LinkedHashSet<>();
+		boolean searching = true;
+		int noteCount = 0;
+		while (searching) {
+			searching = false;
+			for (String word : filteredWords) {
+				if (word.contains(notes[noteCount]) && solvedWords.add(word)) {
+					searching = true;
+					noteCount = (++noteCount)%notes.length;
+				}
+			}
+		}
+		return solvedWords.toArray(new String[0]);
+	}
+
+	private static String[] generateRandomWordsArray() {
+
+		Map<Integer, String> musicalWords = new HashMap<>() {
+			{
+				put(1, \"SOLAR\");
+				put(2, \"DREAMER\");
+				put(3, \"FACTOR\");
+				put(4, \"FARMERS\");
+				put(5, \"DOCTOR\");
+				put(6, \"CREDIBLE\");
+				put(7, \"MIRACLE\");
+				put(8, \"SIMPLIFY\");
+				put(9, \"ENDOW\");
+				put(10, \"MISTAKE\");
+				put(11, \"CORRECT\");
+				put(12, \"SOLUTION\");
+				put(13, \"ADORABLE\");
+				put(14, \"LANDSCAPE\");
+				put(15, \"SALARY\");
+				put(16, \"COMMIT\");
+				put(17, \"CLARITY\");
+				put(18, \"BUFFALO\");
+				put(19, \"DESOLATE\");
+				put(20, \"BASIC\");
+				put(21, \"EROSION\");
+				put(22, \"ENVIRONMENT\");
+				put(23, \"HORIZON\");
+				put(24, \"EXAMPLE\");
+				put(25, \"HELICOPTER\");
+				put(26, \"INNOVATION\");
+				put(27, \"JOURNEY\");
+				put(28, \"KITCHEN\");
+				put(29, \"LIBRARY\");
+				put(30, \"MOUNTAIN\");
+				put(31, \"PERMITS\");
+				put(32, \"FANTASTIC\");
+				put(33, \"FACTORIAL\");
+				put(34, \"CREDIBLE\");
+				put(35, \"DOLLY\");
+				put(36, \"DOBLE\");
+				put(37, \"RELATION\");
+				put(38, \"DODGE\");
+				put(39, \"FREEDOM\");
+				put(40, \"RIVER\");
+				put(41, \"MIMICRY\");
+				put(42, \"MONTAIN\");
+				put(43, \"COLLABORATE\");
+				put(44, \"REACTOR\");
+				put(45, \"CLOUD\");
+				put(46, \"FISH\");
+				put(47, \"SUNSHINE\");
+				put(48, \"LATERAL\");
+				put(49, \"SOLAR\");
+				put(50, \"RELATE\");
+				put(51, \"CHAIR\");
+				put(52, \"BOOK\");
+				put(53, \"SADOMASOCHISM\");
+				put(54, \"FAIRYTALE\");
+				put(55, \"PREPARE\");
+				put(56, \"WINDOW\");
+				put(57, \"FACILITATE\");
+				put(58, \"HOUSE\");
+				put(59, \"ENDORSE\");
+				put(60, \"GARDEN\");
+				put(61, \"MODIFY\");
+				put(62, \"TREATMENT\");
+				put(63, \"PARK\");
+				put(64, \"RESOLUTE\");
+				put(65, \"CONSOLIDATE\");
+				put(66, \"NIGHT\");
+				put(67, \"BREEDER\");
+				put(68, \"SINGULAR\");
+				put(69, \"BEDROOM\");
+				put(70, \"ABSOLUTE\");
+				put(71, \"VISIBLE\");
+				put(72, \"REINFORCE\");
+				put(73, \"REMINDER\");
+				put(74, \"FAITHFUL\");
+				put(75, \"COMIC\");
+				put(76, \"VISIBLE\");
+				put(77, \"ELABORATE\");
+				put(78, \"PREDOMINATE\");
+				put(79, \"CONSISTENT\");
+				put(80, \"RESIST\");
+				put(81, \"KITCHEN\");
+				put(82, \"MINIMAL\");
+				put(83, \"GATE\");
+				put(84, \"PLATFORM\");
+				put(85, \"FANATIC\");
+				put(86, \"ADMISSION\");
+				put(87, \"SILENT\");
+				put(88, \"SOLUBLE\");
+				put(89, \"FARMLAND\");
+				put(90, \"GLACIAL\");
+				put(91, \"ROW\");
+				put(92, \"EMIGRANT\");
+				put(93, \"SISTER\");
+				put(94, \"SOLSTICE\");
+				put(95, \"SITUATION\");
+				put(96, \"WIND\");
+				put(97, \"OCEAN\");
+				put(98, \"SOLID\");
+				put(99, \"DORMITORY\");
+				put(100, \"FOUNTAIN\");
+			}
+		};
+
+		Random random = new Random();
+		int size = random.nextInt(100) + 1;
+
+		String[] wordsArray = new String[size];
+
+		for (int i = 0; i < size; i++) {
+			int randomKey = random.nextInt(musicalWords.size()) + 1;
+			wordsArray[i] = musicalWords.get(randomKey);
+		}
+
+		return wordsArray;
+	}
+
+	private static String magicMessage(String[] inputWords) {
+
+		return String.format(\"For input: «%s» \", Arrays.toString(inputWords));
+
+	}
+
+}
+
+    "
+}

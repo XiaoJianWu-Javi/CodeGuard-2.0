@@ -1,0 +1,45 @@
+{
+"javaCode" : 
+"import java.util.Arrays;
+public class ReverseWords{
+ public static String reverseWords(String str){
+     return Arrays.stream(str.split(\" \")).reduce((x, y) -> y+\" \"+x).get();
+ }
+}
+"
+,
+
+"testCode" : 
+"import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+import java.util.stream.Collectors;
+
+class SolutionTest {
+    @Test
+    void fixedTests() {
+        assertEquals(\"world! hello\", ReverseWords.reverseWords(\"hello world!\"));
+        assertEquals(\"this like speak doesn't yoda\", ReverseWords.reverseWords(\"yoda doesn't speak like this\"));
+        assertEquals(\"foobar\", ReverseWords.reverseWords(\"foobar\"));
+        assertEquals(\"editor kata\", ReverseWords.reverseWords(\"kata editor\"));
+        assertEquals(\"boat your row row row\", ReverseWords.reverseWords(\"row row row your boat\"));
+        assertEquals(\"\", ReverseWords.reverseWords(\"\"));
+    }
+  
+    @Test
+    void randomTests() {
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        for(int run = 0; run < 40; ++run) {
+            String input = IntStream.range(0, rnd.nextInt(12)).mapToObj(i -> rnd.ints(rnd.nextInt(1,12), 'a', 'z'+1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)).collect(Collectors.joining(\" \"));
+            String[] words = input.split(\" \");
+            Collections.reverse(Arrays.asList(words));
+            String expected = String.join(\" \", words);
+            assertEquals(expected, ReverseWords.reverseWords(input), String.format(\"For input \\\"%s\\\"\", input));
+        }
+    }
+}"
+
+}
