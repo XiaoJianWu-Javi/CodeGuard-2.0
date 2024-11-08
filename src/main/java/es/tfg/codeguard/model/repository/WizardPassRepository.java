@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import es.tfg.codeguard.model.entity.Wizard;
+import es.tfg.codeguard.model.entity.WizardPass;
 
 @Repository
-@Qualifier("wizardsEntityManagerFactory")
-public interface WizardRepository extends JpaRepository<Wizard, String> {
+@Qualifier("passwordEntityManagerFactory")
+public interface WizardPassRepository extends JpaRepository<WizardPass, String> {
 
 }

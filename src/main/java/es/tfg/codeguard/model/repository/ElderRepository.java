@@ -8,6 +8,6 @@ import es.tfg.codeguard.model.entity.Wizard;
 
 @Repository
 @Qualifier("wizardsEntityManagerFactory")
-public interface WizardRepository extends JpaRepository<Wizard, String> {
+public interface ElderRepository extends JpaRepository<Wizard, String> {
 
 }
