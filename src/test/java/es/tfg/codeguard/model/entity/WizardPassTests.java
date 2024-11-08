@@ -87,8 +87,8 @@ class WizardPassTests {
 
     @Test
     void validSetHashedPass() {
-        assertDoesNotThrow(() -> saruman.setWizardName("11111111111111"));
-        assertDoesNotThrow(() -> saruman.setWizardName("83874fo8w7ycoiureovq'¡'¡´+´12+`3ç"));
+        assertDoesNotThrow(() -> saruman.setHashedPass("11111111111111"));
+        assertDoesNotThrow(() -> saruman.setHashedPass("83874fo8w7ycoiureovq'¡'¡´+´12+`3ç"));
     }
 
     @Test

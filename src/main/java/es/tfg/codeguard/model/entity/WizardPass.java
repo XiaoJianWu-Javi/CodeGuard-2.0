@@ -39,6 +39,7 @@ public class WizardPass {
     }
 
     public String getHashedPass() {
+        if (hashedPass == null) throw new NoSuchElementException();
         return hashedPass;
     }
 
