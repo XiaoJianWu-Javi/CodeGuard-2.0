@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import es.tfg.codeguard.model.entity.Wizard;
 
 @Repository
-@Qualifier("wizardsEntityManagerFactory")
+@Qualifier("entityManagerFactoryWizards")
 public interface WizardRepository extends JpaRepository<Wizard, String> {
 
 }

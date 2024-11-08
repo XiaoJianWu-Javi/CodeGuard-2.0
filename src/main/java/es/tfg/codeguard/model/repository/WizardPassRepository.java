@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import es.tfg.codeguard.model.entity.WizardPass;
 
 @Repository
-@Qualifier("passwordEntityManagerFactory")
+@Qualifier("entityManagerFactoryPassword")
 public interface WizardPassRepository extends JpaRepository<WizardPass, String> {
 
 }

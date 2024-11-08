@@ -84,31 +84,31 @@ class WizardTests {
         assertTrue(saruman.isCreator());
     }
 
-    @Test
-    void setSpellsTests() {
-        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
-            add(null); add(new Spell()); add(new Spell());
-        }};
-        assertThrows(IllegalArgumentException.class, () -> saruman.setSpells(spells));
+//    @Test
+//    void setSpellsTests() {
+//        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
+//            add(null); add(new Spell()); add(new Spell());
+//        }};
+//        assertThrows(IllegalArgumentException.class, () -> saruman.setSpells(spells));
+//
+//        spells.clear();
+//        spells.add(new Spell());
+//        assertDoesNotThrow(() -> saruman.setSpells(spells));
+//    }
 
-        spells.clear();
-        spells.add(new Spell());
-        assertDoesNotThrow(() -> saruman.setSpells(spells));
-    }
-
-    @Test
-    void getSpellsTests() {
-        assertTrue(saruman.getSpells().isEmpty());  //Not Initialized
-
-        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
-            add(new Spell()); add(new Spell()); add(new Spell());
-        }};
-        saruman.setSpells(spells);
-        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
-        assertEquals(spells.size(), saruman.getSpells().size());
-
-        saruman.getSpells().clear();
-        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
-        assertEquals(spells.size(), saruman.getSpells().size());
-    }
+//    @Test
+//    void getSpellsTests() {
+//        assertTrue(saruman.getSpells().isEmpty());  //Not Initialized
+//
+//        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
+//            add(new Spell()); add(new Spell()); add(new Spell());
+//        }};
+//        saruman.setSpells(spells);
+//        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
+//        assertEquals(spells.size(), saruman.getSpells().size());
+//
+//        saruman.getSpells().clear();
+//        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
+//        assertEquals(spells.size(), saruman.getSpells().size());
+//    }
 }

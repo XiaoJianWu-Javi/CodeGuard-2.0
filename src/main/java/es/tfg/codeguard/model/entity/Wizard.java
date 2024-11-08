@@ -4,14 +4,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-@MappedSuperclass
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Wizard {
 
     private static final String WIZARDNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";
@@ -24,12 +22,12 @@ public class Wizard {
     private Boolean tester;
     private Boolean creator;
 
-    private List<Spell> spells;
+    //private List<Spell> spells;
 
     public Wizard() {
         setTester(false);
         setCreator(false);
-        setSpells(new ArrayList<>());
+        //setSpells(new ArrayList<>());
     }
 
     public String getWizardName() {
@@ -59,14 +57,14 @@ public class Wizard {
         this.creator = creator;
     }
 
-    public List<Spell> getSpells() {
-        return new ArrayList<>(spells);
-    }
-
-    public void setSpells(List<Spell> spells) {
-        checkSpells(spells);
-        this.spells = spells;
-    }
+//    public List<Spell> getSpells() {
+//        return new ArrayList<>(spells);
+//    }
+//
+//    public void setSpells(List<Spell> spells) {
+//        checkSpells(spells);
+//        this.spells = spells;
+//    }
 
     private void checkSpells(List<Spell> spells) {
         for (Spell spell : spells) if (spell == null) throw new IllegalArgumentException();
