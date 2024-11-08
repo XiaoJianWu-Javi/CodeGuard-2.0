@@ -10,20 +10,20 @@ public class WizardDTO {
     private String wizardName;
     private boolean tester;
     private boolean creator;
-    private List<Spell> spells;
+//    private List<Spell> spells;
 
     public WizardDTO(Wizard wizard) {
         setWizardName(wizard.getWizardName());
         setTester(wizard.isTester());
         setCreator(wizard.isCreator());
-        setSpells(wizard.getSpells());
+//        setSpells(wizard.getSpells());
     }
 
     public WizardDTO(DeadWizard deadWizard) {
         setWizardName(deadWizard.getWizardName());
         setTester(deadWizard.isTester());
         setCreator(deadWizard.isCreator());
-        setSpells(deadWizard.getSpells());
+//        setSpells(deadWizard.getSpells());
     }
 
 
@@ -51,11 +51,11 @@ public class WizardDTO {
         this.creator = creator;
     }
 
-    public List<Spell> getSpells() {
-        return spells;
-    }
-
-    public void setSpells(List<Spell> spells) {
-        this.spells = spells;
-    }
+//    public List<Spell> getSpells() {
+//        return spells;
+//    }
+//
+//    public void setSpells(List<Spell> spells) {
+//        this.spells = spells;
+//    }
 }

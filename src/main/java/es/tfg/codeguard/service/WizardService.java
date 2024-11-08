@@ -2,16 +2,15 @@ package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.PasswordWizardDTO;
 import es.tfg.codeguard.model.entity.DeadWizard;
-import es.tfg.codeguard.model.entity.PasswordWizardEncript;
 import es.tfg.codeguard.model.entity.Wizard;
+import es.tfg.codeguard.model.entity.WizardPass;
 import es.tfg.codeguard.model.repository.DeadWizardRepository;
-import es.tfg.codeguard.model.repository.PasswordWizardRepository;
+import es.tfg.codeguard.model.repository.WizardPassRepository;
 import es.tfg.codeguard.model.repository.WizardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -22,14 +21,12 @@ public class WizardService {
     @Autowired
     private WizardRepository wizardRepository;
     @Autowired
-    private PasswordWizardRepository passwordWizardRepository;
+    private WizardPassRepository wizardPassRepository;
     @Autowired
     private DeadWizardRepository deadWizardRepository;
 
 
-    public WizardService() {
 
-    }
 
     public Optional<PasswordWizardDTO> registerWizard(String wizardname, String wizardpassword) {
 
@@ -41,14 +38,14 @@ public class WizardService {
         wizard.setWizardName(wizardname);
         wizard.setTester(false);
         wizard.setCreator(false);
-        wizard.setSpells(Collections.emptyList());
+//        wizard.setSpells(Collections.emptyList());
         wizardRepository.save(wizard);
 
-        PasswordWizardEncript passwordWizardEncript = new PasswordWizardEncript();
+        WizardPass passwordWizardEncript = new WizardPass();
         passwordWizardEncript.setWizardName(wizardname);
-        passwordWizardEncript.setElderCheck(false);
+        passwordWizardEncript.setElder(false);
         passwordWizardEncript.setHashedPass(passwordEncoder.encode(wizardpassword));
-        passwordWizardRepository.save(passwordWizardEncript);
+        wizardPassRepository.save(passwordWizardEncript);
 
         PasswordWizardDTO passwordWizard = new PasswordWizardDTO();
         passwordWizard.setWizardName(wizardname);
@@ -58,7 +55,7 @@ public class WizardService {
 
     public Optional<DeadWizard> deleteWizard(String wizardname) {
 
-        if(passwordWizardRepository.findById(wizardname).isEmpty() && wizardRepository.findById(wizardname).isEmpty()){
+        if(wizardPassRepository.findById(wizardname).isEmpty() && wizardRepository.findById(wizardname).isEmpty()){
             return Optional.empty();
         }
 
@@ -68,11 +65,11 @@ public class WizardService {
         deadwizard.setWizardName(wizard.getWizardName());
         deadwizard.setTester(wizard.isTester());
         deadwizard.setCreator(wizard.isCreator());
-        deadwizard.setSpells(wizard.getSpells());
+//        deadwizard.setSpells(wizard.getSpells());
         deadWizardRepository.save(deadwizard);
 
         wizardRepository.delete(wizardRepository.findById(wizardname).get());
-        passwordWizardRepository.delete(passwordWizardRepository.findById(wizardname).get());
+        wizardPassRepository.delete(wizardPassRepository.findById(wizardname).get());
 
         return Optional.of(deadwizard);
     }

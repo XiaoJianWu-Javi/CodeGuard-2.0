@@ -3,19 +3,20 @@ package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.PasswordWizardDTO;
 import es.tfg.codeguard.model.entity.DeadWizard;
-import es.tfg.codeguard.model.entity.PasswordWizardEncript;
 import es.tfg.codeguard.model.entity.Wizard;
+import es.tfg.codeguard.model.entity.WizardPass;
 import es.tfg.codeguard.model.repository.DeadWizardRepository;
-import es.tfg.codeguard.model.repository.PasswordWizardRepository;
+import es.tfg.codeguard.model.repository.WizardPassRepository;
 import es.tfg.codeguard.model.repository.WizardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,18 +28,13 @@ class WizardServiceTests {
     private WizardRepository wizardRepository;
 
     @Mock
-    private PasswordWizardRepository passwordWizardRepository;
+    private WizardPassRepository wizardPassRepository;
 
     @Mock
     private DeadWizardRepository deadWizardRepository;
-
+    @InjectMocks
     private WizardService wizardService;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        wizardService = new WizardService();
-    }
 
     @Test
     public void TestFailWizardServiceRegisterMethod() {
@@ -46,7 +42,7 @@ class WizardServiceTests {
         wizard.setWizardName("Gandalf");
         wizard.setTester(false);
         wizard.setCreator(false);
-        wizard.setSpells(Collections.emptyList());
+//        wizard.setSpells(Collections.emptyList());
         when(wizardRepository.findById("Gandalf")).thenReturn(Optional.of(wizard));
 
         Optional<PasswordWizardDTO> wizardopt = wizardService.registerWizard("Gandalf", "cantpass");
@@ -69,7 +65,7 @@ class WizardServiceTests {
 
     @Test
     public void TestFailWizardServiceDeleteMethod() {
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(Optional.empty());
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<DeadWizard> deadWizard = wizardService.deleteWizard("Gandalf");
         assertThat(deadWizard).isEmpty();
@@ -77,19 +73,19 @@ class WizardServiceTests {
 
     @Test
     public void TestFineWizardServiceDeleteMethod() {
-        PasswordWizardEncript passwordWizardEncript = new PasswordWizardEncript();
+        WizardPass passwordWizardEncript = new WizardPass();
         passwordWizardEncript.setWizardName("Gandalf");
-        passwordWizardEncript.setElderCheck(false);
+        passwordWizardEncript.setElder(false);
         passwordWizardEncript.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
 
-        Optional<PasswordWizardEncript> wizardpass = Optional.of(passwordWizardEncript);
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(wizardpass);
+        Optional<WizardPass> wizardpass = Optional.of(passwordWizardEncript);
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(wizardpass);
 
         Wizard wizard = new Wizard();
         wizard.setWizardName("Gandalf");
         wizard.setTester(false);
         wizard.setCreator(false);
-        wizard.setSpells(Collections.emptyList());
+//        wizard.setSpells(Collections.emptyList());
         Optional<Wizard> wizardopt = Optional.of(wizard);
         when(wizardRepository.findById("Gandalf")).thenReturn(wizardopt);
 
@@ -99,7 +95,7 @@ class WizardServiceTests {
         deadWizardExpected.setWizardName("Gandalf");
         deadWizardExpected.setTester(false);
         deadWizardExpected.setCreator(false);
-        deadWizardExpected.setSpells(Collections.emptyList());
+//        deadWizardExpected.setSpells(Collections.emptyList());
 
         assertThat(deadWizardopt.get()).usingRecursiveComparison().isEqualTo(deadWizardExpected);
     }

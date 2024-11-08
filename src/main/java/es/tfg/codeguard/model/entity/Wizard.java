@@ -1,12 +1,14 @@
 package es.tfg.codeguard.model.entity;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

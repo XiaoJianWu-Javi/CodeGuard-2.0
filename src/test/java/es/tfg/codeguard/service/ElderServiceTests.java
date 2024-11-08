@@ -3,19 +3,18 @@ package es.tfg.codeguard.service;
 import es.tfg.codeguard.model.dto.PasswordWizardDTO;
 import es.tfg.codeguard.model.dto.WizardDTO;
 import es.tfg.codeguard.model.entity.DeadWizard;
-import es.tfg.codeguard.model.entity.PasswordWizardEncript;
 import es.tfg.codeguard.model.entity.Wizard;
+import es.tfg.codeguard.model.entity.WizardPass;
 import es.tfg.codeguard.model.repository.DeadWizardRepository;
-import es.tfg.codeguard.model.repository.PasswordWizardRepository;
+import es.tfg.codeguard.model.repository.WizardPassRepository;
 import es.tfg.codeguard.model.repository.WizardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,15 +28,15 @@ class ElderServiceTests {
 
     @Mock
 
-    private PasswordWizardRepository passwordWizardRepository;
+    private WizardPassRepository wizardPassRepository;
 
     @Mock
 
     private DeadWizardRepository deadWizardRepository;
-
+    @InjectMocks
     private ElderService elderService;
 
-    private PasswordWizardEncript passwordWizardEncript;
+    private WizardPass wizardPass;
 
     private Wizard wizard;
 
@@ -45,32 +44,30 @@ class ElderServiceTests {
 
     @BeforeEach
     public void setUp(){
-        MockitoAnnotations.openMocks(this);
-        elderService = new ElderService();
 
-        passwordWizardEncript = new PasswordWizardEncript();
-        passwordWizardEncript.setWizardName("Gandalf");
-        passwordWizardEncript.setElderCheck(false);
-        passwordWizardEncript.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
+        wizardPass = new WizardPass();
+        wizardPass.setWizardName("Gandalf");
+        wizardPass.setElder(false);
+        wizardPass.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
 
         wizard = new Wizard();
         wizard.setWizardName("Gandalf");
         wizard.setTester(false);
         wizard.setCreator(false);
-        wizard.setSpells(Collections.emptyList());
+//        wizard.setSpells(Collections.emptyList());
 
         deadWizard = new DeadWizard();
         deadWizard.setWizardName("Gandalf");
         deadWizard.setTester(false);
         deadWizard.setCreator(false);
-        deadWizard.setSpells(Collections.emptyList());
+//        deadWizard.setSpells(Collections.emptyList());
 
     }
 
 
     @Test
     public void TestFailElderServiceKillMethod(){
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(Optional.empty());
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<WizardDTO> deadWizard = elderService.killWizard("Gandalf");
         assertThat(deadWizard).isEmpty();
@@ -78,8 +75,8 @@ class ElderServiceTests {
 
     @Test
     public void TestFineElderServiceKillMethod(){
-        Optional<PasswordWizardEncript> wizardPass = Optional.of(passwordWizardEncript);
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(wizardPass);
+        Optional<WizardPass> wizardPassopt = Optional.of(wizardPass);
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(wizardPassopt);
 
 
         Optional<Wizard> wizardOpt = Optional.of(wizard);
@@ -97,7 +94,7 @@ class ElderServiceTests {
 
     @Test
     public void TestFailElderServiceUpdateMethod() {
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(Optional.empty());
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
         Optional<PasswordWizardDTO> wizard = elderService.updateWizard("Gandalf", "cantpass");
 
         assertThat(wizard).isEmpty();
@@ -107,7 +104,7 @@ class ElderServiceTests {
     @Test
     public void TestFineElderServiceUpdateMethod() {
 
-        when(passwordWizardRepository.findById("Gandalf")).thenReturn(Optional.of(passwordWizardEncript));
+        when(wizardPassRepository.findById("Gandalf")).thenReturn(Optional.of(wizardPass));
 
 
         PasswordWizardDTO passwordWizardDTO = new PasswordWizardDTO();

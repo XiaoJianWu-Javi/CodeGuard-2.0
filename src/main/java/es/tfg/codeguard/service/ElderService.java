@@ -3,13 +3,12 @@ package es.tfg.codeguard.service;
 import es.tfg.codeguard.model.dto.PasswordWizardDTO;
 import es.tfg.codeguard.model.dto.WizardDTO;
 import es.tfg.codeguard.model.entity.DeadWizard;
-import es.tfg.codeguard.model.entity.PasswordWizardEncript;
 import es.tfg.codeguard.model.entity.Wizard;
+import es.tfg.codeguard.model.entity.WizardPass;
 import es.tfg.codeguard.model.repository.DeadWizardRepository;
-import es.tfg.codeguard.model.repository.PasswordWizardRepository;
+import es.tfg.codeguard.model.repository.WizardPassRepository;
 import es.tfg.codeguard.model.repository.WizardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,18 +22,16 @@ public class ElderService {
     @Autowired
     private WizardRepository wizardRepository;
     @Autowired
-    private PasswordWizardRepository passwordWizardRepository;
+    private WizardPassRepository wizardPassRepository;
     @Autowired
     private DeadWizardRepository deadWizardRepository;
 
-    public ElderService(){
 
-    }
 
     public Optional<WizardDTO> killWizard(String wizardName) {
 
 
-        if(passwordWizardRepository.findById(wizardName).isEmpty() && wizardRepository.findById(wizardName).isEmpty()){
+        if(wizardPassRepository.findById(wizardName).isEmpty() && wizardRepository.findById(wizardName).isEmpty()){
             return Optional.empty();
         }
 
@@ -44,12 +41,12 @@ public class ElderService {
         deadwizard.setWizardName(wizard.getWizardName());
         deadwizard.setTester(wizard.isTester());
         deadwizard.setCreator(wizard.isCreator());
-        deadwizard.setSpells(wizard.getSpells());
+//        deadwizard.setSpells(wizard.getSpells());
 
         deadWizardRepository.save(deadwizard);
 
         wizardRepository.delete(wizardRepository.findById(wizardName).get());
-        passwordWizardRepository.delete(passwordWizardRepository.findById(wizardName).get());
+        wizardPassRepository.delete(wizardPassRepository.findById(wizardName).get());
 
 
 
@@ -58,19 +55,19 @@ public class ElderService {
 
     public Optional<PasswordWizardDTO> updateWizard(String wizardName, String newWizardPass){
 
-        if(passwordWizardRepository.findById(wizardName).isEmpty()){
+        if(wizardPassRepository.findById(wizardName).isEmpty()){
             return Optional.empty();
         }
 
-        PasswordWizardEncript newWizard = passwordWizardRepository.findById(wizardName).get();
+        WizardPass newWizard = wizardPassRepository.findById(wizardName).get();
 
         newWizard.setHashedPass(passwordEncoder.encode(newWizardPass));
 
-        passwordWizardRepository.save(newWizard);
+        wizardPassRepository.save(newWizard);
 
         PasswordWizardDTO passwordWizardDTO = new PasswordWizardDTO();
         passwordWizardDTO.setWizardName(newWizard.getWizardName());
-        passwordWizardDTO.setElderCheck(newWizard.isElderCheck());
+        passwordWizardDTO.setElderCheck(newWizard.isElder());
         return Optional.of(passwordWizardDTO);
 
     }
