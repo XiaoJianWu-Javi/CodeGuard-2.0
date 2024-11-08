@@ -3,15 +3,15 @@ package es.tfg.codeguard.compilerTest;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import javax.naming.TimeLimitExceededException;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TestAdvancedCompiler {
 
-    public static void main(String[] args) throws IOException, InterruptedException, TimeLimitExceededException {
+    public static void main(String[] args) throws IOException, InterruptedException, TimeoutException, CompilationErrorException, ClassNotFoundException {
         File jsonFile = new File("src/main/java/es/tfg/codeguard/compilerTest/json/advanced_test.json");
         JsonObject jsonObject;
         try(FileReader fr = new FileReader(jsonFile)){
@@ -25,7 +25,7 @@ public class TestAdvancedCompiler {
         if(appClassNameMatcher.find()){
             javaClassName = appClassNameMatcher.group(1);
         }else{
-            throw new IllegalArgumentException();
+            throw new ClassNotFoundException();
         }
 
         Pattern testClassPattern = Pattern.compile("(?:class)(?:\\s+)(\\w+)");
@@ -35,7 +35,7 @@ public class TestAdvancedCompiler {
         if(testClassNameMatcher.find()){
             testClassName = testClassNameMatcher.group(1);
         }else{
-            throw new IllegalArgumentException();
+            throw new ClassNotFoundException();
         }
 
         String javaFile = javaClassName + ".java";
@@ -50,7 +50,6 @@ public class TestAdvancedCompiler {
 
         //Compilation
         ProcessBuilder appCompilator = new ProcessBuilder("javac", javaFile);
-        //Hay que redirecionar el stream de error para que se muestren los mensajes de erro
         appCompilator.redirectErrorStream(true);
         Process appCompilatorProcess = appCompilator.start();
 
@@ -68,7 +67,7 @@ public class TestAdvancedCompiler {
         System.out.println("Compiling APP exit code: " + exitCode);
         System.out.println("----------------------");
         if(exitCode!=0){
-            throw new IllegalArgumentException(appErrorMsg.toString());
+            throw new CompilationErrorException(appErrorMsg.toString());
         }
 
         ProcessBuilder testCompilator = new ProcessBuilder("javac", javaFile, testFile, "-cp", "lib/junit-jupiter-api-5.11.0.jar");
@@ -83,34 +82,33 @@ public class TestAdvancedCompiler {
             }
         }
 
-        //Si ha compilado bien los test devuelve 0
+        //Si han compilado bien los test devuelve 0
         exitCode = testCompilatorProcess.waitFor();
         System.out.println("----------------------");
         System.out.println("Compiling TEST exit code: " + exitCode);
         System.out.println("----------------------");
         if(exitCode!=0){
-            throw new IllegalArgumentException(testErrorMsg.toString());
+            throw new CompilationErrorException(appErrorMsg.toString());
         }
 
         //JUnit 5 console execution
         ProcessBuilder testExecutor = new ProcessBuilder("java",
                 "-jar",
                 "lib/junit-platform-console-standalone-1.11.3.jar",
-                "execute", //Si no lo uso en la consola 1.11.3 me da un warning ??
+                "execute", //Si no se usa "execute" la consola en la version 1.11.3 da un warning
                 "-cp", //--class-path -cp
-                ".", //Combina la ruta de la clase con la clase
+                ".",
                 "-c", //--select-class -c
                 testClassName,
-                "--details=flat", //Modes: [flat, verbose, tree]
+                "--details=tree", //Modes: [flat, verbose, tree]
                 "--disable-banner");
-        //Hay que redirecionar el stream de error para que se muestren los mensajes de erro
         testExecutor.redirectErrorStream(true);
         Process testExecutorProcess = testExecutor.start();
 
         //Se esperan 15 segundos antes de destruir el proceso para evitar bucles infinitos
         if(!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)){
             testExecutorProcess.destroy();
-            throw new TimeLimitExceededException("Exceeded the 15 seconds time limit");
+            throw new TimeoutException("Exceeded the 15 seconds time limit");
         }else{
             try(BufferedReader br = new BufferedReader(new InputStreamReader(testExecutorProcess.getInputStream()))){
                 System.out.println("Resultado de la ejecucion:");
@@ -120,12 +118,6 @@ public class TestAdvancedCompiler {
                 }
             }
         }
-//          Codigo previo a la implementación del Time Limit
-        //Si se ha ejecutado bien el programa devuelve 0
-//        exitCode = testExecutorProcess.waitFor();
-//        System.out.println("----------------------");
-//        System.out.println("Execution exit code: " + exitCode);
-//        System.out.println("----------------------");
 
         File javaClassFile = new File(javaClassName + ".class");
         File javaJavaFile = new File(javaFile);
