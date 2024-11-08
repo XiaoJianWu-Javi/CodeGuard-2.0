@@ -25,9 +25,9 @@ class DataSourceConfigTest {
         DataSource wizardsDataSource = (DataSource) context.getBean("wizardsDataSource");
         DataSource deadWizardsDataSource = (DataSource) context.getBean("deadWizardsDataSource");
         DataSource passwordDataSource = (DataSource) context.getBean("passwordDataSource");
-        EntityManagerFactory wizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("wizardsEntityManagerFactory");
-        EntityManagerFactory deadWizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("deadWizardsEntityManagerFactory");
-        EntityManagerFactory passwordEntityManagerFactory = (EntityManagerFactory) context.getBean("passwordEntityManagerFactory");
+        EntityManagerFactory wizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryWizards");
+        EntityManagerFactory deadWizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryDeadWizards");
+        EntityManagerFactory passwordEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryPassword");
 
         assertNotNull(wizardsDataSource);
         assertNotNull(deadWizardsDataSource);

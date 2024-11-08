@@ -1,3 +1,4 @@
+/*
 package es.tfg.codeguard.model.repository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import es.tfg.codeguard.model.entity.Wizard;
 
 @Repository
-@Qualifier("wizardsEntityManagerFactory")
+@Qualifier("entityManagerFactoryWizards")
 public interface ElderRepository extends JpaRepository<Wizard, String> {
 
 }
+
+ */

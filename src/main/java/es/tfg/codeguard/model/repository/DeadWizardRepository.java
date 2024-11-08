@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import es.tfg.codeguard.model.entity.DeadWizard;
 
 @Repository
-@Qualifier("deadWizardsEntityManagerFactory")
+@Qualifier("entityManagerFactoryDeadWizards")
 public interface DeadWizardRepository extends JpaRepository<DeadWizard, String> {
 
 }
