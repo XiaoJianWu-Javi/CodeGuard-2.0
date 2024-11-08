@@ -1,6 +1,7 @@
 package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.PasswordWizardDTO;
+import es.tfg.codeguard.model.dto.WizardDTO;
 import es.tfg.codeguard.model.entity.DeadWizard;
 import es.tfg.codeguard.model.entity.Wizard;
 import es.tfg.codeguard.model.entity.WizardPass;
