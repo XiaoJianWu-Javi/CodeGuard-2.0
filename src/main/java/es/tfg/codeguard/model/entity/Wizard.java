@@ -6,9 +6,11 @@ import java.util.NoSuchElementException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+@MappedSuperclass
 @Entity
 public class Wizard {
 
@@ -67,7 +69,6 @@ public class Wizard {
     }
 
     private void checkSpells(List<Spell> spells) {
-        if (spells.isEmpty()) throw new IllegalArgumentException();
         for (Spell spell : spells) if (spell == null) throw new IllegalArgumentException();
     }
 }

@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class WizardTests {
+class WizardPassTests {
 
-    private Wizard saruman;
+    private WizardPass saruman;
 
     @BeforeEach
     void setup() {
-        saruman = new Wizard();
+        saruman = new WizardPass();
     }
 
     @Test
@@ -25,6 +25,7 @@ class WizardTests {
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName(null));
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName(""));
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName("   "));
+        assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName("\n"));
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName("a"));
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName("a.aa2"));
         assertThrows(IllegalArgumentException.class, () -> saruman.setWizardName("2213"));
@@ -66,49 +67,44 @@ class WizardTests {
     }
 
     @Test
-    void isAndSetTesterOrCreator() {
-        assertFalse(saruman.isTester());    //Not Initialized
-        assertFalse(saruman.isCreator());   //Not Initialized
+    void isAndSetElder() {
+        assertFalse(saruman.isElder());    //Not Initialized
 
-        saruman.setTester(true);
-        assertTrue(saruman.isTester());
-        assertFalse(saruman.isCreator());
+        saruman.setElder(true);
+        assertTrue(saruman.isElder());
 
-        saruman.setCreator(true);
-        saruman.setTester(false);
-        assertFalse(saruman.isTester());
-        assertTrue(saruman.isCreator());
-
-        saruman.setTester(true);
-        assertTrue(saruman.isTester());
-        assertTrue(saruman.isCreator());
+        saruman.setElder(false);
+        assertFalse(saruman.isElder());
     }
 
     @Test
-    void setSpellsTests() {
-        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
-            add(null); add(new Spell()); add(new Spell());
-        }};
-        assertThrows(IllegalArgumentException.class, () -> saruman.setSpells(spells));
-
-        spells.clear();
-        spells.add(new Spell());
-        assertDoesNotThrow(() -> saruman.setSpells(spells));
+    void notValidSetHashedPass() {
+        assertThrows(IllegalArgumentException.class, () -> saruman.setHashedPass(null));
+        assertThrows(IllegalArgumentException.class, () -> saruman.setHashedPass(""));
+        assertThrows(IllegalArgumentException.class, () -> saruman.setHashedPass("   "));
+        assertThrows(IllegalArgumentException.class, () -> saruman.setHashedPass("\n"));
     }
 
     @Test
-    void getSpellsTests() {
-        assertTrue(saruman.getSpells().isEmpty());  //Not Initialized
+    void validSetHashedPass() {
+        assertDoesNotThrow(() -> saruman.setWizardName("11111111111111"));
+        assertDoesNotThrow(() -> saruman.setWizardName("83874fo8w7ycoiureovq'¡'¡´+´12+`3ç"));
+    }
 
-        java.util.List<Spell> spells = new java.util.ArrayList<>() {{
-            add(new Spell()); add(new Spell()); add(new Spell());
-        }};
-        saruman.setSpells(spells);
-        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
-        assertEquals(spells.size(), saruman.getSpells().size());
+    @Test
+    void getNotInitializedHashedPass() {
+        assertThrows(NoSuchElementException.class, () -> saruman.getHashedPass());
+        try { saruman.setHashedPass(""); } catch(Exception e) {}
+        assertThrows(NoSuchElementException.class, () -> saruman.getHashedPass());
+    }
 
-        saruman.getSpells().clear();
-        assertArrayEquals(spells.toArray(), saruman.getSpells().toArray());
-        assertEquals(spells.size(), saruman.getSpells().size());
+    @Test
+    void getInitializedHashedPass() {
+        String hashedPass = "s4rum4n";
+
+        saruman.setHashedPass(hashedPass);
+        assertEquals(hashedPass, saruman.getHashedPass());
+        try { saruman.setHashedPass(""); } catch(Exception e) {}
+        assertEquals(hashedPass, saruman.getHashedPass());
     }
 }
