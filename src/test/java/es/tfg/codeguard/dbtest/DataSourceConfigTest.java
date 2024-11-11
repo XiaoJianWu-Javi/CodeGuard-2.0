@@ -22,45 +22,45 @@ class DataSourceConfigTest {
     @Test
     void correctBeans(){
 
-        DataSource wizardsDataSource = (DataSource) context.getBean("wizardsDataSource");
-        DataSource deadWizardsDataSource = (DataSource) context.getBean("deadWizardsDataSource");
+        DataSource usersDataSource = (DataSource) context.getBean("usersDataSource");
+        DataSource deletedUsersDataSource = (DataSource) context.getBean("deletedUsersDataSource");
         DataSource passwordDataSource = (DataSource) context.getBean("passwordDataSource");
-        EntityManagerFactory wizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryWizards");
-        EntityManagerFactory deadWizardsEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryDeadWizards");
+        EntityManagerFactory usersEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryUsers");
+        EntityManagerFactory deletedUsersEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryDeletedUsers");
         EntityManagerFactory passwordEntityManagerFactory = (EntityManagerFactory) context.getBean("entityManagerFactoryPassword");
 
-        assertNotNull(wizardsDataSource);
-        assertNotNull(deadWizardsDataSource);
+        assertNotNull(usersDataSource);
+        assertNotNull(deletedUsersDataSource);
         assertNotNull(passwordDataSource);
-        assertNotNull(wizardsEntityManagerFactory);
-        assertNotNull(deadWizardsEntityManagerFactory);
+        assertNotNull(usersEntityManagerFactory);
+        assertNotNull(deletedUsersEntityManagerFactory);
         assertNotNull(passwordEntityManagerFactory);
 
     }
 
     @Test
     void correctDataBase(){
-        DataSource wizardsDataSource = (DataSource) context.getBean("wizardsDataSource");
-        DataSource deadWizardsDataSource = (DataSource) context.getBean("deadWizardsDataSource");
+        DataSource usersDataSource = (DataSource) context.getBean("usersDataSource");
+        DataSource deletedUsersDataSource = (DataSource) context.getBean("deletedUsersDataSource");
         DataSource passwordDataSource = (DataSource) context.getBean("passwordDataSource");
 
-        String wizardsURL = ((HikariDataSource) wizardsDataSource).getJdbcUrl();
-        String deadWizardsURL = ((HikariDataSource) deadWizardsDataSource).getJdbcUrl();
+        String usersURL = ((HikariDataSource) usersDataSource).getJdbcUrl();
+        String deletedUsersURL = ((HikariDataSource) deletedUsersDataSource).getJdbcUrl();
         String passwordURL = ((HikariDataSource) passwordDataSource).getJdbcUrl();
 
-        assertEquals("jdbc:h2:mem:wizards", wizardsURL);
-        assertEquals("jdbc:h2:mem:deletedWizards", deadWizardsURL);
+        assertEquals("jdbc:h2:mem:users", usersURL);
+        assertEquals("jdbc:h2:mem:deletedUsers", deletedUsersURL);
         assertEquals("jdbc:h2:mem:password", passwordURL);
     }
 
     @Test
     void openDbTest() throws SQLException {
-        DataSource wizardsDataSource = (DataSource) context.getBean("wizardsDataSource");
-        DataSource deadWizardsDataSource = (DataSource) context.getBean("deadWizardsDataSource");
+        DataSource usersDataSource = (DataSource) context.getBean("usersDataSource");
+        DataSource deletedUsersDataSource = (DataSource) context.getBean("deletedUsersDataSource");
         DataSource passwordDataSource = (DataSource) context.getBean("passwordDataSource");
 
-        assertFalse(wizardsDataSource.getConnection().isClosed());
-        assertFalse(deadWizardsDataSource.getConnection().isClosed());
+        assertFalse(usersDataSource.getConnection().isClosed());
+        assertFalse(deletedUsersDataSource.getConnection().isClosed());
         assertFalse(passwordDataSource.getConnection().isClosed());
     }
 }

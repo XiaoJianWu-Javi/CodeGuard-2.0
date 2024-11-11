@@ -1,13 +1,18 @@
+package es.tfg.codeguard.model.repository;/*
 package es.tfg.codeguard.model.repository;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import es.tfg.codeguard.model.entity.DeadWizard;
+import es.tfg.codeguard.model.entity.Admin;
 
 @Repository
-@Qualifier("entityManagerFactoryDeadWizards")
-public interface DeadWizardRepository extends JpaRepository<DeadWizard, String> {
+@Qualifier("entityManagerFactoryUsers")
+public interface AdminRepository extends JpaRepository<Admin, String> {
 
 }
+
+ */
+
+
