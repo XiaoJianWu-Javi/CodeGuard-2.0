@@ -21,17 +21,17 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableJpaRepositories(
         basePackages = "es.tfg.codeguard.model.repository",
-        entityManagerFactoryRef = "entityManagerFactoryWizards",
-        transactionManagerRef = "transactionManagerWizard"
+        entityManagerFactoryRef = "entityManagerFactoryUsers",
+        transactionManagerRef = "transactionManagerUser"
 )
-public class WizardDataSourceConfig implements DataSourceConfig {
+public class UserDataSourceConfig implements DataSourceConfig {
 
     @Primary
-    @Bean(name = "wizardsDataSource")
-    @ConfigurationProperties(prefix = "spring.wizards.datasource") //Rename this prefix in .properties to something better
+    @Bean(name = "usersDataSource")
+    @ConfigurationProperties(prefix = "spring.users.datasource") //Rename this prefix in .properties to something better
     public DataSource dataSource(){
         return DataSourceBuilder.create()
-                .url("jdbc:h2:mem:wizards")
+                .url("jdbc:h2:mem:users")
                 .username("wizards")
                 .password("")
                 .driverClassName("org.h2.Driver")
@@ -39,21 +39,21 @@ public class WizardDataSourceConfig implements DataSourceConfig {
     }
 
     @Primary
-    @Bean(name = "entityManagerFactoryWizards")
+    @Bean(name = "entityManagerFactoryUsers")
     public LocalContainerEntityManagerFactoryBean entityManager(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("wizardsDataSource")DataSource dataSource) {
+            @Qualifier("usersDataSource")DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
                 .packages("es.tfg.codeguard.model.entity")
-                .persistenceUnit("wizards")
+                .persistenceUnit("users")
                 .build();
     }
 
     @Primary
     @Bean(name = "transactionManagerWizard")
     public PlatformTransactionManager platformTransactionManager(
-            @Qualifier("entityManagerFactoryWizards") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("entityManagerFactoryUsers") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 

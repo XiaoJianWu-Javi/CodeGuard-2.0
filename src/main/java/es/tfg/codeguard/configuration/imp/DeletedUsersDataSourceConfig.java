@@ -20,36 +20,36 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableJpaRepositories(
         basePackages = "es.tfg.codeguard.model.repository",
-        entityManagerFactoryRef = "entityManagerFactoryDeadWizards",
-        transactionManagerRef = "transactionManagerDeadWizard"
+        entityManagerFactoryRef = "entityManagerFactoryDeletedUsers",
+        transactionManagerRef = "transactionManagerDeletedUsers"
 )
-public class DeletedWizardsDataSourceConfig implements DataSourceConfig {
+public class DeletedUsersDataSourceConfig implements DataSourceConfig {
 
-    @Bean(name = "deadWizardsDataSource")
-    @ConfigurationProperties(prefix = "spring.deleted.datasource")
+    @Bean(name = "deletedUsersDataSource")
+    @ConfigurationProperties(prefix = "spring.deletedUsers.datasource")
     public DataSource dataSource(){
         return DataSourceBuilder.create()
-                .url("jdbc:h2:mem:deletedWizards")
-                .username("deleted")
+                .url("jdbc:h2:mem:deletedUsers")
+                .username("deletedUsers")
                 .password("")
                 .driverClassName("org.h2.Driver")
                 .build();
     }
 
-    @Bean(name = "entityManagerFactoryDeadWizards")
+    @Bean(name = "entityManagerFactoryDeletedUsers")
     public LocalContainerEntityManagerFactoryBean entityManager(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("deadWizardsDataSource")DataSource dataSource) {
+            @Qualifier("deletedUsersDataSource")DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
                 .packages("es.tfg.codeguard.model.entity")
-                .persistenceUnit("deadWizards")
+                .persistenceUnit("deletedUsers")
                 .build();
     }
 
-    @Bean(name = "transactionManagerDeadWizard")
+    @Bean(name = "transactionManagerDeletedUsers")
     public PlatformTransactionManager platformTransactionManager(
-            @Qualifier("entityManagerFactoryDeadWizards") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("entityManagerFactoryDeletedUsers") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }
