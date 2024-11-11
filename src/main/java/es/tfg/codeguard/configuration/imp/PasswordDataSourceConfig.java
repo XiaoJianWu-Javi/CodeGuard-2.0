@@ -1,6 +1,8 @@
 package es.tfg.codeguard.configuration.imp;
 
 import es.tfg.codeguard.configuration.DataSourceConfig;
+import es.tfg.codeguard.model.entity.UserPass;
+import es.tfg.codeguard.model.repository.UserPassRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,7 +21,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "es.tfg.codeguard.model.repository",
+        basePackageClasses = {UserPassRepository.class},
         entityManagerFactoryRef = "entityManagerFactoryPassword",
         transactionManagerRef = "transactionManagerPassword"
 )
@@ -42,7 +44,7 @@ public class PasswordDataSourceConfig implements DataSourceConfig {
             @Qualifier("passwordDataSource")DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("es.tfg.codeguard.model.entity")
+                .packages(UserPass.class)
                 .persistenceUnit("password")
                 .build();
     }
