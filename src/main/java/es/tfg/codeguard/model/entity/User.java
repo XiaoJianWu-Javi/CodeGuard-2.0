@@ -7,40 +7,39 @@ import jakarta.persistence.InheritanceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Wizard {
+public class User {
 
-    private static final String WIZARDNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";
+    private static final String USERNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";
     
     @Id
     @NotBlank
-    @Pattern(regexp = WIZARDNAME_REGEXP, message = "{wizardname.invalidPattern}")
-    private String wizardName;
+    @Pattern(regexp = USERNAME_REGEXP, message = "{user.username.invalidPattern}")
+    private String username;
 
     private Boolean tester;
     private Boolean creator;
 
     //private List<Spell> spells;
 
-    public Wizard() {
+    public User() {
         setTester(false);
         setCreator(false);
         //setSpells(new ArrayList<>());
     }
 
-    public String getWizardName() {
-        if (wizardName == null) throw new NoSuchElementException();
-        return wizardName;
+    public String getUsername() {
+        if (username == null) throw new NoSuchElementException();
+        return username;
     }
 
-    public void setWizardName(String wizardName) {
-        if (wizardName == null || wizardName.isBlank()) throw new IllegalArgumentException();
-        if (!wizardName.matches(WIZARDNAME_REGEXP)) throw new IllegalArgumentException();
-        this.wizardName = wizardName;
+    public void setUsername(String username) {
+        if (username == null || username.isBlank()) throw new IllegalArgumentException();
+        if (!username.matches(USERNAME_REGEXP)) throw new IllegalArgumentException();
+        this.username = username;
     }
 
     public Boolean isTester() {
@@ -62,13 +61,13 @@ public class Wizard {
 //    public List<Spell> getSpells() {
 //        return new ArrayList<>(spells);
 //    }
-//
+
 //    public void setSpells(List<Spell> spells) {
 //        checkSpells(spells);
 //        this.spells = spells;
 //    }
 
-    private void checkSpells(List<Spell> spells) {
-        for (Spell spell : spells) if (spell == null) throw new IllegalArgumentException();
-    }
+//    private void checkSpells(List<Exercise> exercises) {
+//        for (Exercise exercise : exercises) if (exercise == null) throw new IllegalArgumentException();
+//    }
 }
