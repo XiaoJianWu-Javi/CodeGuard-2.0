@@ -14,6 +14,9 @@ public class UserDTO {
     private Boolean creator;
 //    private List<Exercise> exercises;
 
+    public UserDTO(){
+    }
+
     public UserDTO(User user) {
         setUsername(user.getUsername());
         setTester(user.isTester());
