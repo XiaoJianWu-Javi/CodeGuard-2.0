@@ -3,12 +3,12 @@ package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.model.entity.DeletedUser;
-import es.tfg.codeguard.model.entity.User;
-import es.tfg.codeguard.model.entity.UserPass;
-import es.tfg.codeguard.model.repository.DeletedUserRepository;
-import es.tfg.codeguard.model.repository.UserPassRepository;
-import es.tfg.codeguard.model.repository.UserRepository;
+import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
+import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
