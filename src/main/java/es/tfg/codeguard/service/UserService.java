@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface UserService {
 
-    public abstract Optional<UserPassDTO> registerUser(String wizardname, String wizardpassword);
+    public abstract Optional<UserPassDTO> registerUser(String username, String password);
 
-    public abstract Optional<UserDTO> deleteUser(String wizardname);
+    public abstract Optional<UserDTO> deleteUser(String username);
 
     public abstract Optional<UserDTO> getUserById(String username);
 
