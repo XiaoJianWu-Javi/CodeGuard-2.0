@@ -1,13 +1,13 @@
-package es.tfg.codeguard.model.entity;
+package es.tfg.codeguard.model.entity.userpass;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 import java.util.NoSuchElementException;
 
 @Entity
+@Table(name = "USERPASS")
 public class UserPass {
 
     private static final String USERNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";

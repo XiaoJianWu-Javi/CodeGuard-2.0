@@ -1,18 +1,15 @@
 package es.tfg.codeguard.model.dto;
 
-import es.tfg.codeguard.model.entity.DeletedUser;
-import es.tfg.codeguard.model.entity.Exercise;
-import es.tfg.codeguard.model.entity.User;
+import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.user.User;
 
-import java.util.List;
-import java.util.ArrayList;
-
+//TODO: Make Exercise list implementation when exercises are done
 public class UserDTO {
 	
     private String username;
     private Boolean tester;
     private Boolean creator;
-//    private List<Exercise> exercises;
+//  private List<Exercise> exercises;
 
     public UserDTO(User user) {
         setUsername(user.getUsername());
