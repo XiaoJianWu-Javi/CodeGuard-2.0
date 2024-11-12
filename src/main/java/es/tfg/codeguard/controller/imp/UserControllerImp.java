@@ -24,14 +24,14 @@ public class UserControllerImp implements UserController {
     public ResponseEntity<UserPassDTO> registerUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
 
         return userService.registerUser(userName, userPassword)
-                .map(wizardDto -> new ResponseEntity<>(wizardDto, HttpStatus.CREATED))
+                .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.CREATED))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName) {
         return userService.deleteUser(userName)
-                .map(wizardDto -> new ResponseEntity<>(wizardDto, HttpStatus.OK))
+                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
@@ -39,7 +39,7 @@ public class UserControllerImp implements UserController {
 
     public ResponseEntity<UserDTO> getUserById(@PathVariable("userName") String userName) {
         return userService.getUserById(userName)
-                .map(wizardDto -> new ResponseEntity<>(wizardDto, HttpStatus.OK))
+                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -54,26 +54,26 @@ public class UserControllerImp implements UserController {
 //TODO: Incremento de código Strint 2
 
 //    @GetMapping("/login")
-//    @ApiOperation("Login Wizard")
+//    @ApiOperation("Login user")
 //    @ApiResponses({
-//            @ApiResponse(code = 200, message = "Wizard logged succesfully"),
-//            @ApiResponse(code = 404, message = "Wizard couldn`t login")
+//            @ApiResponse(code = 200, message = "User logged succesfully"),
+//            @ApiResponse(code = 404, message = "User couldn`t login")
 //    })
-//    public ResponseEntity<UserPassDTO> loginWizard(@RequestParam(name = "wizardName") String wizardName, @RequestParam(name = "wizardPassword") String wizardPassword) {
-//        return userService.loginUser(wizardName, wizardPassword)
-//                .map(wizardDto -> new ResponseEntity<>(wizardDto, HttpStatus.OK))
+//    public ResponseEntity<UserPassDTO> loginUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
+//        return userService.loginUser(userName, userPassword)
+//                .map(userPassDto -> new ResponseEntity<>(userPassDto, HttpStatus.OK))
 //                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 //    }
 
 //    @GetMapping("/logout")
-//    @ApiOperation("Logout Wizard")
+//    @ApiOperation("Logout user")
 //    @ApiResponses({
-//            @ApiResponse(code = 200, message = "Wizard logout succesfully"),
-//            @ApiResponse(code = 404, message = "Wizard couldn't logout")
+//            @ApiResponse(code = 200, message = "User logout succesfully"),
+//            @ApiResponse(code = 404, message = "User couldn't logout")
 //    })
-//    public ResponseEntity<UserPassDTO> logoutWizard(@RequestParam(name = "wizardName") String wizardName) {
-//        return userService.logoutUser(wizardName)
-//                .map(wizardDto -> new ResponseEntity<>(wizardDto, HttpStatus.OK))
+//    public ResponseEntity<UserPassDTO> logoutUser(@RequestParam(name = "userName") String userName) {
+//        return userService.logoutUser(userName)
+//                .map(userPassDto -> new ResponseEntity<>(userPassDto, HttpStatus.OK))
 //                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 //    }
 

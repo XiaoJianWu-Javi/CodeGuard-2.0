@@ -18,7 +18,7 @@ public class AdminControllerImp implements AdminController {
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName) {
 
         return adminService.deleteUser(userName)
-                .map(wizardDTO -> new ResponseEntity<>(wizardDTO, HttpStatus.OK))
+                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }

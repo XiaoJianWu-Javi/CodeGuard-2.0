@@ -50,90 +50,90 @@ class UserControllerTests {
     }
 
     @Test
-    void registerWizardTest() {
+    void registerUserTest() {
 
-        userPassDTO.setUsername("FirstWizard");
+        userPassDTO.setUsername("FirstUser");
 
-        when(userService.registerUser("FirstWizard", "1234")).thenReturn(Optional.of(userPassDTO));
+        when(userService.registerUser("FirstUser", "1234")).thenReturn(Optional.of(userPassDTO));
 
-        Optional<UserPassDTO> resultado = userService.registerUser("FirstWizard", "1234");
+        Optional<UserPassDTO> resultado = userService.registerUser("FirstUser", "1234");
 
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstWizard", "1234");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
-
-
-        userPassDTO.setUsername("WizardSecond");
-
-        when(userService.registerUser("WizardSecond", "9876")).thenReturn(Optional.ofNullable(userPassDTO));
-
-        resultado = userService.registerUser("WizardSecond", "9876");
-
-        esperado = userControllerImp.registerUser("WizardSecond", "9876");
+        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstUser", "1234");
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
-        userPassDTO.setUsername("Wizard3");
+        userPassDTO.setUsername("UserSecond");
 
-        when(userService.registerUser("Wizard3", "bestWizard123")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(userService.registerUser("UserSecond", "9876")).thenReturn(Optional.ofNullable(userPassDTO));
 
-        resultado = userService.registerUser("Wizard3", "bestWizard123");
+        resultado = userService.registerUser("UserSecond", "9876");
 
-        esperado = userControllerImp.registerUser("Wizard3", "bestWizard123");
+        esperado = userControllerImp.registerUser("UserSecond", "9876");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
+
+
+        userPassDTO.setUsername("User3");
+
+        when(userService.registerUser("User3", "bestUser123")).thenReturn(Optional.ofNullable(userPassDTO));
+
+        resultado = userService.registerUser("User3", "bestUser123");
+
+        esperado = userControllerImp.registerUser("User3", "bestUser123");
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
     }
 
     @Test
-    void invalidRegisterWizardTest() {
+    void invalidRegisterUserTest() {
 
-        when(userService.registerUser("FirstWizardñ", "1234")).thenReturn(Optional.empty());
+        when(userService.registerUser("FirstUserñ", "1234")).thenReturn(Optional.empty());
 
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstWizardñ", "1234");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-
-        when(userService.registerUser("WizardSecond<?php>", "9876")).thenReturn(Optional.empty());
-
-        esperado = userControllerImp.registerUser("WizardSecond<?php>", "9876");
+        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstUserñ", "1234");
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
 
-        when(userService.registerUser("Wizard3;;:.+", "bestWizard123")).thenReturn(Optional.empty());
+        when(userService.registerUser("UserSecond<?php>", "9876")).thenReturn(Optional.empty());
 
-        esperado = userControllerImp.registerUser("Wizard3;;:.+", "bestWizard123");
+        esperado = userControllerImp.registerUser("UserSecond<?php>", "9876");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+
+        when(userService.registerUser("User3;;:.+", "bestUser123")).thenReturn(Optional.empty());
+
+        esperado = userControllerImp.registerUser("User3;;:.+", "bestUser123");
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"FirstWizard", "SecondWizard", "ThirdWizard", "FourthWizard"})
-    void deleteWizardTest(String wizardName) {
+    @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
+    void deleteUserTest(String userName) {
 
-        userDTO.setUsername(wizardName);
+        userDTO.setUsername(userName);
 
-        when(userService.deleteUser(wizardName)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.deleteUser(userName)).thenReturn(Optional.ofNullable(userDTO));
 
-        Optional<UserDTO> resultado = userService.deleteUser(wizardName);
+        Optional<UserDTO> resultado = userService.deleteUser(userName);
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(wizardName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(userName);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"FirstWizard", "SecondWizard", "ThirdWizard", "FourthWizard"})
-    void InvalidDeleteWizardTest(String wizardName) {
+    @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
+    void InvalidDeleteUserTest(String userName) {
 
-        when(userService.deleteUser(wizardName)).thenReturn(Optional.empty());
+        when(userService.deleteUser(userName)).thenReturn(Optional.empty());
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(wizardName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(userName);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
@@ -141,15 +141,15 @@ class UserControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"aaron_pp", "saul_af", "dani_ro", "diego_ra"})
-    void GetWizardByIdTest(String wizardName) {
+    void GetUserByIdTest(String userName) {
 
-        userDTO.setUsername(wizardName);
+        userDTO.setUsername(userName);
 
-        when(userService.getUserById(wizardName)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.getUserById(userName)).thenReturn(Optional.ofNullable(userDTO));
 
-        Optional<UserDTO> resultado = userService.getUserById(wizardName);
+        Optional<UserDTO> resultado = userService.getUserById(userName);
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(wizardName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(userName);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
@@ -157,11 +157,11 @@ class UserControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"huwhqñ", "duhqñidqidiq", "qi@dqiqdqdmiqdnqijdqjq", "#iuqdqdq", "uhy@", "_adam", "ad_am", "adam_#", "udhwqduqid???", "?¿ñ", "ññññññ", "adam#¿?!¡"})
-    void InvalidGetWizardByIdTest(String wizardName) {
+    void InvalidGetUserByIdTest(String userName) {
 
-        when(userService.getUserById(wizardName)).thenReturn(Optional.empty());
+        when(userService.getUserById(userName)).thenReturn(Optional.empty());
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(wizardName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(userName);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
@@ -229,140 +229,140 @@ class UserControllerTests {
 //TODO: Incremento de código Strint 2
 
 //    @Test
-//    void loginWizardTest() {
+//    void loginUserTest() {
 //
-//        when(userService.loginUser("FirstWizard", "1234")).thenReturn(Optional.ofNullable(userDTO));
+//        when(userService.loginUser("FirstUser", "1234")).thenReturn(Optional.ofNullable(userDTO));
 //
-//        Optional<UserPassDTO> resultado = userService.loginWizard("FirstWizard", "1234");
+//        Optional<UserPassDTO> resultado = userService.loginUser("FirstUser", "1234");
 //
-//        ResponseEntity<Optional<WizardDTO>> esperado = userControllerImp.loginWizard("FirstWizard", "1234");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
-//
-//
-//        when(userService.loginWizard("WizardSecond", "9876")).thenReturn(Optional.ofNullable(userDTO));
-//
-//        resultado = userService.loginWizard("WizardSecond", "9876");
-//
-//        esperado = userControllerImp.loginWizard("WizardSecond", "9876");
+//        ResponseEntity<Optional<UserDTO>> esperado = userControllerImp.loginUser("FirstUser", "1234");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 //
 //
-//        when(userService.loginWizard("Wizard3", "bestWizard123")).thenReturn(Optional.ofNullable(userDTO));
+//        when(userService.loginUser("UserSecond", "9876")).thenReturn(Optional.ofNullable(userDTO));
 //
-//        resultado = userService.loginWizard("Wizard3", "bestWizard123");
+//        resultado = userService.loginUser("UserSecond", "9876");
 //
-//        esperado = userControllerImp.loginWizard("Wizard3", "bestWizard123");
+//        esperado = userControllerImp.loginUser("UserSecond", "9876");
+//
+//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+//
+//
+//        when(userService.loginUser("User3", "bestUser123")).thenReturn(Optional.ofNullable(userDTO));
+//
+//        resultado = userService.loginUser("User3", "bestUser123");
+//
+//        esperado = userControllerImp.loginUser("User3", "bestUser123");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 //
 //    }
 //
 //    @Test
-//    void InvalidloginWizardTest() {
+//    void InvalidloginUserTest() {
 //
-//        when(userService.loginWizard("FirstWizardñ", "1234")).thenReturn(Optional.empty());
+//        when(userService.loginUser("FirstUserñ", "1234")).thenReturn(Optional.empty());
 //
-//        Optional<WizardDTO> resultado = userService.loginWizard("FirstWizardñ", "1234");
+//        Optional<UserDTO> resultado = userService.loginUser("FirstUserñ", "1234");
 //
-//        ResponseEntity<Optional<WizardDTO>> esperado = userControllerImp.loginWizard("FirstWizardñ", "1234");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
-//
-//
-//        when(userService.loginWizard("WizardSecond", "9876")).thenReturn(Optional.empty());
-//
-//        resultado = userService.loginWizard("WizardSecond", "9876");
-//
-//        esperado = userControllerImp.loginWizard("WizardSecond", "9876");
+//        ResponseEntity<Optional<UserDTO>> esperado = userControllerImp.loginUser("FirstUserñ", "1234");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
 //
 //
-//        when(userService.loginWizard("Wizard3", "bestWizard123")).thenReturn(Optional.empty());
+//        when(userService.loginUser("UserSecond", "9876")).thenReturn(Optional.empty());
 //
-//        resultado = userService.loginWizard("Wizard3", "bestWizard123");
+//        resultado = userService.loginUser("UserSecond", "9876");
 //
-//        esperado = userControllerImp.loginWizard("Wizard3", "bestWizard123");
+//        esperado = userControllerImp.loginUser("UserSecond", "9876");
+//
+//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
+//
+//
+//        when(userService.loginUser("User3", "bestUser123")).thenReturn(Optional.empty());
+//
+//        resultado = userService.loginUser("User3", "bestUser123");
+//
+//        esperado = userControllerImp.loginUser("User3", "bestUser123");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
 //    }
 
 //    @Test
-//    void UpdateWizardPasswordTest(){
+//    void UpdateUserPasswordTest(){
 //
-//        when(userService.updateUserPass("FirstWizard", "1234new")).thenReturn(Optional.ofNullable(userDTO));
+//        when(userService.updateUserPass("FirstUser", "1234new")).thenReturn(Optional.ofNullable(userDTO));
 //
-//        Optional<UserDTO> resultado = userService.updateUserPass("FirstWizard", "1234new");
+//        Optional<UserDTO> resultado = userService.updateUserPass("FirstUser", "1234new");
 //
-//        ResponseEntity<UserDTO> esperado = userControllerImp.updateUserPass("FirstWizard", "1234new");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
-//
-//        when(userService.updateUserPass("SecondWizard", "9876new")).thenReturn(Optional.ofNullable(userDTO));
-//
-//        resultado = userService.updateUserPass("SecondWizard", "9876new");
-//
-//        esperado = userControllerImp.updateUserPass("SecondWizard", "9876new");
+//        ResponseEntity<UserDTO> esperado = userControllerImp.updateUserPass("FirstUser", "1234new");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 //
+//        when(userService.updateUserPass("SecondUser", "9876new")).thenReturn(Optional.ofNullable(userDTO));
 //
-//        when(userService.updateUserPass("ThirdtWizard", "newpass")).thenReturn(Optional.ofNullable(userDTO));
+//        resultado = userService.updateUserPass("SecondUser", "9876new");
 //
-//        resultado = userService.updateUserPass("ThirdtWizard", "newpass");
-//
-//        esperado = userControllerImp.updateUserPass("ThirdtWizard", "newpass");
+//        esperado = userControllerImp.updateUserPass("SecondUser", "9876new");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 //
 //
-//        when(userService.updateUserPass("FourthWizard", "newhola1234")).thenReturn(Optional.ofNullable(userDTO));
+//        when(userService.updateUserPass("ThirdtUser", "newpass")).thenReturn(Optional.ofNullable(userDTO));
 //
-//        resultado = userService.updateUserPass("FourthWizard", "newhola1234");
+//        resultado = userService.updateUserPass("ThirdtUser", "newpass");
 //
-//        esperado = userControllerImp.updateUserPass("FourthWizard", "newhola1234");
+//        esperado = userControllerImp.updateUserPass("ThirdtUser", "newpass");
+//
+//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+//
+//
+//        when(userService.updateUserPass("FourthUser", "newhola1234")).thenReturn(Optional.ofNullable(userDTO));
+//
+//        resultado = userService.updateUserPass("FourthUser", "newhola1234");
+//
+//        esperado = userControllerImp.updateUserPass("FourthUser", "newhola1234");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 //
 //    }
 //
 //    @Test
-//    void InvalidUpdateWizardPasswordTest(){
+//    void InvalidUpdateUserPasswordTest(){
 //
-//        when(userService.updateUserPass("FirstWizard", "new1234;;")).thenReturn(Optional.empty());
+//        when(userService.updateUserPass("FirstUser", "new1234;;")).thenReturn(Optional.empty());
 //
-//        Optional<UserDTO> resultado = userService.updateUserPass("FirstWizard", "new1234;;");
+//        Optional<UserDTO> resultado = userService.updateUserPass("FirstUser", "new1234;;");
 //
-//        ResponseEntity<UserDTO> esperado = userControllerImp.updateUserPass("FirstWizard", "new1234;;");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_MODIFIED));
-//
-//
-//        when(userService.updateUserPass("SecondWizard", "newhola1234ºº")).thenReturn(Optional.empty());
-//
-//        resultado = userService.updateUserPass("SecondWizard", "newhola1234ºº");
-//
-//        esperado = userControllerImp.updateUserPass("SecondWizard", "newhola1234ºº");
+//        ResponseEntity<UserDTO> esperado = userControllerImp.updateUserPass("FirstUser", "new1234;;");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_MODIFIED));
 //
 //
-//        when(userService.updateUserPass("ThirdWizard", "ªªaaaa")).thenReturn(Optional.empty());
+//        when(userService.updateUserPass("SecondUser", "newhola1234ºº")).thenReturn(Optional.empty());
 //
-//        resultado = userService.updateUserPass("ThirdWizard", "ªªaaa");
+//        resultado = userService.updateUserPass("SecondUser", "newhola1234ºº");
 //
-//        esperado = userControllerImp.updateUserPass("ThirdWizard", "ªªaaaa");
+//        esperado = userControllerImp.updateUserPass("SecondUser", "newhola1234ºº");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_MODIFIED));
 //
 //
-//        when(userService.updateUserPass("FourthWizard", "juitenDiten,,,,")).thenReturn(Optional.empty());
+//        when(userService.updateUserPass("ThirdUser", "ªªaaaa")).thenReturn(Optional.empty());
 //
-//        resultado = userService.updateUserPass("FourthWizard", "juitenDiten,,,,");
+//        resultado = userService.updateUserPass("ThirdUser", "ªªaaa");
 //
-//        esperado = userControllerImp.updateUserPass("FourthWizard", "juitenDiten,,,,");
+//        esperado = userControllerImp.updateUserPass("ThirdUser", "ªªaaaa");
+//
+//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_MODIFIED));
+//
+//
+//        when(userService.updateUserPass("FourthUser", "juitenDiten,,,,")).thenReturn(Optional.empty());
+//
+//        resultado = userService.updateUserPass("FourthUser", "juitenDiten,,,,");
+//
+//        esperado = userControllerImp.updateUserPass("FourthUser", "juitenDiten,,,,");
 //
 //        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_MODIFIED));
 //

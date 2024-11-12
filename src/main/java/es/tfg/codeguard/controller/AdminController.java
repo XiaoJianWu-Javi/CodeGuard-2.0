@@ -6,26 +6,23 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/elder")
+@RequestMapping("/admin")
 public interface AdminController {
 
-    @GetMapping("/delete")
-    @ApiOperation("Delete Wizard by Id")
+    @DeleteMapping("/delete")
+    @ApiOperation("Delete user by name")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Wizard deleted succsesfully"),
-            @ApiResponse(code = 404, message = "Wizard couldn't deleted")
+            @ApiResponse(code = 200, message = "User deleted succsesfully"),
+            @ApiResponse(code = 404, message = "User couldn't deleted")
     })
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName);
 
 
-    @GetMapping("/updateUser")
-    @ApiOperation("Update User password")
+    @PatchMapping("/updateUser")
+    @ApiOperation("Update user password")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Password updated sucsessfully"),
             @ApiResponse(code = 403, message = "Password couldn't updated")

@@ -11,37 +11,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/wizard")
+@RequestMapping("/user")
 public interface UserController {
 
-    @GetMapping("/register")
-    @ApiOperation("Register new Wizard")
+    @PostMapping("/register")
+    @ApiOperation("Register new user")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Wizard register succesfully"),
-            @ApiResponse(code = 404, message = "Wizard couldn`t register")
+            @ApiResponse(code = 201, message = "User register succesfully"),
+            @ApiResponse(code = 404, message = "User couldn`t register")
     })
     public ResponseEntity<UserPassDTO> registerUser(String userName, String userPassword);
 
 
-    @GetMapping("/delete")
-    @ApiOperation("Delete Wizard")
+    @DeleteMapping("/delete")
+    @ApiOperation("Delete user")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Wizard couldn't be deleted")
+            @ApiResponse(code = 404, message = "User couldn't be deleted")
     })
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "UserName") String UserName);
 
-    @GetMapping("/{wizardId}")
-    @ApiOperation("Get Wizard by name")
+    @GetMapping("/{userName}")
+    @ApiOperation("Get user by name")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Wizard found"),
-            @ApiResponse(code = 404, message = "Any Wizard found")
+            @ApiResponse(code = 200, message = "User found"),
+            @ApiResponse(code = 404, message = "Any user found")
     })
     public ResponseEntity<UserDTO> getUserById(@PathVariable("userName") String userName);
 
 
     @GetMapping("/allUsers")
-    @ApiOperation("Get all Users")
+    @ApiOperation("Get all users")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Users found")
     })
