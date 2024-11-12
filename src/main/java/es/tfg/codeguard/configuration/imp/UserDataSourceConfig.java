@@ -1,8 +1,6 @@
 package es.tfg.codeguard.configuration.imp;
 
 import es.tfg.codeguard.configuration.DataSourceConfig;
-import es.tfg.codeguard.model.entity.User;
-import es.tfg.codeguard.model.repository.UserRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,7 +20,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackageClasses = {UserRepository.class},
+        basePackages = {"es.tfg.codeguard.model.repository.user"},
         entityManagerFactoryRef = "entityManagerFactoryUsers",
         transactionManagerRef = "transactionManagerUser"
 )
@@ -47,13 +45,13 @@ public class UserDataSourceConfig implements DataSourceConfig {
             @Qualifier("usersDataSource")DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages(User.class)
+                .packages("es.tfg.codeguard.model.entity.user")
                 .persistenceUnit("users")
                 .build();
     }
 
     @Primary
-    @Bean(name = "transactionManagerWizard")
+    @Bean(name = "transactionManagerUser")
     public PlatformTransactionManager platformTransactionManager(
             @Qualifier("entityManagerFactoryUsers") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
