@@ -1,13 +1,11 @@
-package es.tfg.codeguard.model.repository;
+package es.tfg.codeguard.model.repository.user;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import es.tfg.codeguard.model.entity.User;
+import es.tfg.codeguard.model.entity.user.User;
 
 @Repository
-@Qualifier("entityManagerFactoryUsers")
 public interface UserRepository extends JpaRepository<User, String> {
 
 }

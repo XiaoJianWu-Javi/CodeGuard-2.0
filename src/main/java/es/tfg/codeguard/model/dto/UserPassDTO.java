@@ -1,6 +1,6 @@
 package es.tfg.codeguard.model.dto;
 
-import es.tfg.codeguard.model.entity.UserPass;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
 
 public class UserPassDTO {
 	
