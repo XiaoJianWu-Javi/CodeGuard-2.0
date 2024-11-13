@@ -13,7 +13,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class LoginControllerImp implements LoginController {
     //TODO: Use interface
     //TODO: Use interface
@@ -60,7 +62,6 @@ public class LoginControllerImp implements LoginController {
 
     @Autowired
     private UserService userService;
-
 
     public ResponseEntity<UserPassDTO> loginUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
 

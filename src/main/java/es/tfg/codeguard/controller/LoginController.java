@@ -8,28 +8,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/login")
 public interface LoginController {
 
     @PostMapping(name = "", consumes = "application/json")
-    @ApiOperation("Login user")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "User logged succesfully"),
-            @ApiResponse(code = 400, message = "User couldn`t login")
+    @Operation(summary = "Login user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged succesfully"),
+            @ApiResponse(responseCode = "400", description = "User couldn`t login")
     })
     public ResponseEntity<UserPassDTO> loginUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword);
 
 
     @GetMapping("/logout")
-    @ApiOperation("Logout user")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "User logout succesfully"),
-            @ApiResponse(code = 400, message = "User couldn't logout")
+    @Operation(summary = "Logout user")
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "200", description = "User logout succesfully"),
+            @ApiResponse(responseCode = "400", description = "User couldn't logout")
     })
     public ResponseEntity<UserPassDTO> logoutUser(@RequestParam(name = "userName") String userName);
 

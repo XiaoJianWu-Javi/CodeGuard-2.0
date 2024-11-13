@@ -33,12 +33,11 @@ public class AdminServiceImp implements AdminService {
             return Optional.empty();
         }
 
-        User user = userRepository.findById(userName).get();
+        DeletedUser user = new DeletedUser(userRepository.findById(userName).get());
 
-        deletedUserRepository.save(new DeletedUser(user));
+        deletedUserRepository.save(user);
 
         userRepository.delete(userRepository.findById(userName).get());
-        userPassRepository.delete(userPassRepository.findById(userName).get());
 
         return Optional.of(new UserDTO(user));
     }
