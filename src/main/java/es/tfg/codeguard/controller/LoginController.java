@@ -1,60 +1,37 @@
 package es.tfg.codeguard.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import es.tfg.codeguard.model.dto.UserPassDTO;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
-@Controller
+@RestController
 @RequestMapping("/login")
-public class LoginController {
+public interface LoginController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    
-    @PostMapping(name = "/login", consumes = "application/json")
-    public ResponseEntity login(@RequestBody AuthRequest user) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-            );
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch(AuthenticationException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
+    @PostMapping(name = "", consumes = "application/json")
+    @ApiOperation("Login user")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User logged succesfully"),
+            @ApiResponse(code = 400, message = "User couldn`t login")
+    })
+    public ResponseEntity<UserPassDTO> loginUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword);
 
-    class AuthRequest {
-        private String username;
-        private String password;
 
-        
-        public void setUsername(String username) {
-            this.username = username;
-        }
+    @GetMapping("/logout")
+    @ApiOperation("Logout user")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User logout succesfully"),
+            @ApiResponse(code = 400, message = "User couldn't logout")
+    })
+    public ResponseEntity<UserPassDTO> logoutUser(@RequestParam(name = "userName") String userName);
 
-        
-        public String getUsername() {
-            return username;
-        }
 
-        public String getPassword() {
-            return password;
-        }
-
-        
-        public void setPassword(String password) {
-            this.password = password;
-        }
-        
-    }
 }
- 

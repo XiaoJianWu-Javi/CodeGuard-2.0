@@ -34,7 +34,7 @@ class UserServiceTests {
     @Mock
     private DeletedUserRepository deletedUserRepository;
     @InjectMocks
-    private UserServiceImp wizardService;
+    private UserServiceImp userServiceImp;
 
 
     @Test
@@ -44,7 +44,7 @@ class UserServiceTests {
 
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
-        Optional<UserPassDTO> userOpt = wizardService.registerUser("Gandalf", "cantpass");
+        Optional<UserPassDTO> userOpt = userServiceImp.registerUser("Gandalf", "cantpass");
 
         assertThat(userOpt).isEmpty();
     }
@@ -53,7 +53,7 @@ class UserServiceTests {
     public void TestFineUserServiceRegisterMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserPassDTO> user = wizardService.registerUser("Gandalf", "cantpass");
+        Optional<UserPassDTO> user = userServiceImp.registerUser("Gandalf", "cantpass");
 
         UserPassDTO userPassDTO = new UserPassDTO();
         userPassDTO.setUsername("Gandalf");
@@ -66,7 +66,7 @@ class UserServiceTests {
     public void TestFailUserServiceDeleteMethod() {
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> deletedUser = wizardService.deleteUser("Gandalf");
+        Optional<UserDTO> deletedUser = userServiceImp.deleteUser("Gandalf");
         assertThat(deletedUser).isEmpty();
     }
 
@@ -85,7 +85,7 @@ class UserServiceTests {
         Optional<User> userOpt = Optional.of(user);
         when(userRepository.findById("Gandalf")).thenReturn(userOpt);
 
-        Optional<UserDTO> userDto = wizardService.deleteUser("Gandalf");
+        Optional<UserDTO> userDto = userServiceImp.deleteUser("Gandalf");
 
         DeletedUser deletedUser = new DeletedUser();
         deletedUser.setUsername("Gandalf");
@@ -133,7 +133,7 @@ class UserServiceTests {
     public void TestFailGetUserByName(){
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> user = wizardService.getUserById("Gandalf");
+        Optional<UserDTO> user = userServiceImp.getUserById("Gandalf");
 
         assertThat(user).isEmpty();
     }

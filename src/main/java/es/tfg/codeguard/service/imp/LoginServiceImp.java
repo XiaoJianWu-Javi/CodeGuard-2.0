@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
@@ -37,5 +38,10 @@ public class LoginServiceImp implements LoginService {
         } else {
             throw new UsernameNotFoundException(username);
         }
+    }
+
+    @Override
+    public Optional<UserDTO> loginUser(String userName, String userPassword) {
+        return Optional.empty();
     }
 }
