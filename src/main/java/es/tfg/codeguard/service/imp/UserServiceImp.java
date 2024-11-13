@@ -2,12 +2,12 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.model.entity.DeletedUser;
-import es.tfg.codeguard.model.entity.User;
-import es.tfg.codeguard.model.entity.UserPass;
-import es.tfg.codeguard.model.repository.DeletedUserRepository;
-import es.tfg.codeguard.model.repository.UserPassRepository;
-import es.tfg.codeguard.model.repository.UserRepository;
+import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
+import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
 
-    //configurar las clases para cuando se tenga configurado la base de datos utilizar bcript desde config
+    //TODO: configurar las clases para cuando se tenga configurado la base de datos utilizar bcript desde config
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private UserRepository userRepository;
@@ -28,8 +28,6 @@ public class UserServiceImp implements UserService {
     @Autowired
     private DeletedUserRepository deletedUserRepository;
 
-
-
     @Override
     public Optional<UserPassDTO> registerUser(String userName, String userPass) {
 
@@ -37,8 +35,7 @@ public class UserServiceImp implements UserService {
             return Optional.empty();
         }
 
-        User user = new User();
-        user.setUsername(userName);
+        User user = new User(userName);
         userRepository.save(user);
 
         UserPass userPassEncript = new UserPass();
@@ -52,7 +49,7 @@ public class UserServiceImp implements UserService {
         return Optional.of(userPassDTO);
     }
 
-    //Este metodo con spring session tiene que detectar la sesion y si estas conectado te cierra la sesion y te elimina. (No recibe parametros)
+    //TODO: Este metodo con spring session tiene que detectar la sesion y si estas conectado te cierra la sesion y te elimina. (No recibe parametros)
     public Optional<UserDTO> deleteUser(String userName) {
 
         if(userPassRepository.findById(userName).isEmpty()){
@@ -60,8 +57,6 @@ public class UserServiceImp implements UserService {
         }
 
         User user = userRepository.findById(userName).get();
-
-
 
         deletedUserRepository.save(new DeletedUser(user));
 
@@ -74,16 +69,14 @@ public class UserServiceImp implements UserService {
     }
 
     public Optional<UserDTO> getUserById(String username){
+
         Optional<User> wizard = userRepository.findById(username);
         return wizard.map(UserDTO::new);
-
     }
-
 
     public List<UserDTO> getAllUsers() {
 
         return userRepository.findAll().stream().map(UserDTO::new).toList();
     }
-
 
 }

@@ -2,12 +2,12 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.model.entity.DeletedUser;
-import es.tfg.codeguard.model.entity.User;
-import es.tfg.codeguard.model.entity.UserPass;
-import es.tfg.codeguard.model.repository.DeletedUserRepository;
-import es.tfg.codeguard.model.repository.UserPassRepository;
-import es.tfg.codeguard.model.repository.UserRepository;
+import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
+import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class AdminServiceImp implements AdminService {
 
-    //configurar las clases para cuando se tenga configurado la base de datos utilizar bcript desde config
+    //TODO: configurar las clases para cuando se tenga configurado la base de datos utilizar bcript desde config
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private UserRepository userRepository;
@@ -27,10 +27,7 @@ public class AdminServiceImp implements AdminService {
     @Autowired
     private DeletedUserRepository deletedUserRepository;
 
-
-
     public Optional<UserDTO> deleteUser(String userName) {
-
 
         if(userPassRepository.findById(userName).isEmpty()){
             return Optional.empty();
@@ -38,19 +35,15 @@ public class AdminServiceImp implements AdminService {
 
         User user = userRepository.findById(userName).get();
 
-
-
         deletedUserRepository.save(new DeletedUser(user));
 
         userRepository.delete(userRepository.findById(userName).get());
         userPassRepository.delete(userPassRepository.findById(userName).get());
 
-
-
         return Optional.of(new UserDTO(user));
     }
 
-    //Actualizar para permitir cambiar cualquier campo del wizard menos el id
+    //TODO: Actualizar para permitir cambiar cualquier campo del wizard menos el id
     public Optional<UserPassDTO> updateUser(String userName, String newUserPass){
 
         if(userPassRepository.findById(userName).isEmpty()){
@@ -140,7 +133,7 @@ public class AdminServiceImp implements AdminService {
         }
 
         User user = userRepository.findById(userName).get();
-        //cuando este implementada la base de datos llamar a los 2 metodos que cambian los permisos y pedir el optional a la base de datos en el return
+        //TODO: cuando este implementada la base de datos llamar a los 2 metodos que cambian los permisos y pedir el optional a la base de datos en el return
         user.setTester(true);
         user.setCreator(true);
         userRepository.save(user);
@@ -157,7 +150,7 @@ public class AdminServiceImp implements AdminService {
         }
 
         User user = userRepository.findById(userName).get();
-        //cuando este implementada la base de datos llamar a los 2 metodos que cambian los permisos y pedir el optional a la base de datos en el return
+        //TODO: cuando este implementada la base de datos llamar a los 2 metodos que cambian los permisos y pedir el optional a la base de datos en el return
         user.setTester(false);
         user.setCreator(false);
         userRepository.save(user);
@@ -166,7 +159,5 @@ public class AdminServiceImp implements AdminService {
 
         return Optional.of(userDTO);
     }
-
-
 
 }
