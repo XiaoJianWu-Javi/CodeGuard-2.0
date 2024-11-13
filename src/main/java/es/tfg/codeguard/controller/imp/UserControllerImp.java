@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
 public class UserControllerImp implements UserController {
 
     @Autowired
@@ -20,6 +21,7 @@ public class UserControllerImp implements UserController {
     @Autowired
     private AdminService adminService;
 
+    @Override
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName) {
         return userService.deleteUser(userName)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
