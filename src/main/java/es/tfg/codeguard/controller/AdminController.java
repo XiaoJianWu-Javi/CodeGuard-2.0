@@ -1,7 +1,6 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -21,13 +20,6 @@ public interface AdminController {
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName);
 
 
-    @PatchMapping("/updateUser")
-    @ApiOperation("Update user password")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Password updated sucsessfully"),
-            @ApiResponse(code = 403, message = "Password couldn't updated")
-    })
-    public ResponseEntity<UserPassDTO> updateUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "newUserPass") String newUserPass);
 
 
 }
