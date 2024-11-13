@@ -20,15 +20,6 @@ public class UserControllerImp implements UserController {
     @Autowired
     private AdminService adminService;
 
-
-    public ResponseEntity<UserPassDTO> registerUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
-
-        return userService.registerUser(userName, userPassword)
-                .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.CREATED))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-
     public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName) {
         return userService.deleteUser(userName)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
@@ -36,6 +27,12 @@ public class UserControllerImp implements UserController {
 
     }
 
+    @Override
+    public ResponseEntity<UserPassDTO> deleteUser() {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        //TODO: To implement
+
+    }
 
     public ResponseEntity<UserDTO> getUserById(@PathVariable("userName") String userName) {
         return userService.getUserById(userName)
@@ -50,31 +47,14 @@ public class UserControllerImp implements UserController {
 
     }
 
+    public ResponseEntity<UserPassDTO> updateUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "newUserPass") String newUserPass) {
 
-//TODO: Incremento de código Strint 2
+        return adminService.updateUser(userName, newUserPass)
+                .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
 
-//    @GetMapping("/login")
-//    @ApiOperation("Login user")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "User logged succesfully"),
-//            @ApiResponse(code = 404, message = "User couldn`t login")
-//    })
-//    public ResponseEntity<UserPassDTO> loginUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
-//        return userService.loginUser(userName, userPassword)
-//                .map(userPassDto -> new ResponseEntity<>(userPassDto, HttpStatus.OK))
-//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//    }
+        //TODO: Cambiar servicio cuando este bien implementado
 
-//    @GetMapping("/logout")
-//    @ApiOperation("Logout user")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "User logout succesfully"),
-//            @ApiResponse(code = 404, message = "User couldn't logout")
-//    })
-//    public ResponseEntity<UserPassDTO> logoutUser(@RequestParam(name = "userName") String userName) {
-//        return userService.logoutUser(userName)
-//                .map(userPassDto -> new ResponseEntity<>(userPassDto, HttpStatus.OK))
-//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//    }
+    }
 
 }

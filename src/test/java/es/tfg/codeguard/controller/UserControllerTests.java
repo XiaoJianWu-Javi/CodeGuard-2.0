@@ -3,6 +3,7 @@ package es.tfg.codeguard.controller;
 import es.tfg.codeguard.controller.imp.UserControllerImp;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,9 @@ class UserControllerTests {
     @Mock
     private UserService userService;
 
+    @Mock
+    private AdminService adminService;
+
     @InjectMocks
     private UserControllerImp userControllerImp;
 
@@ -46,68 +50,6 @@ class UserControllerTests {
         userDTO = new UserDTO();
         userDTO.setTester(false);
         userDTO.setCreator(false);
-
-    }
-
-    @Test
-    void registerUserTest() {
-
-        userPassDTO.setUsername("FirstUser");
-
-        when(userService.registerUser("FirstUser", "1234")).thenReturn(Optional.of(userPassDTO));
-
-        Optional<UserPassDTO> resultado = userService.registerUser("FirstUser", "1234");
-
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstUser", "1234");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
-
-
-        userPassDTO.setUsername("UserSecond");
-
-        when(userService.registerUser("UserSecond", "9876")).thenReturn(Optional.ofNullable(userPassDTO));
-
-        resultado = userService.registerUser("UserSecond", "9876");
-
-        esperado = userControllerImp.registerUser("UserSecond", "9876");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
-
-
-        userPassDTO.setUsername("User3");
-
-        when(userService.registerUser("User3", "bestUser123")).thenReturn(Optional.ofNullable(userPassDTO));
-
-        resultado = userService.registerUser("User3", "bestUser123");
-
-        esperado = userControllerImp.registerUser("User3", "bestUser123");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
-
-    }
-
-    @Test
-    void invalidRegisterUserTest() {
-
-        when(userService.registerUser("FirstUserñ", "1234")).thenReturn(Optional.empty());
-
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.registerUser("FirstUserñ", "1234");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-
-        when(userService.registerUser("UserSecond<?php>", "9876")).thenReturn(Optional.empty());
-
-        esperado = userControllerImp.registerUser("UserSecond<?php>", "9876");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-
-        when(userService.registerUser("User3;;:.+", "bestUser123")).thenReturn(Optional.empty());
-
-        esperado = userControllerImp.registerUser("User3;;:.+", "bestUser123");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }
 
@@ -226,68 +168,96 @@ class UserControllerTests {
 
     }
 
-//TODO: Incremento de código Strint 2
+    @Test
+    void UpdateUserPasswordTest() {
 
-//    @Test
-//    void loginUserTest() {
-//
-//        when(userService.loginUser("FirstUser", "1234")).thenReturn(Optional.ofNullable(userDTO));
-//
-//        Optional<UserPassDTO> resultado = userService.loginUser("FirstUser", "1234");
-//
-//        ResponseEntity<Optional<UserDTO>> esperado = userControllerImp.loginUser("FirstUser", "1234");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
-//
-//
-//        when(userService.loginUser("UserSecond", "9876")).thenReturn(Optional.ofNullable(userDTO));
-//
-//        resultado = userService.loginUser("UserSecond", "9876");
-//
-//        esperado = userControllerImp.loginUser("UserSecond", "9876");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
-//
-//
-//        when(userService.loginUser("User3", "bestUser123")).thenReturn(Optional.ofNullable(userDTO));
-//
-//        resultado = userService.loginUser("User3", "bestUser123");
-//
-//        esperado = userControllerImp.loginUser("User3", "bestUser123");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
-//
-//    }
-//
-//    @Test
-//    void InvalidloginUserTest() {
-//
-//        when(userService.loginUser("FirstUserñ", "1234")).thenReturn(Optional.empty());
-//
-//        Optional<UserDTO> resultado = userService.loginUser("FirstUserñ", "1234");
-//
-//        ResponseEntity<Optional<UserDTO>> esperado = userControllerImp.loginUser("FirstUserñ", "1234");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
-//
-//
-//        when(userService.loginUser("UserSecond", "9876")).thenReturn(Optional.empty());
-//
-//        resultado = userService.loginUser("UserSecond", "9876");
-//
-//        esperado = userControllerImp.loginUser("UserSecond", "9876");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
-//
-//
-//        when(userService.loginUser("User3", "bestUser123")).thenReturn(Optional.empty());
-//
-//        resultado = userService.loginUser("User3", "bestUser123");
-//
-//        esperado = userControllerImp.loginUser("User3", "bestUser123");
-//
-//        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.NOT_FOUND));
-//    }
+        userPassDTO.setUsername("FirstUser");
+
+        when(adminService.updateUser("FirstUser", "1234new")).thenReturn(Optional.ofNullable(userPassDTO));
+
+        Optional<UserPassDTO> resultado = adminService.updateUser("FirstUser", "1234new");
+
+        ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "1234new");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+
+
+        userPassDTO.setUsername("SecondUser");
+
+        when(adminService.updateUser("SecondUser", "9876new")).thenReturn(Optional.ofNullable(userPassDTO));
+
+        resultado = adminService.updateUser("SecondUser", "9876new");
+
+        esperado = userControllerImp.updateUser("SecondUser", "9876new");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+
+
+        userPassDTO.setUsername("ThirdtUser");
+
+        when(adminService.updateUser("ThirdtUser", "newpass")).thenReturn(Optional.ofNullable(userPassDTO));
+
+        resultado = adminService.updateUser("ThirdtUser", "newpass");
+
+        esperado = userControllerImp.updateUser("ThirdtUser", "newpass");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+
+
+        userPassDTO.setUsername("FourthUser");
+
+        when(adminService.updateUser("FourthUser", "newhola1234")).thenReturn(Optional.ofNullable(userPassDTO));
+
+        resultado = adminService.updateUser("FourthUser", "newhola1234");
+
+        esperado = userControllerImp.updateUser("FourthUser", "newhola1234");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+
+    }
+
+    @Test
+    void InvalidUpdateUserPasswordTest() {
+
+        when(adminService.updateUser("FirstUser", "new1234;;")).thenReturn(Optional.empty());
+
+        Optional<UserPassDTO> resultado = adminService.updateUser("FirstUser", "new1234;;");
+
+        ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "new1234;;");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+
+
+        when(adminService.updateUser("SecondUser", "newhola1234ºº")).thenReturn(Optional.empty());
+
+        resultado = adminService.updateUser("SecondUser", "newhola1234ºº");
+
+        esperado = userControllerImp.updateUser("SecondUser", "newhola1234ºº");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+
+
+        when(adminService.updateUser("ThirdUser", "ªªaaaa")).thenReturn(Optional.empty());
+
+        resultado = adminService.updateUser("ThirdUser", "ªªaaa");
+
+        esperado = userControllerImp.updateUser("ThirdUser", "ªªaaaa");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+
+
+        when(adminService.updateUser("FourthUser", "juitenDiten,,,,")).thenReturn(Optional.empty());
+
+        resultado = adminService.updateUser("FourthUser", "juitenDiten,,,,");
+
+        esperado = userControllerImp.updateUser("FourthUser", "juitenDiten,,,,");
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+
+    }
+
+
+//TODO: Esperar a implementación el en servicio correcto
 
 //    @Test
 //    void UpdateUserPasswordTest(){
