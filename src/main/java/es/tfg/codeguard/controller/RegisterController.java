@@ -1,9 +1,10 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public interface RegisterController {
 
     @PostMapping("")
-    @ApiOperation("Register new user")
-    @ApiResponses({
-            @ApiResponse(code = 201, message = "User register succesfully"),
-            @ApiResponse(code = 409, message = "User couldn`t be register"),
-            @ApiResponse(code = 400, message = "User name not valid")
+    @Operation(summary = "Register new user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User register succesfully"),
+            @ApiResponse(responseCode = "400", description = "User name not valid"),
+            @ApiResponse(responseCode = "409", description = "User couldn`t be register")
     })
     public ResponseEntity<UserPassDTO> registerUser(String userName, String userPassword);
 }
