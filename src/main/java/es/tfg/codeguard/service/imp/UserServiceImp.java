@@ -28,26 +28,26 @@ public class UserServiceImp implements UserService {
     @Autowired
     private DeletedUserRepository deletedUserRepository;
 
-    @Override
-    public Optional<UserPassDTO> registerUser(String userName, String userPass) {
-
-        if (userPassRepository.findById(userName).isPresent()) {
-            return Optional.empty();
-        }
-
-        User user = new User(userName);
-        userRepository.save(user);
-
-        UserPass userPassEncript = new UserPass();
-        userPassEncript.setUsername(userName);
-        userPassEncript.setAdmin(false);
-        userPassEncript.setHashedPass(passwordEncoder.encode(userPass));
-        userPassRepository.save(userPassEncript);
-
-        UserPassDTO userPassDTO = new UserPassDTO(userPassEncript);
-
-        return Optional.of(userPassDTO);
-    }
+//    @Override
+//    public Optional<UserPassDTO> registerUser(String userName, String userPass) {
+//
+//        if (userPassRepository.findById(userName).isPresent()) {
+//            return Optional.empty();
+//        }
+//
+//        User user = new User(userName);
+//        userRepository.save(user);
+//
+//        UserPass userPassEncript = new UserPass();
+//        userPassEncript.setUsername(userName);
+//        userPassEncript.setAdmin(false);
+//        userPassEncript.setHashedPass(passwordEncoder.encode(userPass));
+//        userPassRepository.save(userPassEncript);
+//
+//        UserPassDTO userPassDTO = new UserPassDTO(userPassEncript);
+//
+//        return Optional.of(userPassDTO);
+//    }
 
     //TODO: Este metodo con spring session tiene que detectar la sesion y si estas conectado te cierra la sesion y te elimina. (No recibe parametros)
     public Optional<UserDTO> deleteUser(String userName) {
