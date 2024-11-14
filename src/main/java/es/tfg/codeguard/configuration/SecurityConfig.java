@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,20 +25,21 @@ public class SecurityConfig {
     private LoginUserDetailsService userDetailsService;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
         return httpSecurity
-            .authorizeHttpRequests(registry -> {
-                registry.requestMatchers("/home",
-                                                     "/register",
-                                                     "/api/**").permitAll();
-                registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
-                registry.requestMatchers("/user/**").hasRole("USER");
-                registry.anyRequest().authenticated();
-            })
-            .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-            .csrf(AbstractHttpConfigurer::disable)
-            .build();
+                .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers("/home",
+                            "/register",
+                            "/api/**").permitAll();
+                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
+                    registry.requestMatchers("/user/**").hasRole("USER");
+                    registry.anyRequest().authenticated();
+                })
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .build();
     }
 
     @Bean
