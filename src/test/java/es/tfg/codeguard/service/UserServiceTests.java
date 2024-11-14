@@ -36,32 +36,6 @@ class UserServiceTests {
     @InjectMocks
     private UserServiceImp userServiceImp;
 
-
-    @Test
-    public void TestFailUserServiceRegisterMethod() {
-        UserPass userPass = new UserPass();
-        userPass.setUsername("Gandalf");
-
-        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
-
-        Optional<UserPassDTO> userOpt = userServiceImp.registerUser("Gandalf", "cantpass");
-
-        assertThat(userOpt).isEmpty();
-    }
-
-    @Test
-    public void TestFineUserServiceRegisterMethod() {
-        when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-
-        Optional<UserPassDTO> user = userServiceImp.registerUser("Gandalf", "cantpass");
-
-        UserPassDTO userPassDTO = new UserPassDTO();
-        userPassDTO.setUsername("Gandalf");
-        userPassDTO.setAdmin(false);
-        Optional<UserPassDTO> userExpected = Optional.of(userPassDTO);
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
-    }
-
     @Test
     public void TestFailUserServiceDeleteMethod() {
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());

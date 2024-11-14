@@ -23,5 +23,5 @@ public interface RegisterController {
             @ApiResponse(responseCode = "400", description = "User name not valid"),
             @ApiResponse(responseCode = "409", description = "User couldn`t be register")
     })
-    public ResponseEntity<UserPassDTO> registerUser(@RequestBody JsonParserUserPassDTO user);
+    public ResponseEntity<UserPassDTO> registerUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO);
 }
