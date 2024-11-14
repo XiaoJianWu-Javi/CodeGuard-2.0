@@ -1,8 +1,9 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.controller.imp.RegisterControllerImp;
+import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.service.UserService;
+import es.tfg.codeguard.service.RegisterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,52 +25,64 @@ import static org.mockito.Mockito.when;
 public class RegisterControllerTest {
 
     @Mock
-    private UserService userService;
+    private RegisterService registerService;
 
     @InjectMocks
     private RegisterControllerImp registerControllerImp;
 
     private UserPassDTO userPassDTO;
+    private JsonParserUserPassDTO jsonParserDTO;
 
     @BeforeEach
     void setup() {
         userPassDTO = new UserPassDTO();
         userPassDTO.setAdmin(false);
 
+        jsonParserDTO=new JsonParserUserPassDTO();
+
     }
 
     @Test
     void registerUserTest() {
 
+        jsonParserDTO.setUsername("FirstUser");
+        jsonParserDTO.setPassword("1234");
+
         userPassDTO.setUsername("FirstUser");
 
-        when(userService.registerUser("FirstUser", "1234")).thenReturn(Optional.of(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.of(userPassDTO));
 
-        Optional<UserPassDTO> resultado = userService.registerUser("FirstUser", "1234");
+        Optional<UserPassDTO> resultado = registerService.registerUser(jsonParserDTO);
 
-        ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser("FirstUser", "1234");
+        ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser(jsonParserDTO);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
+
+        jsonParserDTO.setUsername("UserSecond");
+        jsonParserDTO.setPassword("9876");
 
         userPassDTO.setUsername("UserSecond");
 
-        when(userService.registerUser("UserSecond", "9876")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
 
-        resultado = userService.registerUser("UserSecond", "9876");
+        resultado = registerService.registerUser(jsonParserDTO);
 
-        esperado = registerControllerImp.registerUser("UserSecond", "9876");
+        esperado = registerControllerImp.registerUser(jsonParserDTO);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
+        jsonParserDTO.setUsername("User3");
+        jsonParserDTO.setPassword("bestUser123");
+
         userPassDTO.setUsername("User3");
 
-        when(userService.registerUser("User3", "bestUser123")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
 
-        resultado = userService.registerUser("User3", "bestUser123");
+        resultado = registerService.registerUser(jsonParserDTO);
 
-        esperado = registerControllerImp.registerUser("User3", "bestUser123");
+        esperado = registerControllerImp.registerUser(jsonParserDTO);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
@@ -78,25 +91,34 @@ public class RegisterControllerTest {
     @Test
     void invalidRegisterUserTest() {
 
-        when(userService.registerUser("FirstUserñ", "1234")).thenReturn(Optional.empty());
+        jsonParserDTO.setUsername("FirstUserñ");
+        jsonParserDTO.setPassword("1234");
 
-        ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser("FirstUserñ", "1234");
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-
-        when(userService.registerUser("UserSecond<?php>", "9876")).thenReturn(Optional.empty());
-
-        esperado = registerControllerImp.registerUser("UserSecond<?php>", "9876");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
-        when(userService.registerUser("User3;;:.+", "bestUser123")).thenReturn(Optional.empty());
+        jsonParserDTO.setUsername("FirstUserñ");
+        jsonParserDTO.setPassword("1234");
 
-        esperado = registerControllerImp.registerUser("User3;;:.+", "bestUser123");
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        esperado = registerControllerImp.registerUser(jsonParserDTO);
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
+
+
+        jsonParserDTO.setUsername("User3;;:.+");
+        jsonParserDTO.setPassword("bestUser123");
+
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
+
+        esperado = registerControllerImp.registerUser(jsonParserDTO);
+
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
     }
 
