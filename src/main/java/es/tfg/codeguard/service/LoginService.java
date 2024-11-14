@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import es.tfg.codeguard.model.dto.UserDTO;
 
 @Service
-public interface LoginService extends UserDetailsService {
+public interface LoginService {
 
     public Optional<UserDTO> loginUser(String userName, String userPassword);
 }

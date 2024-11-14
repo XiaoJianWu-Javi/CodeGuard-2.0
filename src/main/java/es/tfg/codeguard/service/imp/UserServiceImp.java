@@ -43,6 +43,7 @@ public class UserServiceImp implements UserService {
         userPassEncript.setAdmin(false);
         userPassEncript.setHashedPass(passwordEncoder.encode(userPass));
         userPassRepository.save(userPassEncript);
+        userRepository.save(new User(userName));
 
         UserPassDTO userPassDTO = new UserPassDTO(userPassEncript);
 

@@ -24,21 +24,21 @@ public class LoginServiceImp implements LoginService {
     @Autowired
     private UserPassRepository userPassRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserPass> user = userPassRepository.findById(username);
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    //     Optional<UserPass> user = userPassRepository.findById(username);
 
-        if (user.isPresent()) {
-            UserPass userObj = user.get();
+    //     if (user.isPresent()) {
+    //         UserPass userObj = user.get();
 
-            return User.builder()
-                .username(userObj.getUsername())
-                .password(userObj.getHashedPass())
-                .build();
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
+    //         return User.builder()
+    //             .username(userObj.getUsername())
+    //             .password(userObj.getHashedPass())
+    //             .build();
+    //     } else {
+    //         throw new UsernameNotFoundException(username);
+    //     }
+    // }
 
     @Override
     public Optional<UserDTO> loginUser(String userName, String userPassword) {

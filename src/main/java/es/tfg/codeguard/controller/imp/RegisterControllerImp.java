@@ -1,8 +1,10 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.controller.RegisterController;
+import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.UserService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +18,9 @@ public class RegisterControllerImp implements RegisterController {
     @Autowired
     private UserService userService;
 
-    public ResponseEntity<UserPassDTO> registerUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "userPassword") String userPassword) {
+    public ResponseEntity<UserPassDTO> registerUser(@RequestBody JsonParserUserPassDTO user) {
 
-        return userService.registerUser(userName, userPassword)
+        return userService.registerUser(user.getUsername(), user.getPassword())
                 .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.CREATED))
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
