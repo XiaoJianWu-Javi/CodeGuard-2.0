@@ -5,11 +5,13 @@ import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -30,9 +32,12 @@ public class UserControllerImp implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserPassDTO> deleteUser() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-        //TODO: To implement
+    public ResponseEntity<UserDTO> deleteUser(Principal principal) {
+
+        return userService.deleteUser(principal.getName())
+                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.BAD_REQUEST))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
 
     }
 

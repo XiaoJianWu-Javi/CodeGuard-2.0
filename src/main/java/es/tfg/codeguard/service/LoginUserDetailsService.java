@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface CodeGuardUserDetailsService extends UserDetailsService {
+public interface LoginUserDetailsService extends UserDetailsService {
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

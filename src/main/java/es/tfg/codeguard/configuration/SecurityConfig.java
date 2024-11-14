@@ -14,14 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import es.tfg.codeguard.service.CodeGuardUserDetailsService;
+import es.tfg.codeguard.service.LoginUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
-    private CodeGuardUserDetailsService userDetailsService;
+    private LoginUserDetailsService userDetailsService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -31,8 +31,7 @@ public class SecurityConfig {
                 registry.requestMatchers("/home",
                                                      "/register",
                                                      "/api/**").permitAll();
-                registry.requestMatchers("/admin/**").hasRole("ADMIN");
-                registry.requestMatchers("/h2-console/**").hasRole("ADMIN");
+                registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
                 registry.requestMatchers("/user/**").hasRole("USER");
                 registry.anyRequest().authenticated();
             })

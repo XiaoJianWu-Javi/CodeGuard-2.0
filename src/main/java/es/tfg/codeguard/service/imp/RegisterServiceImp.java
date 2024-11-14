@@ -8,7 +8,7 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.RegisterService;
-import es.tfg.codeguard.util.UserNameNotValid;
+import es.tfg.codeguard.util.UsernameNotValid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class RegisterServiceImp implements RegisterService {
             userPassEncript.setUsername(jsonParserUserPassDTO.getUsername());
             userPassEncript.setHashedPass(passwordEncoder.encode(jsonParserUserPassDTO.getPassword()));
         }catch (IllegalArgumentException e){
-            throw new UserNameNotValid("NOMBRE O CONTRASEÑA INCORRECTO");
+            throw new UsernameNotValid("NOMBRE O CONTRASEÑA INCORRECTO");
         }
 
         userPassEncript.setAdmin(false);

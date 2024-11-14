@@ -8,13 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
-import es.tfg.codeguard.service.CodeGuardUserDetailsService;
+import es.tfg.codeguard.service.LoginUserDetailsService;
 
 @Service
-public class CodeGuardUserDetailsServiceImp implements CodeGuardUserDetailsService {
+public class LoginUserDetailsServiceImp implements LoginUserDetailsService {
 
     @Autowired
     private UserPassRepository userPassRepository;

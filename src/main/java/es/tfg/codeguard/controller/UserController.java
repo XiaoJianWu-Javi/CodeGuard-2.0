@@ -6,13 +6,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:4200")
 public interface UserController {
 
     //TODO: Eliminar este método
@@ -31,7 +34,7 @@ public interface UserController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "User couldn't be deleted")
     })
-    public ResponseEntity<UserPassDTO> deleteUser();
+    public ResponseEntity<UserDTO> deleteUser(Principal principal);
 
     @GetMapping("/{userName}")
     @Operation(summary = "Get user by name")

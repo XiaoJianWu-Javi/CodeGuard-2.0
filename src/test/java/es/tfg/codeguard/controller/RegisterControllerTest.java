@@ -98,7 +98,7 @@ public class RegisterControllerTest {
 
         ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
         jsonParserDTO.setUsername("FirstUserñ");
@@ -108,7 +108,7 @@ public class RegisterControllerTest {
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
         jsonParserDTO.setUsername("User3;;:.+");
@@ -118,7 +118,7 @@ public class RegisterControllerTest {
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
     }
 
