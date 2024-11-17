@@ -29,25 +29,18 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors->cors.configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-                    configuration.setAllowedMethods(Arrays.asList("*"));
-                    configuration.setAllowedHeaders(Arrays.asList("*"));
-                    return configuration;
-                }))
-                .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/home", "/register", "/api/**").permitAll();
-                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasRole("USER");
-                    registry.anyRequest().authenticated();
-                })
-                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
-                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .build();
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(Arrays.asList("http://localhost"));
+            configuration.setAllowedMethods(Arrays.asList("*"));
+            configuration.setAllowedHeaders(Arrays.asList("*"));
+            return configuration;
+        })).authorizeHttpRequests(registry -> {
+            registry.requestMatchers("/home", "/register", "/api/**", "/login").permitAll();
+            registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
+            registry.requestMatchers("/user/**").hasRole("USER");
+            registry.anyRequest().permitAll();
+        }).formLogin(formLogin -> formLogin.usernameParameter("username").passwordParameter("password")).headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)).build();
     }
 
     @Bean
