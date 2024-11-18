@@ -5,6 +5,7 @@ import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.service.JWTService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class JWTServiceImp implements JWTService {
     private final byte[] secretKeyByteArray;
 
     // <<-CONSTRUCTOR->>
+    @Autowired
     public JWTServiceImp(
             @Value("${jwt.secret-key}")
             String secretKey
@@ -55,11 +57,6 @@ public class JWTServiceImp implements JWTService {
                 .signWith(Keys.hmacShaKeyFor(secretKeyByteArray))
                 .compact();
 
-    }
-
-    @Override
-    public boolean validateToken(String authToken, UserDetails userDetails) {
-        return false;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.controller.UserController;
+import es.tfg.codeguard.model.dto.AuthenticationDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -62,6 +64,15 @@ public class UserControllerImp implements UserController {
 
         //TODO: Cambiar servicio cuando este bien implementado
 
+    }
+
+    @Override
+    public ResponseEntity<UserPassDTO> authenticate(AuthenticationDTO authenticationDTO, BindingResult bindingResult) {
+
+        //TODO: IMPLEMENT USERSERVICE.AUTHENTICATE
+
+        //return userService.authenticate(authenticationDTO, bindingResult)
+        return ResponseEntity.badRequest().build();
     }
 
 }

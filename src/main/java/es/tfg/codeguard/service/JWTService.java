@@ -18,7 +18,7 @@ public interface JWTService {
 
     public String createJwt (UserPass userPass);
 
-    public boolean validateToken(String authToken, UserDetails userDetails);
+    //public boolean validateToken(String authToken, UserDetails userDetails);
 
     public Claims extractClaims(String jwt);
 

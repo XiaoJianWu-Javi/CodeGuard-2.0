@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.model.dto.AuthenticationDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -58,5 +61,14 @@ public interface UserController {
             @ApiResponse(responseCode = "304", description = "Password couldn't updated")
     })
     public ResponseEntity<UserPassDTO> updateUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "newUserPass") String newUserPass);
+
+
+    @PostMapping("/login")
+    @Operation(summary = "Login a User")
+    @ApiResponses({
+            @ApiResponse(responseCode = "",description = ""),
+            @ApiResponse(responseCode = "", description = "")
+    })
+    public  ResponseEntity<UserPassDTO> authenticate(@Valid @RequestBody AuthenticationDTO authenticationDTO, BindingResult bindingResult);
 
 }
