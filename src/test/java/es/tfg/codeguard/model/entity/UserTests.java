@@ -3,6 +3,7 @@ package es.tfg.codeguard.model.entity;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-//TODO:uncomment the test below
 class UserTests {
 
     private User user;
@@ -87,31 +87,31 @@ class UserTests {
         assertTrue(user.isCreator());
     }
 
-//    @Test
-//    void setExercisesTests() {
-//        java.util.List<Exercise> exercises = new java.util.ArrayList<>() {{
-//            add(null); add(new Exercise()); add(new Exercise());
-//        }};
-//        assertThrows(IllegalArgumentException.class, () -> user.setExercises(exercises));
-//
-//        spells.clear();
-//        spells.add(new Exercise());
-//        assertDoesNotThrow(() -> user.setExercises(exercises));
-//    }
+    @Test
+    void setExercisesTests() {
+        java.util.List<Integer> exercises = new java.util.ArrayList<>() {{
+            add(null); add(1); add(14);
+        }};
+        assertThrows(IllegalArgumentException.class, () -> user.setExercises(exercises));
 
-//    @Test
-//    void getExercisesTests() {
-//        assertTrue(user.getExercises().isEmpty());  //Not Initialized
-//
-//        java.util.List<Exercise> exercises = new java.util.ArrayList<>() {{
-//            add(new Exercise()); add(new Exercise()); add(new Exercise());
-//        }};
-//        saruman.setExercises(exercises);
-//        assertArrayEquals(exercises.toArray(), user.getExercises().toArray());
-//        assertEquals(exercises.size(), user.getExercises().size());
-//
-//        saruman.getExercises().clear();
-//        assertArrayEquals(exercises.toArray(), user.getExercises().toArray());
-//        assertEquals(exercises.size(), user.getExercises().size());
-//    }
+        exercises.clear();
+        exercises.add(1);
+        assertDoesNotThrow(() -> user.setExercises(exercises));
+    }
+
+    @Test
+    void getExercisesTests() {
+        assertTrue(user.getExercises().isEmpty());  //Not Initialized
+
+        java.util.List<Integer> exercises = new java.util.ArrayList<>() {{
+            add(16); add(2); add(1);
+        }};
+        user.setExercises(exercises);
+        assertArrayEquals(exercises.toArray(), user.getExercises().toArray());
+        assertEquals(exercises.size(), user.getExercises().size());
+
+        user.getExercises().clear();
+        assertArrayEquals(exercises.toArray(), user.getExercises().toArray());
+        assertEquals(exercises.size(), user.getExercises().size());
+    }
 }

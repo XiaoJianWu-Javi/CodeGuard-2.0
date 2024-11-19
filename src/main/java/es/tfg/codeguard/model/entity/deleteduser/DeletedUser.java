@@ -16,5 +16,6 @@ public class DeletedUser extends User {
         setUsername(user.getUsername());
         setTester(user.isTester());
         setCreator(user.isCreator());
+        setExercises(user.getExercises());
     }
 }
