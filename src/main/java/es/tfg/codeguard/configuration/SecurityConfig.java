@@ -7,11 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -25,12 +29,45 @@ public class SecurityConfig {
     }
 
 
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) //CAMBIADO
+                .cors(cors->cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+                    configuration.setAllowedMethods(Arrays.asList("*"));
+                    configuration.setAllowedHeaders(Arrays.asList("*"));
+                    return configuration;
+                }))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(registry -> {
+                    registry.requestMatchers("/home", "/register", "/api/**", "/login").permitAll(); //AÑADIDO LOGIN
+                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
+                    registry.requestMatchers("/user/**").hasRole("USER");
+                    registry.anyRequest().authenticated();
+                })
+
+                //OAUTH2
+                //.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
+                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .build();
+    }
+
+
 //    @Bean
 //    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 //
 //        return httpSecurity
 //                .csrf(AbstractHttpConfigurer::disable)
-//                //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) //CAMBIADO
+//
+//                .formLogin(AbstractHttpConfigurer::disable)
+//                .httpBasic(AbstractHttpConfigurer::disable)
+//
 //                .cors(cors->cors.configurationSource(request -> {
 //                    CorsConfiguration configuration = new CorsConfiguration();
 //                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
@@ -39,35 +76,19 @@ public class SecurityConfig {
 //                    return configuration;
 //                }))
 //                .authorizeHttpRequests(registry -> {
-//                    registry.requestMatchers("/home", "/register", "/api/**").permitAll(); //AÑADIDO LOGIN
+//                    registry.requestMatchers("/home", "/register", "/api/**", "/login").permitAll(); //AÑADIDO LOGIN
 //                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
 //                    registry.requestMatchers("/user/**").hasRole("USER");
 //                    registry.anyRequest().authenticated();
 //                })
-//                //OAUTH2
-//                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
-//                .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+//                //.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+////                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
+//                //.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
 //                .build();
+//
+//
 //    }
-
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        return httpSecurity
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(registry -> {
-                    //registry.requestMatchers("/login","/register").permitAll();
-                    registry.anyRequest().permitAll();
-                }).build();
-
-
-    }
 
 //    @Bean
 //    UserDetailsService userDetailsService() {

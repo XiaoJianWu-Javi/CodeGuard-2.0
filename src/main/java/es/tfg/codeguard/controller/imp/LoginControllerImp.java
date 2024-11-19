@@ -26,7 +26,7 @@ public class LoginControllerImp implements LoginController {
     private JWTService jwtService;
 
     @Override
-    public ResponseEntity<?> loginUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO) {
+    public ResponseEntity<UserPassDTO> loginUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO) {
 
         Optional<UserPassDTO> userOp = loginService.loginUser(jsonParserUserPassDTO.getUsername(), jsonParserUserPassDTO.getPassword());
 
