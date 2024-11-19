@@ -6,7 +6,6 @@ import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.UserService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,23 +40,11 @@ class UserControllerTests {
 
     private UserDTO userDTO;
     private UserPassDTO userPassDTO;
-
-    @BeforeEach
-    void setup() {
-        userPassDTO = new UserPassDTO();
-        userPassDTO.setAdmin(false);
-
-        userDTO = new UserDTO();
-        userDTO.setTester(false);
-        userDTO.setCreator(false);
-
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void deleteUserTest(String userName) {
 
-        userDTO.setUsername(userName);
+        userDTO = new UserDTO(userName, false, false, new ArrayList<>());
 
         when(userService.deleteUser(userName)).thenReturn(Optional.ofNullable(userDTO));
 
@@ -85,7 +72,7 @@ class UserControllerTests {
     @ValueSource(strings = {"aaron_pp", "saul_af", "dani_ro", "diego_ra"})
     void GetUserByIdTest(String userName) {
 
-        userDTO.setUsername(userName);
+        userDTO = new UserDTO(userName, false, false, new ArrayList<>());
 
         when(userService.getUserById(userName)).thenReturn(Optional.ofNullable(userDTO));
 
@@ -112,20 +99,10 @@ class UserControllerTests {
     @Test
     void GetAllUsersTest() {
 
-        UserDTO user1 = new UserDTO();
-        user1.setUsername("user1");
-        user1.setCreator(false);
-        user1.setTester(false);
-
-        UserDTO user2 = new UserDTO();
-        user2.setUsername("user2");
-        user2.setCreator(false);
-        user2.setTester(false);
-
-        UserDTO user3 = new UserDTO();
-        user3.setUsername("user3");
-        user3.setCreator(false);
-        user3.setTester(false);
+        UserDTO user1 = new UserDTO("user1", false, false, new ArrayList<>());
+        UserDTO user2 = new UserDTO("user2", false, false, new ArrayList<>());
+        UserDTO user3 = new UserDTO("user3", false, false, new ArrayList<>());
+        
 
         when(userService.getAllUsers()).thenReturn(new ArrayList<UserDTO>(Arrays.asList()));
 
@@ -171,7 +148,7 @@ class UserControllerTests {
     @Test
     void UpdateUserPasswordTest() {
 
-        userPassDTO.setUsername("FirstUser");
+        userPassDTO = new UserPassDTO("FirstUser", false);
 
         when(adminService.updateUser("FirstUser", "1234new")).thenReturn(Optional.ofNullable(userPassDTO));
 
@@ -182,7 +159,7 @@ class UserControllerTests {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
 
-        userPassDTO.setUsername("SecondUser");
+        userPassDTO = new UserPassDTO("SecondUser", false);
 
         when(adminService.updateUser("SecondUser", "9876new")).thenReturn(Optional.ofNullable(userPassDTO));
 
@@ -193,7 +170,7 @@ class UserControllerTests {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
 
-        userPassDTO.setUsername("ThirdtUser");
+        userPassDTO = new UserPassDTO("ThirdtUser", false);
 
         when(adminService.updateUser("ThirdtUser", "newpass")).thenReturn(Optional.ofNullable(userPassDTO));
 
@@ -204,7 +181,7 @@ class UserControllerTests {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
 
-        userPassDTO.setUsername("FourthUser");
+        userPassDTO = new UserPassDTO("FourthUser", false);
 
         when(adminService.updateUser("FourthUser", "newhola1234")).thenReturn(Optional.ofNullable(userPassDTO));
 

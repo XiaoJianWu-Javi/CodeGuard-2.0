@@ -33,22 +33,13 @@ public class RegisterControllerTest {
     private UserPassDTO userPassDTO;
     private JsonParserUserPassDTO jsonParserDTO;
 
-    @BeforeEach
-    void setup() {
-        userPassDTO = new UserPassDTO();
-        userPassDTO.setAdmin(false);
-
-        jsonParserDTO=new JsonParserUserPassDTO();
-
-    }
 
     @Test
     void registerUserTest() {
 
-        jsonParserDTO.setUsername("FirstUser");
-        jsonParserDTO.setPassword("1234");
+        jsonParserDTO = new JsonParserUserPassDTO("FirstUser", "1234");
 
-        userPassDTO.setUsername("FirstUser");
+        userPassDTO = new UserPassDTO("FirstUser", false);
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.of(userPassDTO));
 
@@ -59,10 +50,9 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
-        jsonParserDTO.setUsername("UserSecond");
-        jsonParserDTO.setPassword("9876");
-
-        userPassDTO.setUsername("UserSecond");
+        jsonParserDTO = new JsonParserUserPassDTO("UserSecond", "9876");
+        
+        userPassDTO = new UserPassDTO("UserSecond", false);
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
 
@@ -73,10 +63,9 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
-        jsonParserDTO.setUsername("User3");
-        jsonParserDTO.setPassword("bestUser123");
-
-        userPassDTO.setUsername("User3");
+        jsonParserDTO = new JsonParserUserPassDTO("User3", "bestUser123");
+        
+        userPassDTO = new UserPassDTO("User3", false);
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
 
@@ -91,8 +80,8 @@ public class RegisterControllerTest {
     @Test
     void invalidRegisterUserTest() {
 
-        jsonParserDTO.setUsername("FirstUserñ");
-        jsonParserDTO.setPassword("1234");
+
+        jsonParserDTO = new JsonParserUserPassDTO("FirstUserñ", "1234");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
@@ -101,8 +90,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
-        jsonParserDTO.setUsername("FirstUserñ");
-        jsonParserDTO.setPassword("1234");
+        jsonParserDTO = new JsonParserUserPassDTO("FirstUserñ", "1234");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
@@ -111,8 +99,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
-        jsonParserDTO.setUsername("User3;;:.+");
-        jsonParserDTO.setPassword("bestUser123");
+        jsonParserDTO = new JsonParserUserPassDTO("User3;;:.+", "bestUser123");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
