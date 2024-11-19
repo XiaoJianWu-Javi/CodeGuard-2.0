@@ -2,6 +2,7 @@ package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.controller.UserController;
 import es.tfg.codeguard.model.dto.AuthenticationDTO;
+import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
@@ -67,7 +68,7 @@ public class UserControllerImp implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserPassDTO> authenticate(AuthenticationDTO authenticationDTO, BindingResult bindingResult) {
+    public ResponseEntity<UserPassDTO> authenticate(JsonParserUserPassDTO jsonParserUserPassDTO) {
 
         //TODO: IMPLEMENT USERSERVICE.AUTHENTICATE
 

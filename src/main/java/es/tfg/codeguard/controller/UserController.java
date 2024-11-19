@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.AuthenticationDTO;
+import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,6 +70,6 @@ public interface UserController {
             @ApiResponse(responseCode = "",description = ""),
             @ApiResponse(responseCode = "", description = "")
     })
-    public  ResponseEntity<UserPassDTO> authenticate(@Valid @RequestBody AuthenticationDTO authenticationDTO, BindingResult bindingResult);
+    public  ResponseEntity<UserPassDTO> authenticate(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO);
 
 }

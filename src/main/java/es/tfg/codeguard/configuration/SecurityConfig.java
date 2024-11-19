@@ -1,21 +1,20 @@
 package es.tfg.codeguard.configuration;
 
+import es.tfg.codeguard.service.LoginUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import es.tfg.codeguard.service.LoginUserDetailsService;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
@@ -28,6 +27,7 @@ public class SecurityConfig {
     private LoginUserDetailsService userDetailsService;
 
     @Bean
+    @Order(1)
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
@@ -45,6 +45,7 @@ public class SecurityConfig {
                     registry.requestMatchers("/user/**").hasRole("USER");
                     registry.anyRequest().authenticated();
                 })
+                //.oauth2Login(Customizer.withDefaults())
                 .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .build();
@@ -55,16 +56,18 @@ public class SecurityConfig {
         return userDetailsService;
     }
 
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+//    @Bean
+//    AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService);
+//        provider.setPasswordEncoder(passwordEncoder(@Value("${password.secret-key}") secretKey);
+//        return provider;
+//    }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // Usar un encoder de contraseñas seguro
+    PasswordEncoder passwordEncoder(@Value("${password.secret-key}") String secretKey) {
+
+        return new Pbkdf2PasswordEncoder(secretKey, 16, 31000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+
     }
 }
