@@ -42,12 +42,6 @@ public class JWTServiceImp implements JWTService {
                 .withExpiresAt(new Date (now.getTime() + expirationTime))
                 .sign(Algorithm.HMAC256(secretKeyByteArray));
 
-//        return Jwts.builder()
-//                .setSubject(userPass.getUsername())
-//                .setIssuedAt(now)
-//                .setExpiration(new Date(now.getTime() + expirationTime))
-//                .signWith(Keys.hmacShaKeyFor(secretKeyByteArray))
-//                .compact();
     }
 
     @Override
