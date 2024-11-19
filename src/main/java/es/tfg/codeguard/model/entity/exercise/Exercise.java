@@ -2,6 +2,7 @@ package es.tfg.codeguard.model.entity.exercise;
 
 import java.util.List;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class Exercise {
 
     @Lob
     private String test;
+    @ElementCollection
     @Lob
     private List<String> solutions;
 
