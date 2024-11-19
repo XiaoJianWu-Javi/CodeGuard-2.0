@@ -38,7 +38,7 @@ public class LoginControllerImp implements LoginController {
 
             HttpHeaders headers = new HttpHeaders();
 
-            headers.set("token", jwtService.createJwt(userOp.get()));
+            headers.set("Authorization", jwtService.createJwt(userOp.get()));
 
             return ResponseEntity.ok().headers(headers).body(userOp.get());
 
