@@ -7,21 +7,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/exercise")
 public interface ExerciseController {
 
 
-    @GetMapping("createExercise")
-    @Operation(summary = "Create a new exercise from external API")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "New exercise create"),
-            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
-            @ApiResponse(responseCode = "400", description = "Exercise name not valid")
-    })
-    public ResponseEntity<ExerciseDTO> createExercise();
+//    @GetMapping("createExercise")
+//    @Operation(summary = "Create a new exercise from external API")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "201", description = "New exercise create"),
+//            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
+//            @ApiResponse(responseCode = "400", description = "Exercise name not valid")
+//    })
+//    public ResponseEntity<ExerciseDTO> createExercise();
 
 
     @GetMapping("/{exerciseName}")
@@ -30,7 +33,7 @@ public interface ExerciseController {
             @ApiResponse(responseCode="200", description = "Exercise found"),
             @ApiResponse(responseCode="404", description = "Exercise not found")
     })
-    public ResponseEntity<ExerciseDTO> getExercise();
+    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam("exerciseName") String exerciseName);
 
 
     @GetMapping("/allExercise")
@@ -38,7 +41,7 @@ public interface ExerciseController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Exercises found")
     })
-    public ResponseEntity<ExerciseDTO> getAllExercises();
+    public ResponseEntity<List<ExerciseDTO>> getAllExercises();
 
 
 

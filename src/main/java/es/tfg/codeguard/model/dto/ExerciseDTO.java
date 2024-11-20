@@ -1,5 +1,5 @@
 package es.tfg.codeguard.model.dto;
 
-public class ExerciseDTO {
+public record ExerciseDTO(Integer id, String title, String description, String tester, String creator) {
 
 }
