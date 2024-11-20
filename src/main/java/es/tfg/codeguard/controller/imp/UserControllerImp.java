@@ -5,13 +5,13 @@ import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -24,20 +24,11 @@ public class UserControllerImp implements UserController {
     private AdminService adminService;
 
     @Override
-    public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName) {
-        return userService.deleteUser(userName)
+    public ResponseEntity<UserDTO> deleteUser(String userToken) {
+
+        return userService.deleteUser(userToken)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-    }
-
-    @Override
-    public ResponseEntity<UserDTO> deleteUser(Principal principal) {
-
-        return userService.deleteUser(principal.getName())
-                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.BAD_REQUEST))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
 
     }
 

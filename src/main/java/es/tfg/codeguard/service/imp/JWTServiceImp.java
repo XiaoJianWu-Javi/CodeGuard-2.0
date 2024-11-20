@@ -8,66 +8,61 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.service.JWTService;
-
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.stereotype.Service;
 
-
 import java.util.Date;
-
-
+import java.util.Map;
 
 @Service
 public class JWTServiceImp implements JWTService {
 
-    private final byte[] secretKeyByteArray;
+    //@Value("${jwt.secret-key}")
+    private String secretKey;
 
-    public JWTServiceImp (@Value("${jwt.secret-key}") String secretKey){
-
-        this.secretKeyByteArray=secretKey.getBytes();
-
+    public JWTServiceImp(@Value("${jwt.secret-key}") String secretKey) {
+        this.secretKey = secretKey;
     }
-
 
     @Override
     public String createJwt(UserPassDTO userPass) {
 
         Date now = new Date();
-        long expirationTime = 60*60*24;
+        long expirationTime = 60 * 60 * 24 * 1000;
 
         return JWT.create()
                 .withSubject(userPass.getUsername())
                 .withIssuedAt(now)
-                .withExpiresAt(new Date (now.getTime() + expirationTime))
-                .sign(Algorithm.HMAC256(secretKeyByteArray));
+                .withExpiresAt(new Date(now.getTime() + expirationTime))
+                .sign(Algorithm.HMAC256(getSecretKeyBytes(this.secretKey)));
 
     }
 
     @Override
     public UserPass extractUserPass(String jwt) {
 
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secretKeyByteArray)).build();
-
-        DecodedJWT decodedjwt = jwtVerifier.verify(jwt);
-
-        Claim claim = decodedjwt.getClaim("Subject");
+        Claim claim = getClaimsFromToken(jwt).get("sub");
 
         UserPass userPass = new UserPass();
-        userPass.setUsername(claim.toString());
-        userPass.setHashedPass("");
+        userPass.setUsername(claim.asString());
         userPass.setAdmin(false);
 
         return userPass;
 
     }
 
-//    @Override
-//    public Claims extractClaims(String jwt) throws UnsupportedJwtException, MalformedJwtException, ExpiredJwtException, IllegalArgumentException {
-//        return Jwts.parser()
-//                .setSigningKey(Keys.hmacShaKeyFor(secretKeyByteArray))
-//                .build()
-//                .parseClaimsJwt(jwt)
-//                .getBody();
-//    }
+    public Map<String, Claim> getClaimsFromToken(String jwt) {
+
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(getSecretKeyBytes(this.secretKey))).build();
+
+        DecodedJWT decodedjwt = jwtVerifier.verify(jwt);
+
+        return decodedjwt.getClaims();
+
+    }
+
+    private byte[] getSecretKeyBytes(String secretKey) {
+        return secretKey.getBytes();
+    }
+
 }

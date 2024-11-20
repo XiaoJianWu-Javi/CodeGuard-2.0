@@ -1,7 +1,7 @@
 package es.tfg.codeguard.configuration;
 
+import es.tfg.codeguard.service.imp.LoginUserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,10 +17,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    LoginUserDetailsServiceImp userDetailsService;
 
     private final JWTRequestFilter jwtRequestFilter;
 
@@ -28,90 +33,40 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) //CAMBIADO
-                .cors(cors->cors.configurationSource(request -> {
+                .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
                     configuration.setAllowedMethods(Arrays.asList("*"));
                     configuration.setAllowedHeaders(Arrays.asList("*"));
+                    configuration.setExposedHeaders(List.of("Authorization"));
                     return configuration;
                 }))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/home", "/register", "/api/**", "/login").permitAll(); //AÑADIDO LOGIN
-                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasRole("USER");
+                    registry.requestMatchers("/h2-console/**").permitAll(); //SENTENCIADO A SER ELIMINADO
+                    registry.requestMatchers("/register", "/login", "/api/**").permitAll();
+                    registry.requestMatchers("/admin/**").hasRole("ADMIN");
                     registry.anyRequest().authenticated();
                 })
-
-                //OAUTH2
-                //.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .build();
+
     }
 
-
-//    @Bean
-//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//
-//        return httpSecurity
-//                .csrf(AbstractHttpConfigurer::disable)
-//
-//                .formLogin(AbstractHttpConfigurer::disable)
-//                .httpBasic(AbstractHttpConfigurer::disable)
-//
-//                .cors(cors->cors.configurationSource(request -> {
-//                    CorsConfiguration configuration = new CorsConfiguration();
-//                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-//                    configuration.setAllowedMethods(Arrays.asList("*"));
-//                    configuration.setAllowedHeaders(Arrays.asList("*"));
-//                    return configuration;
-//                }))
-//                .authorizeHttpRequests(registry -> {
-//                    registry.requestMatchers("/home", "/register", "/api/**", "/login").permitAll(); //AÑADIDO LOGIN
-//                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
-//                    registry.requestMatchers("/user/**").hasRole("USER");
-//                    registry.anyRequest().authenticated();
-//                })
-//                //.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-////                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
-//                //.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-//                .build();
-//
-//
-//    }
-
-//    @Bean
-//    UserDetailsService userDetailsService() {
-//        return userDetailsService;
-//    }
-
-//    @Bean
-//    AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);
-//        provider.setPasswordEncoder(passwordEncoder());
-//        return provider;
-//    }
-
-//    @Bean
-//    PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();  // Usar un encoder de contraseñas seguro
-//    }
+    @Bean
+    UserDetailsService userDetailsService() {
+        return userDetailsService;
+    }
 
     @Bean
-    PasswordEncoder passwordEncoder(@Value("${jwt.secret-key}") String secretKey) {
-
-        //return new Pbkdf2PasswordEncoder(secretKey, 16, 31000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
+    PasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
 

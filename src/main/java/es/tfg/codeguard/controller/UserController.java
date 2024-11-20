@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -16,23 +15,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public interface UserController {
 
-    //TODO: Eliminar este método
-
-    @DeleteMapping("/deleteUser")
-    @Operation(summary = "Delete user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "User couldn't be deleted")
-    })
-    public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "UserName") String UserName);
-
     @DeleteMapping("/delete")
     @Operation(summary = "Delete user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "User couldn't be deleted")
     })
-    public ResponseEntity<UserDTO> deleteUser(Principal principal);
+    public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken);
 
     @GetMapping("/{userName}")
     @Operation(summary = "Get user by name")

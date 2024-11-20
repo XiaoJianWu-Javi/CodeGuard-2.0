@@ -1,6 +1,7 @@
 package es.tfg.codeguard.configuration;
 
 import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,27 +19,30 @@ import java.io.IOException;
 public class JWTRequestFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
-
 
     private final JWTService jwtService;
 
+    private final UserPassRepository userPassRepository;
+
     @Autowired
-    public JWTRequestFilter(JWTService jwtService) {
+    public JWTRequestFilter(JWTService jwtService, UserPassRepository userPassRepository) {
         this.jwtService = jwtService;
+        this.userPassRepository = userPassRepository;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader(AUTHORIZATION_HEADER);
+        String token = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (authHeader != null && authHeader.startsWith(TOKEN_PREFIX)) {
-            String token = authHeader.substring(TOKEN_PREFIX.length());
+        if (token != null) {
 
             UserPass userPass = jwtService.extractUserPass(token);
 
-            SecurityContextHolder.getContext()
-                    .setAuthentication(new UsernamePasswordAuthenticationToken(userPass, null, null));
+            if (userPass.getUsername().equals(userPassRepository.findByUsername(userPass.getUsername()).get().getUsername())) {
+                SecurityContextHolder.getContext()
+                        .setAuthentication(new UsernamePasswordAuthenticationToken(userPass, null, null));
+
+            }
 
         }
         filterChain.doFilter(request, response);
