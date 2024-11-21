@@ -1,7 +1,5 @@
 package es.tfg.codeguard.configuration.imp;
 
-import es.tfg.codeguard.configuration.DataSourceConfig;
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -14,20 +12,23 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+
+import es.tfg.codeguard.configuration.DataSourceConfig;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        basePackages = {"es.tfg.codeguard.model.repository.deleteduser"},
-        entityManagerFactoryRef = "entityManagerFactoryDeletedUsers",
-        transactionManagerRef = "transactionManagerDeletedUsers"
-)
+@EnableJpaRepositories(basePackages = { "es.tfg.codeguard.model.repository.deleteduser" }, 
+                        entityManagerFactoryRef = "entityManagerFactoryDeletedUsers", 
+                        transactionManagerRef = "transactionManagerDeletedUsers")
 public class DeletedUsersDataSourceConfig implements DataSourceConfig {
 
+    @Override
     @Bean(name = "deletedUsersDataSource")
     @ConfigurationProperties(prefix = "spring.deletedusers.datasource")
-    public DataSource dataSource(){
+    public DataSource dataSource() {
+        
         return DataSourceBuilder.create()
                 .url("jdbc:h2:mem:deletedUsers")
                 .username("deletedUsers")
@@ -36,10 +37,12 @@ public class DeletedUsersDataSourceConfig implements DataSourceConfig {
                 .build();
     }
 
+    @Override
     @Bean(name = "entityManagerFactoryDeletedUsers")
     public LocalContainerEntityManagerFactoryBean entityManager(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("deletedUsersDataSource")DataSource dataSource) {
+            @Qualifier("deletedUsersDataSource") DataSource dataSource) {
+
         return builder
                 .dataSource(dataSource)
                 .packages("es.tfg.codeguard.model.entity.deleteduser")
@@ -47,9 +50,11 @@ public class DeletedUsersDataSourceConfig implements DataSourceConfig {
                 .build();
     }
 
+    @Override
     @Bean(name = "transactionManagerDeletedUsers")
     public PlatformTransactionManager platformTransactionManager(
             @Qualifier("entityManagerFactoryDeletedUsers") EntityManagerFactory entityManagerFactory) {
+
         return new JpaTransactionManager(entityManagerFactory);
     }
 }

@@ -1,7 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.controller.LoginController;
-import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
+import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.service.LoginService;
@@ -26,9 +26,9 @@ public class LoginControllerImp implements LoginController {
     private JWTService jwtService;
 
     @Override
-    public ResponseEntity<UserPassDTO> loginUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO) {
+    public ResponseEntity<UserPassDTO> loginUser(@RequestBody AuthDTO authDTO) {
 
-        Optional<UserPassDTO> userOp = loginService.loginUser(jsonParserUserPassDTO.getUsername(), jsonParserUserPassDTO.getPassword());
+        Optional<UserPassDTO> userOp = loginService.loginUser(authDTO.username(), authDTO.password());
 
         if (userOp.isEmpty()) {
 

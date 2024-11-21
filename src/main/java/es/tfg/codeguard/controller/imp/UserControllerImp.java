@@ -1,25 +1,25 @@
 package es.tfg.codeguard.controller.imp;
 
-import es.tfg.codeguard.controller.UserController;
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.service.AdminService;
-import es.tfg.codeguard.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import es.tfg.codeguard.controller.UserController;
+import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.service.AdminService;
+import es.tfg.codeguard.service.UserService;
 
 @RestController
 public class UserControllerImp implements UserController {
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private AdminService adminService;
 
@@ -32,8 +32,10 @@ public class UserControllerImp implements UserController {
 
     }
 
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("userName") String userName) {
-        return userService.getUserById(userName)
+    @Override
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String username) {
+
+        return userService.getUserById(username)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -42,17 +44,15 @@ public class UserControllerImp implements UserController {
     public ResponseEntity<List<UserDTO>> getAllUser() {
 
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
-
     }
 
-    public ResponseEntity<UserPassDTO> updateUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "newUserPass") String newUserPass) {
+    @Override
+    public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass) {
 
-        return adminService.updateUser(userName, newUserPass)
+        return adminService.updateUser(username, newUserPass)
                 .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
 
-        //TODO: Cambiar servicio cuando este bien implementado
-
+        //TODO: Cambiar junto al serivcio cuando esté bien implementado el UPDATE
     }
-
 }

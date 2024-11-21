@@ -17,21 +17,20 @@ import java.util.Map;
 @Service
 public class JWTServiceImp implements JWTService {
 
-    //@Value("${jwt.secret-key}")
-    private String secretKey;
+    private final String secretKey;
 
     public JWTServiceImp(@Value("${jwt.secret-key}") String secretKey) {
         this.secretKey = secretKey;
     }
 
     @Override
-    public String createJwt(UserPassDTO userPass) {
+    public String createJwt(UserPassDTO userPassDTO) {
 
         Date now = new Date();
         long expirationTime = 60 * 60 * 24 * 1000;
 
         return JWT.create()
-                .withSubject(userPass.getUsername())
+                .withSubject(userPassDTO.username())
                 .withIssuedAt(now)
                 .withExpiresAt(new Date(now.getTime() + expirationTime))
                 .sign(Algorithm.HMAC256(getSecretKeyBytes(this.secretKey)));
@@ -51,6 +50,7 @@ public class JWTServiceImp implements JWTService {
 
     }
 
+    @Override
     public Map<String, Claim> getClaimsFromToken(String jwt) {
 
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(getSecretKeyBytes(this.secretKey))).build();

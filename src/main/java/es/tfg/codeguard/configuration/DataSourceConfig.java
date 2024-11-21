@@ -1,9 +1,10 @@
 package es.tfg.codeguard.configuration;
 
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import jakarta.persistence.EntityManagerFactory;
 
 import javax.sql.DataSource;
 

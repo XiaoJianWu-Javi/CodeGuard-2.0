@@ -2,10 +2,9 @@ package es.tfg.codeguard.service;
 
 import java.util.Optional;
 
-import es.tfg.codeguard.model.dto.UserPassDTO;
 import org.springframework.stereotype.Service;
 
-import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
 
 @Service
 public interface LoginService {

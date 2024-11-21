@@ -1,19 +1,20 @@
 package es.tfg.codeguard.controller;
 
-import es.tfg.codeguard.controller.imp.RegisterControllerImp;
-import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.service.RegisterService;
-import org.junit.jupiter.api.BeforeEach;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import es.tfg.codeguard.controller.imp.RegisterControllerImp;
+import es.tfg.codeguard.model.dto.AuthDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.service.RegisterService;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class RegisterControllerTest {
+class RegisterControllerTest {
 
     @Mock
     private RegisterService registerService;
@@ -31,13 +32,12 @@ public class RegisterControllerTest {
     private RegisterControllerImp registerControllerImp;
 
     private UserPassDTO userPassDTO;
-    private JsonParserUserPassDTO jsonParserDTO;
-
+    private AuthDTO jsonParserDTO;
 
     @Test
     void registerUserTest() {
 
-        jsonParserDTO = new JsonParserUserPassDTO("FirstUser", "1234");
+        jsonParserDTO = new AuthDTO("FirstUser", "1234");
 
         userPassDTO = new UserPassDTO("FirstUser", false);
 
@@ -50,7 +50,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
-        jsonParserDTO = new JsonParserUserPassDTO("UserSecond", "9876");
+        jsonParserDTO = new AuthDTO("UserSecond", "9876");
         
         userPassDTO = new UserPassDTO("UserSecond", false);
 
@@ -63,7 +63,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
 
 
-        jsonParserDTO = new JsonParserUserPassDTO("User3", "bestUser123");
+        jsonParserDTO = new AuthDTO("User3", "bestUser123");
         
         userPassDTO = new UserPassDTO("User3", false);
 
@@ -81,7 +81,7 @@ public class RegisterControllerTest {
     void invalidRegisterUserTest() {
 
 
-        jsonParserDTO = new JsonParserUserPassDTO("FirstUserñ", "1234");
+        jsonParserDTO = new AuthDTO("FirstUserñ", "1234");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
@@ -90,7 +90,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
-        jsonParserDTO = new JsonParserUserPassDTO("FirstUserñ", "1234");
+        jsonParserDTO = new AuthDTO("FirstUserñ", "1234");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 
@@ -99,7 +99,7 @@ public class RegisterControllerTest {
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
 
 
-        jsonParserDTO = new JsonParserUserPassDTO("User3;;:.+", "bestUser123");
+        jsonParserDTO = new AuthDTO("User3;;:.+", "bestUser123");
 
         when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
 

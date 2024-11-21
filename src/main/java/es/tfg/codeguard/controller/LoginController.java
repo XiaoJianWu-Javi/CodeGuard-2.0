@@ -1,6 +1,6 @@
 package es.tfg.codeguard.controller;
 
-import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
+import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +21,6 @@ public interface LoginController {
             @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
             @ApiResponse(responseCode = "304", description = "Password couldn't updated")
     })
-    public ResponseEntity<UserPassDTO> loginUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO);
+    public ResponseEntity<UserPassDTO> loginUser(@RequestBody AuthDTO authDTO);
 
 }
