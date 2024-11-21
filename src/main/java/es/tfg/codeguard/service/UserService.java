@@ -7,7 +7,7 @@ import es.tfg.codeguard.model.dto.UserDTO;
 
 public interface UserService {
 
-    public abstract Optional<UserDTO> deleteUser(String username);
+    public abstract Optional<UserDTO> deleteUser(String userToken);
 
     public abstract Optional<UserDTO> getUserById(String username);
 

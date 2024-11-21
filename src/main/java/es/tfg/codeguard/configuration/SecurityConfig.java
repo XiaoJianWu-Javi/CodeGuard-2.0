@@ -1,20 +1,21 @@
 package es.tfg.codeguard.configuration;
 
-import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
 
 import es.tfg.codeguard.service.LoginUserDetailsService;
 
@@ -23,9 +24,11 @@ import es.tfg.codeguard.service.LoginUserDetailsService;
 public class SecurityConfig {
 
     private final LoginUserDetailsService userDetailsService;
+    private final JWTRequestFilter jwtRequestFilter;
 
-    public SecurityConfig(LoginUserDetailsService userDetailsService) {
+    public SecurityConfig(LoginUserDetailsService userDetailsService, JWTRequestFilter jwtRequestFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -33,22 +36,26 @@ public class SecurityConfig {
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors->cors.configurationSource(request -> {
+                .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
                     configuration.setAllowedMethods(Arrays.asList("*"));
                     configuration.setAllowedHeaders(Arrays.asList("*"));
+                    configuration.setExposedHeaders(List.of("Authorization"));
                     return configuration;
                 }))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/home", "/register", "/api/**").permitAll();
-                    registry.requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasRole("USER");
+                    registry.requestMatchers("/h2-console/**").permitAll(); //SENTENCIADO A SER ELIMINADO
+                    registry.requestMatchers("/register", "/login", "/api/**").permitAll();
+                    registry.requestMatchers("/admin/**").hasRole("ADMIN");
                     registry.anyRequest().authenticated();
                 })
-                .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginProcessingUrl("/login"))
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .build();
+
     }
 
     @Bean
@@ -57,15 +64,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    @Bean
     PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
+
     }
 }

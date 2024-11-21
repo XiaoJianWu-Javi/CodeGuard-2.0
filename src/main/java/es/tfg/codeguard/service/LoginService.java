@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
 
 @Service
 public interface LoginService {
 
-    public Optional<UserDTO> loginUser(String username, String userPassword);
+    public Optional<UserPassDTO> loginUser(String userName, String userPassword);
 }

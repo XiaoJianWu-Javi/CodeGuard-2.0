@@ -2,9 +2,10 @@ package es.tfg.codeguard.controller.imp;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 
 import es.tfg.codeguard.controller.UserController;
@@ -26,20 +27,12 @@ public class UserControllerImp implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserDTO> deleteUser(@RequestParam String username) {
+    public ResponseEntity<UserDTO> deleteUser(String userToken) {
 
-        return userService.deleteUser(username)
+        return userService.deleteUser(userToken)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-    }
-
-    @Override
-    public ResponseEntity<UserDTO> deleteUser(Principal principal) {
-
-        return userService.deleteUser(principal.getName())
-                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.BAD_REQUEST))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Override

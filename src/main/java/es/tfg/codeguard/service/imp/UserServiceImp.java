@@ -1,18 +1,20 @@
 package es.tfg.codeguard.service.imp;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.UserService;
+import es.tfg.codeguard.service.JWTService;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -21,30 +23,33 @@ public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final UserPassRepository userPassRepository;
     private final DeletedUserRepository deletedUserRepository;
+    private final JWTService jwtService;
 
     public UserServiceImp(PasswordEncoder passwordEncoder, UserRepository userRepository,
-            UserPassRepository userPassRepository, DeletedUserRepository deletedUserRepository) {
-                
+            UserPassRepository userPassRepository, DeletedUserRepository deletedUserRepository, JWTService jwtService) {
+
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userPassRepository = userPassRepository;
         this.deletedUserRepository = deletedUserRepository;
+        this.jwtService = jwtService;
     }
 
     @Override
-    //TODO: Este metodo con spring session tiene que detectar la sesion y si estas conectado te cierra la sesion y te elimina. (No recibe parametros)
-    public Optional<UserDTO> deleteUser(String username) {
+    public Optional<UserDTO> deleteUser(String userToken) {
 
-        if(userPassRepository.findById(username).isEmpty()){
+        UserPassDTO userPassDTO = new UserPassDTO(jwtService.extractUserPass(userToken));
+
+        if (userPassRepository.findById(userPassDTO.username()).isEmpty()) {
             return Optional.empty();
         }
 
-        User user = userRepository.findById(username).get();
+        User user = userRepository.findById(userPassDTO.username()).get();
 
         deletedUserRepository.save(new DeletedUser(user));
 
-        userRepository.delete(userRepository.findById(username).get());
-        userPassRepository.delete(userPassRepository.findById(username).get());
+        userRepository.delete(userRepository.findById(userPassDTO.username()).get());
+        userPassRepository.delete(userPassRepository.findById(userPassDTO.username()).get());
 
         return Optional.of(new UserDTO(user));
     }
