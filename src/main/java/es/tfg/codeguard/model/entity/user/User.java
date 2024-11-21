@@ -1,5 +1,9 @@
 package es.tfg.codeguard.model.entity.user;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -8,12 +12,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import java.util.NoSuchElementException;
-
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "USERS")
-//TODO:When Exercise Entity is created implement here its functionality
 public class User {
 
     private static final String USERNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";
@@ -25,8 +26,7 @@ public class User {
 
     private Boolean tester;
     private Boolean creator;
-
-//  private List<Exercise> exercises;
+    private List<Integer> exercises;
 
     public User(String username){
         this();
@@ -36,7 +36,7 @@ public class User {
     public User() {
         setTester(false);
         setCreator(false);
-//      setExercises(new ArrayList<>());
+        setExercises(new ArrayList<>());
     }
 
     public String getUsername() {
@@ -66,16 +66,16 @@ public class User {
         this.creator = creator;
     }
 
-//    public List<Exercise> getSpells() {
-//        return new ArrayList<>(this.exercises);
-//    }
+   public List<Integer> getExercises() {
+       return new ArrayList<>(this.exercises);
+   }
 
-//    public void setExercises(List<Exercise> exercises) {
-//        checkExercises(exercises);
-//        this.exercises = exercises;
-//    }
+   public void setExercises(List<Integer> exercises) {
+       checkExercises(exercises);
+       this.exercises = exercises;
+   }
 
-//    private void checkExercises(List<Exercise> exercises) {
-//        for (Exercise exercise : exercises) if (exercise == null) throw new IllegalArgumentException();
-//    }
+   private void checkExercises(List<Integer> exercises) {
+       for (Integer exerciseID : exercises) if (exerciseID == null) throw new IllegalArgumentException();
+   }
 }

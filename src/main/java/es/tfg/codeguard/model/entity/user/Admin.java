@@ -1,6 +1,4 @@
-package es.tfg.codeguard.model.entity;
-
-import es.tfg.codeguard.model.entity.user.User;
+package es.tfg.codeguard.model.entity.user;
 
 public class Admin extends User {
 

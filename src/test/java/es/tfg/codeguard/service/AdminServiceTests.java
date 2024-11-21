@@ -20,19 +20,17 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+
 @SpringBootTest
 class AdminServiceTests {
 
     @Mock
-
     private UserRepository userRepository;
 
     @Mock
-
     private UserPassRepository userPassRepository;
 
     @Mock
-
     private DeletedUserRepository deletedUserRepository;
 
     @InjectMocks
@@ -45,26 +43,19 @@ class AdminServiceTests {
     private DeletedUser deletedUser;
 
     @BeforeEach
-    public void setUp(){
-
+    void setUp() {
         userPass = new UserPass();
         userPass.setUsername("Gandalf");
         userPass.setAdmin(false);
         userPass.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
 
-        user = new User();
-        user.setUsername("Gandalf");
+        user = new User("Gandalf");
 
-
-        deletedUser = new DeletedUser();
-        deletedUser.setUsername("Gandalf");
-
-
+        deletedUser = new DeletedUser(user);
     }
 
-
     @Test
-    public void TestFailAdminServiceDeleteMethod(){
+    void TestFailAdminServiceDeleteMethod() {
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<UserDTO> deleteUser = adminServiceImp.deleteUser("Gandalf");
@@ -72,10 +63,9 @@ class AdminServiceTests {
     }
 
     @Test
-    public void TestFineAdminServiceDeleteMethod(){
+    void TestFineAdminServiceDeleteMethod() {
         Optional<UserPass> userPassOpt = Optional.of(userPass);
         when(userPassRepository.findById("Gandalf")).thenReturn(userPassOpt);
-
 
         Optional<User> userOpt = Optional.of(user);
         when(userRepository.findById("Gandalf")).thenReturn(userOpt);
@@ -86,69 +76,64 @@ class AdminServiceTests {
 
         assertThat(deletedUserExpected).usingRecursiveComparison().isEqualTo(deleteUser);
 
-
-
     }
 
     @Test
-    public void TestFailAdminServiceUpdateMethod() {
+    void TestFailAdminServiceUpdateMethod() {
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserPassDTO> user = adminServiceImp.updateUser("Gandalf", "cantpass");
+        Optional<UserPassDTO> userOptional = adminServiceImp.updateUser("Gandalf", "cantpass");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineAdminServiceUpdateMethod() {
+    void TestFineAdminServiceUpdateMethod() {
 
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
+        UserPassDTO userPassDTO = new UserPassDTO("Gandalf", false);
 
-        UserPassDTO userPassDTO = new UserPassDTO();
-        userPassDTO.setUsername("Gandalf");
-        userPassDTO.setAdmin(false);
         Optional<UserPassDTO> userExpected = Optional.of(userPassDTO);
-        Optional<UserPassDTO> user = adminServiceImp.updateUser("Gandalf", "cantpass");
+        Optional<UserPassDTO> userOptional = adminServiceImp.updateUser("Gandalf", "cantpass");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 
-
     @Test
-    public void TestFailAdminServiceGrantTesterMethod() {
+    void TestFailAdminServiceGrantTesterMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.grantTester("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.grantTester("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineAdminServiceGrantTesterMethod() {
+    void TestFineAdminServiceGrantTesterMethod() {
 
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
         user.setTester(true);
         UserDTO userDTO = new UserDTO(user);
         Optional<UserDTO> userExpected = Optional.of(userDTO);
-        Optional<UserDTO> user = adminServiceImp.grantTester("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.grantTester("Gandalf");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 
     @Test
-    public void TestFailAdminServiceRevokeTesterMethod() {
+    void TestFailAdminServiceRevokeTesterMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.revokeTester("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.revokeTester("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineElderServiceRevokeTesterMethod() {
+    void TestFineElderServiceRevokeTesterMethod() {
         user.setTester(true);
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
 
@@ -158,25 +143,22 @@ class AdminServiceTests {
 
         Optional<UserDTO> userExpected = Optional.of(userDTO);
 
+        Optional<UserDTO> userOptional = adminServiceImp.revokeTester("Gandalf");
 
-
-        Optional<UserDTO> user = adminServiceImp.revokeTester("Gandalf");
-
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
-
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
     }
 
     @Test
-    public void TestFailElderServiceGrantCreatorMethod() {
+    void TestFailElderServiceGrantCreatorMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.grantCreator("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.grantCreator("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineUserServiceGrantCreatorMethod() {
+    void TestFineUserServiceGrantCreatorMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
 
         user.setCreator(true);
@@ -184,23 +166,23 @@ class AdminServiceTests {
         UserDTO userDTO = new UserDTO(user);
 
         Optional<UserDTO> userExpected = Optional.of(userDTO);
-        Optional<UserDTO> user = adminServiceImp.grantCreator("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.grantCreator("Gandalf");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 
     @Test
-    public void TestFailElderServiceRevokeCreatorMethod() {
+    void TestFailElderServiceRevokeCreatorMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.revokeCreator("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.revokeCreator("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineUserServiceRevokeCreatorMethod() {
+    void TestFineUserServiceRevokeCreatorMethod() {
         user.setCreator(true);
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
 
@@ -209,24 +191,23 @@ class AdminServiceTests {
         UserDTO userDTO = new UserDTO(user);
 
         Optional<UserDTO> userExpected = Optional.of(userDTO);
-        Optional<UserDTO> user = adminServiceImp.revokeCreator("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.revokeCreator("Gandalf");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 
-
     @Test
-    public void TestFailElderServiceGrantAllPrivilegesMethod() {
+    void TestFailElderServiceGrantAllPrivilegesMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.grantAllPrivileges("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.grantAllPrivileges("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineAdminServiceGrantAllPrivilegesMethod() {
+    void TestFineAdminServiceGrantAllPrivilegesMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
 
         user.setCreator(true);
@@ -234,24 +215,24 @@ class AdminServiceTests {
 
         UserDTO userDTO = new UserDTO(user);
 
-        Optional<UserDTO> userExpected = Optional.of( userDTO);
-        Optional<UserDTO> user = adminServiceImp.grantAllPrivileges("Gandalf");
+        Optional<UserDTO> userExpected = Optional.of(userDTO);
+        Optional<UserDTO> userOptional = adminServiceImp.grantAllPrivileges("Gandalf");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 
     @Test
-    public void TestFailElderServiceRevokeAllPrivilegesMethod() {
+    void TestFailElderServiceRevokeAllPrivilegesMethod() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
-        Optional<UserDTO> user = adminServiceImp.revokeAllPrivileges("Gandalf");
+        Optional<UserDTO> userOptional = adminServiceImp.revokeAllPrivileges("Gandalf");
 
-        assertThat(user).isEmpty();
+        assertThat(userOptional).isEmpty();
 
     }
 
     @Test
-    public void TestFineUserServiceRevokeAllPrivilegesMethod() {
+    void TestFineUserServiceRevokeAllPrivilegesMethod() {
         user.setCreator(true);
         user.setTester(true);
         when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
@@ -260,10 +241,10 @@ class AdminServiceTests {
 
         UserDTO userDTO = new UserDTO(user);
 
-        Optional<UserDTO> userExpected = Optional.of( userDTO);
-        Optional<UserDTO> user = adminServiceImp.revokeAllPrivileges("Gandalf");
+        Optional<UserDTO> userExpected = Optional.of(userDTO);
+        Optional<UserDTO> userOptional = adminServiceImp.revokeAllPrivileges("Gandalf");
 
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
 
     }
 

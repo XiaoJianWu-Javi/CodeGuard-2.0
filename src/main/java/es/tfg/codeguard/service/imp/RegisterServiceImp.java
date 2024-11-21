@@ -49,7 +49,6 @@ public class RegisterServiceImp implements RegisterService {
 
         userRepository.save(new User(jsonParserUserPassDTO.getUsername()));
 
-
         return Optional.of(new UserPassDTO(userPassEncript));
 
     }

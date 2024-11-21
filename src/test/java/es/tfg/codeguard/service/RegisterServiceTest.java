@@ -40,16 +40,11 @@ public class RegisterServiceTest {
 
     @BeforeEach
     void setup(){
-
-        jsonParserDTO = new JsonParserUserPassDTO();
-
+        jsonParserDTO = new JsonParserUserPassDTO("Gandalf", "cantpass");
     }
 
     @Test
     public void TestFailUserServiceRegisterMethod() {
-
-        jsonParserDTO.setUsername("Gandalf");
-        jsonParserDTO.setPassword("cantpass");
 
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
@@ -64,16 +59,11 @@ public class RegisterServiceTest {
     @Test
     public void TestFineUserServiceRegisterMethod() {
 
-        jsonParserDTO.setUsername("Gandalf");
-        jsonParserDTO.setPassword("cantpass");
-
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<UserPassDTO> user = registerServiceImp.registerUser(jsonParserDTO);
 
-        UserPassDTO userPassDTO = new UserPassDTO();
-        userPassDTO.setUsername("Gandalf");
-        userPassDTO.setAdmin(false);
+        UserPassDTO userPassDTO = new UserPassDTO("Gandalf", false);
         Optional<UserPassDTO> userExpected = Optional.of(userPassDTO);
         assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
     }
