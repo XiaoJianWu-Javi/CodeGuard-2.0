@@ -9,5 +9,5 @@ import es.tfg.codeguard.model.dto.UserDTO;
 @Service
 public interface LoginService {
 
-    public Optional<UserDTO> loginUser(String userName, String userPassword);
+    public Optional<UserDTO> loginUser(String username, String userPassword);
 }

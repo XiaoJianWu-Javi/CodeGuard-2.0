@@ -8,5 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface LoginUserDetailsService extends UserDetailsService {
 
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

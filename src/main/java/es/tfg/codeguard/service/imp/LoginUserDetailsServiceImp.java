@@ -2,7 +2,6 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,8 +14,11 @@ import es.tfg.codeguard.service.LoginUserDetailsService;
 @Service
 public class LoginUserDetailsServiceImp implements LoginUserDetailsService {
 
-    @Autowired
-    private UserPassRepository userPassRepository;
+    private final UserPassRepository userPassRepository;
+
+    public LoginUserDetailsServiceImp(UserPassRepository userPassRepository) {
+        this.userPassRepository = userPassRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -36,7 +38,7 @@ public class LoginUserDetailsServiceImp implements LoginUserDetailsService {
     }
 
     private String[] getRol(UserPass user) {
-        if (user.isAdmin()) return new String[] {"ADMIN", "USER"};
+        if (Boolean.TRUE.equals(user.isAdmin())) return new String[] {"ADMIN", "USER"};
         else return new String[] {"USER"};
     }
 

@@ -1,12 +1,13 @@
 package es.tfg.codeguard.controller;
 
-import es.tfg.codeguard.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import es.tfg.codeguard.model.dto.UserDTO;
 
 @RestController
 @RequestMapping("/admin")
@@ -17,11 +18,7 @@ public interface AdminController {
     @Operation(summary = "Delete user by name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User deleted succsesfully"),
-            @ApiResponse(responseCode = "404", description = "User couldn't deleted")
+            @ApiResponse(responseCode = "404", description = "User couldn't be deleted")
     })
-    public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "userName") String userName);
-
-
-
-
+    public ResponseEntity<UserDTO> deleteUser(@RequestParam String username);
 }

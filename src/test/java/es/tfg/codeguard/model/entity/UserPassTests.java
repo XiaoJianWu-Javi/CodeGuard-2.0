@@ -23,7 +23,7 @@ class UserPassTests {
     }
 
     @Test
-    void notValidSetWizardName() {
+    void notValidSetUsername() {
         assertThrows(IllegalArgumentException.class, () -> userPass.setUsername(null));
         assertThrows(IllegalArgumentException.class, () -> userPass.setUsername(""));
         assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("   "));
@@ -40,7 +40,7 @@ class UserPassTests {
     }
     
     @Test
-    void validSetWizardName() {
+    void validSetUsername() {
         assertDoesNotThrow(() -> userPass.setUsername("aaa1"));
         assertDoesNotThrow(() -> userPass.setUsername("aaa1aaa43535"));
         assertDoesNotThrow(() -> userPass.setUsername("AAA1"));
@@ -52,14 +52,14 @@ class UserPassTests {
     }
 
     @Test
-    void getNotInitializedWizardName() {
+    void getNotInitializedUsername() {
         assertThrows(NoSuchElementException.class, () -> userPass.getUsername());
         try { userPass.setUsername(""); } catch(Exception e) {}
         assertThrows(NoSuchElementException.class, () -> userPass.getUsername());
     }
 
     @Test
-    void getInitializedWizardName() {
+    void getInitializedUsername() {
         String sarumanName = "saruman";
 
         userPass.setUsername(sarumanName);

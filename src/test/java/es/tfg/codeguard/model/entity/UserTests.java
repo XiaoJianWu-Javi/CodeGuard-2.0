@@ -24,7 +24,7 @@ class UserTests {
     }
 
     @Test
-    void notValidSetWizardName() {
+    void notValidSetUsername() {
         assertThrows(IllegalArgumentException.class, () -> user.setUsername(null));
         assertThrows(IllegalArgumentException.class, () -> user.setUsername(""));
         assertThrows(IllegalArgumentException.class, () -> user.setUsername("   "));
@@ -40,7 +40,7 @@ class UserTests {
     }
     
     @Test
-    void validSetWizardName() {
+    void validSetUsername() {
         assertDoesNotThrow(() -> user.setUsername("aaa1"));
         assertDoesNotThrow(() -> user.setUsername("aaa1aaa43535"));
         assertDoesNotThrow(() -> user.setUsername("AAA1"));
@@ -52,14 +52,14 @@ class UserTests {
     }
 
     @Test
-    void getNotInitializedWizardName() {
+    void getNotInitializedUsername() {
         assertThrows(NoSuchElementException.class, () -> user.getUsername());
         try { user.setUsername(""); } catch(Exception e) {}
         assertThrows(NoSuchElementException.class, () -> user.getUsername());
     }
 
     @Test
-    void getInitializedWizardName() {
+    void getInitializedUsername() {
         String sarumanName = "saruman";
 
         user.setUsername(sarumanName);

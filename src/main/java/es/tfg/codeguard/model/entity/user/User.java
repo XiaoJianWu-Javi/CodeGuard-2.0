@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -18,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 public class User {
 
     private static final String USERNAME_REGEXP = "^[a-zA-Z]{3,}\\w*$";
-    
+
     @Id
     @NotBlank
     @Pattern(regexp = USERNAME_REGEXP, message = "{user.username.invalidPattern}")
@@ -26,12 +27,8 @@ public class User {
 
     private Boolean tester;
     private Boolean creator;
-    private List<Integer> exercises;
-
-    public User(String username){
-        this();
-        setUsername(username);
-    }
+    @ElementCollection
+    private List<String> exercises;
 
     public User() {
         setTester(false);
@@ -39,14 +36,28 @@ public class User {
         setExercises(new ArrayList<>());
     }
 
+    public User(String username) {
+        this();
+        setUsername(username);
+    }
+
+    public User(String username, boolean tester, boolean creator) {
+        this(username);
+        setTester(tester);
+        setCreator(creator);
+    }
+
     public String getUsername() {
-        if (username == null) throw new NoSuchElementException();
+        if (username == null)
+            throw new NoSuchElementException();
         return username;
     }
 
     public void setUsername(String username) {
-        if (username == null || username.isBlank()) throw new IllegalArgumentException();
-        if (!username.matches(USERNAME_REGEXP)) throw new IllegalArgumentException();
+        if (username == null || username.isBlank())
+            throw new IllegalArgumentException();
+        if (!username.matches(USERNAME_REGEXP))
+            throw new IllegalArgumentException();
         this.username = username;
     }
 
@@ -66,16 +77,17 @@ public class User {
         this.creator = creator;
     }
 
-   public List<Integer> getExercises() {
-       return new ArrayList<>(this.exercises);
-   }
+    public List<String> getExercises() {
+        return new ArrayList<>(this.exercises);
+    }
 
-   public void setExercises(List<Integer> exercises) {
-       checkExercises(exercises);
-       this.exercises = exercises;
-   }
+    public void setExercises(List<String> exercises) {
+        checkExercises(exercises);
+        this.exercises = exercises;
+    }
 
-   private void checkExercises(List<Integer> exercises) {
-       for (Integer exerciseID : exercises) if (exerciseID == null) throw new IllegalArgumentException();
-   }
+    private void checkExercises(List<String> exercises) {
+        for (String exerciseID : exercises)
+            if (exerciseID == null || exerciseID.isBlank()) throw new IllegalArgumentException();
+    }
 }

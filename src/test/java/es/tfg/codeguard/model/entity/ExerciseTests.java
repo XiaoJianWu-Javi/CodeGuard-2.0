@@ -1,7 +1,5 @@
 package es.tfg.codeguard.model.entity;
 
-import java.util.NoSuchElementException;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -19,7 +17,7 @@ class ExerciseTests {
 
     @BeforeEach
     void setup() {
-        exercise = new Exercise("title", "desc");
+        exercise = new Exercise("id", "title", "desc");
     }
 
     @Test

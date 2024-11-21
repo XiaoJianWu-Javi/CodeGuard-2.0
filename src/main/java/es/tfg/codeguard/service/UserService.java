@@ -1,9 +1,9 @@
 package es.tfg.codeguard.service;
 
-import es.tfg.codeguard.model.dto.UserDTO;
-
 import java.util.List;
 import java.util.Optional;
+
+import es.tfg.codeguard.model.dto.UserDTO;
 
 public interface UserService {
 

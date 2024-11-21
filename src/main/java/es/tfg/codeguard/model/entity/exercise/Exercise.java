@@ -4,42 +4,53 @@ import java.util.List;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
+import es.tfg.codeguard.model.dto.ExerciseDTO;
+
 @Entity
 @Table(name = "EXERCISE")
 public class Exercise {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotBlank
+
+    @Id 
+    private String id;
+    @NotBlank 
     private String title;
-    @Lob
-    @NotBlank
+    @Lob @NotBlank
     private String description;
 
     private String creator;
     private String tester;
 
-    @Lob
+    @Lob 
     private String test;
-    @ElementCollection
-    @Lob
-    private List<String> solutions;
+    @Lob @ElementCollection
+    private List<String> solutions; //TODO: Add username column
 
-    public Exercise(String title, String description) {
+    public Exercise() {}
+
+    public Exercise(String id, String title, String description) {
+        setId(id);
         setTitle(title);
         setDescription(description);
         setSolutions(new java.util.ArrayList<>());
     }
 
-    public Integer getId() {
+    public Exercise(ExerciseDTO exerciseDTO) {
+        this(exerciseDTO.id(), exerciseDTO.title(), exerciseDTO.description());
+        setTester(exerciseDTO.tester());
+        setCreator(exerciseDTO.creator());
+    }
+
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -90,5 +101,9 @@ public class Exercise {
 
     public void setSolutions(List<String> solutions) {
         this.solutions = solutions;
+    }
+
+    public void addSolution(String solution) {
+        solutions.add(solution);
     }
 }
