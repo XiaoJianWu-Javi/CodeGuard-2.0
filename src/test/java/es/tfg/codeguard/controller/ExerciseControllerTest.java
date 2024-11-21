@@ -46,17 +46,16 @@ public class ExerciseControllerTest {
     private UserPassDTO userPassDTO;
 
     @BeforeEach
-    void setup(){
-
+    void setup() {
 
 
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3, 4})
-    void GetExerciseByIdTest(int exerciseId) {
+    @ValueSource(strings = {"1", "2", "3", "4"})
+    void GetExerciseByIdTest(String exerciseId) {
 
-        ExerciseDTO exerciseDTO = new ExerciseDTO(exerciseId, "title" +exerciseId, "description" + exerciseId, "tester"+ exerciseId, "creator" +exerciseId);
+        ExerciseDTO exerciseDTO = new ExerciseDTO(exerciseId, "title" + exerciseId, "description" + exerciseId, "tester" + exerciseId, "creator" + exerciseId);
 
         when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.ofNullable(exerciseDTO));
 
@@ -69,16 +68,10 @@ public class ExerciseControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1010, 1020, 1030, 1040, 1050})
-    void InvalidGetExerciseByIdTest(int exerciseId) {
+    @ValueSource(strings = {"1p", "2ter", "t30", "a4", "54uri"})
+    void InvalidGetExerciseByIdTest(String exerciseId) {
 
-        if(exerciseId>100){
-            when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.empty());
-        }else{
-            ExerciseDTO exerciseDTO = new ExerciseDTO(exerciseId, "title" +exerciseId, "description" + exerciseId, "tester"+ exerciseId, "creator" +exerciseId);
-
-            when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.ofNullable(exerciseDTO));
-        }
+        when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.empty());
 
         ResponseEntity<ExerciseDTO> esperado = exerciseControllerImp.getExercise(exerciseId);
 
@@ -89,9 +82,9 @@ public class ExerciseControllerTest {
     @Test
     void GetAllExercisesTest() {
 
-        ExerciseDTO exercise1 = new ExerciseDTO(1, "title" +1, "description" + 1, "tester"+ 1, "creator" +1);
-        ExerciseDTO exercise2 = new ExerciseDTO(2, "title" +2, "description" + 2, "tester"+ 2, "creator" +2);
-        ExerciseDTO exercise3 = new ExerciseDTO(3, "title" +3, "description" + 3, "tester"+ 3, "creator" +3);
+        ExerciseDTO exercise1 = new ExerciseDTO("1", "title" + 1, "description" + 1, "tester" + 1, "creator" + 1);
+        ExerciseDTO exercise2 = new ExerciseDTO("2", "title" + 2, "description" + 2, "tester" + 2, "creator" + 2);
+        ExerciseDTO exercise3 = new ExerciseDTO("3", "title" + 3, "description" + 3, "tester" + 3, "creator" + 3);
 
 
         when(exerciseService.getAllExercises()).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList()));

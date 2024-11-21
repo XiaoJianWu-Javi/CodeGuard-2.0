@@ -8,7 +8,7 @@ import es.tfg.codeguard.model.entity.exercise.Exercise;
 import java.util.Optional;
 
 @Repository
-public interface ExerciseRepository extends JpaRepository<Exercise, Integer> {
+public interface ExerciseRepository extends JpaRepository<Exercise, String> {
 
     //TODO: POSIBLE FUTURA IMPLEMENTACIÓN
     Optional<Exercise> findByTitle(String title);

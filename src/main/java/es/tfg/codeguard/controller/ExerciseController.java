@@ -30,11 +30,10 @@ public interface ExerciseController {
     @GetMapping("/{exerciseId}")
     @Operation(summary = "Get exercise by name")
     @ApiResponses({
-            @ApiResponse(responseCode="200", description = "Exercise found"),
-            @ApiResponse(responseCode="404", description = "Exercise not found")
+            @ApiResponse(responseCode = "200", description = "Exercise found"),
+            @ApiResponse(responseCode = "404", description = "Exercise not found")
     })
-    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam("exerciseId") int ExerciseId);
-
+    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam String exerciseId);
 
     @GetMapping("/allExercise")
     @Operation(summary = "Get all exercises")
@@ -42,7 +41,6 @@ public interface ExerciseController {
             @ApiResponse(responseCode = "200", description = "Exercises found")
     })
     public ResponseEntity<List<ExerciseDTO>> getAllExercises();
-
 
 
 }

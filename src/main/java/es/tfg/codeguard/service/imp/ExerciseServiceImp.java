@@ -16,7 +16,7 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
 
     @Override
-    public Optional<ExerciseDTO> getExerciseById(int exerciseId) {
+    public Optional<ExerciseDTO> getExerciseById(String exerciseId) {
 
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
             return Optional.empty();

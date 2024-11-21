@@ -22,9 +22,8 @@ public class ExerciseControllerImp implements ExerciseController {
         this.exerciseService = exerciseService;
     }
 
-
     @Override
-    public ResponseEntity<ExerciseDTO> getExercise(int exerciseId) {
+    public ResponseEntity<ExerciseDTO> getExercise(String exerciseId) {
 
         return exerciseService
                 .getExerciseById(exerciseId)

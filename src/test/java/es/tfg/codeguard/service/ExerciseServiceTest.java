@@ -40,7 +40,7 @@ public class ExerciseServiceTest {
     private ExerciseServiceImp exerciseServiceImp;
 
     @Test
-    public void TestFineGetAllExercises(){
+    public void TestFineGetAllExercises() {
 
         Exercise exercise1 = new Exercise();
         exercise1.setTitle("tittle1");
@@ -72,7 +72,7 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    public void TestFailGetAllUsers(){
+    public void TestFailGetAllUsers() {
 
 
         List<Exercise> exercisesExpected = Collections.emptyList();
@@ -86,16 +86,16 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    public void TestFailGetUserByName(){
-        when(exerciseRepository.findById(1)).thenReturn(Optional.empty());
+    public void TestFailGetUserByName() {
+        when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
 
-        Optional<ExerciseDTO> exercise = exerciseServiceImp.getExerciseById(1);
+        Optional<ExerciseDTO> exercise = exerciseServiceImp.getExerciseById("1");
 
         assertThat(exercise).isEmpty();
     }
 
     @Test
-    public void TestFineGetUserByName(){
+    public void TestFineGetUserByName() {
 
         Exercise exerciseExpected = new Exercise();
         exerciseExpected.setTitle("tittle1");
@@ -103,9 +103,9 @@ public class ExerciseServiceTest {
         exerciseExpected.setTest("tester1");
         exerciseExpected.setCreator("creator1");
 
-        when(exerciseRepository.findById(1)).thenReturn(Optional.of(exerciseExpected));
+        when(exerciseRepository.findById("1")).thenReturn(Optional.of(exerciseExpected));
 
-        Optional<Exercise> exercise = exerciseRepository.findById(1);
+        Optional<Exercise> exercise = exerciseRepository.findById("1");
 
         assertThat(Optional.of(exerciseExpected)).usingRecursiveComparison().isEqualTo(exercise);
     }
