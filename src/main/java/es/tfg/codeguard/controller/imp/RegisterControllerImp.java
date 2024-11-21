@@ -4,8 +4,7 @@ import es.tfg.codeguard.controller.RegisterController;
 import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.RegisterService;
-
-import es.tfg.codeguard.util.UsernameNotValid;
+import es.tfg.codeguard.util.UsernameNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,11 @@ public class RegisterControllerImp implements RegisterController {
 
     public ResponseEntity<UserPassDTO> registerUser(@RequestBody JsonParserUserPassDTO jsonParserUserPassDTO) {
 
-        try{
+        try {
             return registerService.registerUser(jsonParserUserPassDTO)
                     .map(userPass -> new ResponseEntity<>(userPass, HttpStatus.CREATED))
                     .orElse(new ResponseEntity<>(HttpStatus.CONFLICT));
-        }catch (UsernameNotValid e){
+        } catch (UsernameNotValidException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
