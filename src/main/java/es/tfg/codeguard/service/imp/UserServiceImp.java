@@ -42,7 +42,6 @@ public class UserServiceImp implements UserService {
         deletedUserRepository.save(new DeletedUser(user));
 
         userRepository.delete(userRepository.findById(userPassDTO.username()).get());
-        userPassRepository.delete(userPassRepository.findById(userPassDTO.username()).get());
 
         return Optional.of(new UserDTO(user));
     }

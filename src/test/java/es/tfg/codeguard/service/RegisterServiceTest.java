@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -33,13 +35,16 @@ public class RegisterServiceTest {
     @Mock
     private DeletedUserRepository deletedUserRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private RegisterServiceImp registerServiceImp;
 
     private AuthDTO jsonParserDTO;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         jsonParserDTO = new AuthDTO("Gandalf", "cantpass");
     }
 
@@ -59,6 +64,7 @@ public class RegisterServiceTest {
     @Test
     public void TestFineUserServiceRegisterMethod() {
 
+        when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<UserPassDTO> user = registerServiceImp.registerUser(jsonParserDTO);
