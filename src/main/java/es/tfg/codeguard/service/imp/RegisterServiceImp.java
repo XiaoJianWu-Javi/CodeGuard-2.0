@@ -33,10 +33,6 @@ public class RegisterServiceImp implements RegisterService {
 
     public Optional<UserPassDTO> registerUser(JsonParserUserPassDTO jsonParserUserPassDTO) throws IllegalArgumentException{
 
-        if(userPassRepository.findById(jsonParserUserPassDTO.username()).isEmpty()){
-
-        }
-
         if(userPassRepository.findById(jsonParserUserPassDTO.username()).isPresent()){
             return Optional.empty();
         }

@@ -9,7 +9,7 @@ import java.util.Optional;
 @Service
 public interface ExerciseService {
 
-    public Optional<ExerciseDTO> getExerciseByName(String exerciseName);
+    public Optional<ExerciseDTO> getExerciseById(int exerciseId);
 
     public List<ExerciseDTO> getAllExercises();
 

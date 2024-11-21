@@ -27,13 +27,13 @@ public interface ExerciseController {
 //    public ResponseEntity<ExerciseDTO> createExercise();
 
 
-    @GetMapping("/{exerciseName}")
+    @GetMapping("/{exerciseId}")
     @Operation(summary = "Get exercise by name")
     @ApiResponses({
             @ApiResponse(responseCode="200", description = "Exercise found"),
             @ApiResponse(responseCode="404", description = "Exercise not found")
     })
-    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam("exerciseName") String exerciseName);
+    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam("exerciseId") int ExerciseId);
 
 
     @GetMapping("/allExercise")

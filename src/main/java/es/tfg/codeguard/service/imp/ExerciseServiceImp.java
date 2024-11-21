@@ -3,6 +3,7 @@ package es.tfg.codeguard.service.imp;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.ExerciseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,21 +12,17 @@ import java.util.Optional;
 @Service
 public class ExerciseServiceImp implements ExerciseService {
 
+    @Autowired
     private ExerciseRepository exerciseRepository;
 
-    public ExerciseServiceImp(ExerciseRepository exerciseRepository) {
-        this.exerciseRepository = exerciseRepository;
-    }
-
-    //TODO: COMPLETE THE SERVICES
     @Override
-    public Optional<ExerciseDTO> getExerciseByName(String exerciseName) {
+    public Optional<ExerciseDTO> getExerciseById(int exerciseId) {
 
-        if (exerciseRepository.findById(exerciseName).isEmpty()) {
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
             return Optional.empty();
         }
 
-        return exerciseRepository.findById(exerciseName).map(ExerciseDTO::new);
+        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new);
 
     }
 

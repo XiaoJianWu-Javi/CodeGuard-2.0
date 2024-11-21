@@ -32,6 +32,10 @@ public class Exercise {
     @Lob
     private List<String> solutions;
 
+    public Exercise(){
+
+    }
+
     public Exercise(String title, String description) {
         setTitle(title);
         setDescription(description);
