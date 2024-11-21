@@ -3,6 +3,7 @@ package es.tfg.codeguard.components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.model.entity.user.User;
@@ -14,19 +15,14 @@ import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 @Component
 public class DataIntializer {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final UserPassRepository userPassRepository;
-    private final ExerciseRepository exerciseRepository; //TODO: utilizar el servicio cuando esté implementado
-
-    public DataIntializer(PasswordEncoder passwordEncoder, ExerciseRepository exerciseRepository, 
-            UserPassRepository userPassRepository, UserRepository userRepository) {
-
-        this.passwordEncoder = passwordEncoder;
-        this.exerciseRepository = exerciseRepository;
-        this.userPassRepository = userPassRepository;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserPassRepository userPassRepository;
+    @Autowired
+    private ExerciseRepository exerciseRepository; //TODO: utilizar el servicio cuando esté implementado
 
     @Bean
     void firstAdmin() {

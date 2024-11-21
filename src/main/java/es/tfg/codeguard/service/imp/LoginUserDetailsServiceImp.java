@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
@@ -14,11 +15,8 @@ import es.tfg.codeguard.service.LoginUserDetailsService;
 @Service
 public class LoginUserDetailsServiceImp implements LoginUserDetailsService {
 
-    private final UserPassRepository userPassRepository;
-
-    public LoginUserDetailsServiceImp(UserPassRepository userPassRepository) {
-        this.userPassRepository = userPassRepository;
-    }
+    @Autowired
+    private UserPassRepository userPassRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

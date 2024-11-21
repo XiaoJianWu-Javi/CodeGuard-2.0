@@ -2,6 +2,7 @@ package es.tfg.codeguard.components;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
@@ -11,20 +12,15 @@ import es.tfg.codeguard.service.ExternalAPIService;
 @Component
 public class ExternalAPIGetter {
 
-    private final ExternalAPIService codeWarsAPIService;
-    private final ExternalAPIService projectEulerAPIService;
-    private final ExerciseRepository exerciseRepository;
-
-    public ExternalAPIGetter(ExternalAPIService codeWarsAPIService, ExternalAPIService projectEulerAPIService,
-            ExerciseRepository exerciseRepository) {
-
-        this.codeWarsAPIService = codeWarsAPIService;
-        this.projectEulerAPIService = projectEulerAPIService;
-        this.exerciseRepository = exerciseRepository;
-    }
-
     private static final int N_EXERCISES = 10;
-    
+
+    @Autowired
+    private ExternalAPIService codeWarsAPIService;
+    @Autowired
+    private ExternalAPIService projectEulerAPIService;
+    @Autowired
+    private ExerciseRepository exerciseRepository;
+
     @Bean
     void getExercisesFromCodeWars() {
 

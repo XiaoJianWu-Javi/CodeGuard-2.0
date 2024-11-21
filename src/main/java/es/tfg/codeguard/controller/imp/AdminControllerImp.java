@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller.imp;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +12,8 @@ import es.tfg.codeguard.service.AdminService;
 @RestController
 public class AdminControllerImp implements AdminController {
 
-    private final AdminService adminService;
-
-    public AdminControllerImp(AdminService adminService) {
-        this.adminService = adminService;
-    }
+    @Autowired
+    private AdminService adminService;
 
     @Override
     public ResponseEntity<UserDTO> deleteUser(@RequestParam String username) {

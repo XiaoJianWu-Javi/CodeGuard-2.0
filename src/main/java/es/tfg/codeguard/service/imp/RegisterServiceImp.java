@@ -2,6 +2,8 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +19,12 @@ import es.tfg.codeguard.util.UsernameNotValidException;
 @Service
 public class RegisterServiceImp implements RegisterService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserPassRepository userPassRepository;
-    private final UserRepository userRepository;
-
-    public RegisterServiceImp(PasswordEncoder passwordEncoder, UserPassRepository userPassRepository,
-            UserRepository userRepository) {
-                
-        this.passwordEncoder = passwordEncoder;
-        this.userPassRepository = userPassRepository;
-        this.userRepository = userRepository;
-    }
+    //TODO: Debería utilizar la inyección de la Bean de PasswordEncoder
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private UserPassRepository userPassRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Optional<UserPassDTO> registerUser(AuthDTO authDTO) throws IllegalArgumentException{

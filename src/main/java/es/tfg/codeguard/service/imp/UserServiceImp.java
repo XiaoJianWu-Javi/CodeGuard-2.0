@@ -1,7 +1,7 @@
 package es.tfg.codeguard.service.imp;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,21 +19,14 @@ import es.tfg.codeguard.service.JWTService;
 @Service
 public class UserServiceImp implements UserService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final UserPassRepository userPassRepository;
-    private final DeletedUserRepository deletedUserRepository;
-    private final JWTService jwtService;
-
-    public UserServiceImp(PasswordEncoder passwordEncoder, UserRepository userRepository,
-            UserPassRepository userPassRepository, DeletedUserRepository deletedUserRepository, JWTService jwtService) {
-
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.userPassRepository = userPassRepository;
-        this.deletedUserRepository = deletedUserRepository;
-        this.jwtService = jwtService;
-    }
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserPassRepository userPassRepository;
+    @Autowired
+    private DeletedUserRepository deletedUserRepository;
+    @Autowired
+    private JWTService jwtService;
 
     @Override
     public Optional<UserDTO> deleteUser(String userToken) {

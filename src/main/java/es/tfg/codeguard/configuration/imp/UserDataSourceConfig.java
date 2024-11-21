@@ -28,7 +28,7 @@ public class UserDataSourceConfig implements DataSourceConfig {
     @Override
     @Primary
     @Bean(name = "usersDataSource")
-    @ConfigurationProperties(prefix = "spring.users.datasource") //Rename this prefix in .properties to something better
+    @ConfigurationProperties(prefix = "spring.users.datasource")
     public DataSource dataSource(){
 
         return DataSourceBuilder.create()

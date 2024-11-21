@@ -2,8 +2,10 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
@@ -18,19 +20,14 @@ import es.tfg.codeguard.service.AdminService;
 @Service
 public class AdminServiceImp implements AdminService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final UserPassRepository userPassRepository;
-    private final DeletedUserRepository deletedUserRepository;
-
-    public AdminServiceImp(PasswordEncoder passwordEncoder, UserRepository userRepository,
-            UserPassRepository userPassRepository, DeletedUserRepository deletedUserRepository) {
-
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.userPassRepository = userPassRepository;
-        this.deletedUserRepository = deletedUserRepository;
-    }
+    //TODO: Debería utilizar la inyección de la Bean de PasswordEncoder
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserPassRepository userPassRepository;
+    @Autowired
+    private DeletedUserRepository deletedUserRepository;
 
     @Override
     public Optional<UserDTO> deleteUser(String username) {

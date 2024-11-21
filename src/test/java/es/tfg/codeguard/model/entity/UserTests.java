@@ -2,16 +2,18 @@ package es.tfg.codeguard.model.entity;
 
 import java.util.NoSuchElementException;
 
+import org.springframework.boot.test.context.SpringBootTest;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import es.tfg.codeguard.model.entity.user.User;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import es.tfg.codeguard.model.entity.user.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class UserTests {
@@ -89,13 +91,13 @@ class UserTests {
 
     @Test
     void setExercisesTests() {
-        java.util.List<Integer> exercises = new java.util.ArrayList<>() {{
-            add(null); add(1); add(14);
+        java.util.List<String> exercises = new java.util.ArrayList<>() {{
+            add(null); add("problema-1"); add("problema-14");
         }};
         assertThrows(IllegalArgumentException.class, () -> user.setExercises(exercises));
 
         exercises.clear();
-        exercises.add(1);
+        exercises.add("problema-1");
         assertDoesNotThrow(() -> user.setExercises(exercises));
     }
 
@@ -103,8 +105,8 @@ class UserTests {
     void getExercisesTests() {
         assertTrue(user.getExercises().isEmpty());  //Not Initialized
 
-        java.util.List<Integer> exercises = new java.util.ArrayList<>() {{
-            add(16); add(2); add(1);
+        java.util.List<String> exercises = new java.util.ArrayList<>() {{
+            add("problema-16"); add("problema-2"); add("problema-1");
         }};
         user.setExercises(exercises);
         assertArrayEquals(exercises.toArray(), user.getExercises().toArray());

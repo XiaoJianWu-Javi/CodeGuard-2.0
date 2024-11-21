@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,13 +24,10 @@ import es.tfg.codeguard.service.LoginUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final LoginUserDetailsService userDetailsService;
-    private final JWTRequestFilter jwtRequestFilter;
-
-    public SecurityConfig(LoginUserDetailsService userDetailsService, JWTRequestFilter jwtRequestFilter) {
-        this.userDetailsService = userDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
-    }
+    @Autowired
+    private LoginUserDetailsService userDetailsService;
+    @Autowired
+    private JWTRequestFilter jwtRequestFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -64,9 +62,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-
     }
 }

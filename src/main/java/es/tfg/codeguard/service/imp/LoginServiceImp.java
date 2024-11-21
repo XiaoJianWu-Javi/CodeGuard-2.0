@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.tfg.codeguard.service.LoginService;
 import es.tfg.codeguard.model.dto.UserPassDTO;
@@ -13,13 +14,10 @@ import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 @Service
 public class LoginServiceImp implements LoginService {
 
-    private final UserPassRepository userPassRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public LoginServiceImp(UserPassRepository userPassRepository, PasswordEncoder passwordEncoder) {
-        this.userPassRepository = userPassRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private UserPassRepository userPassRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<UserPassDTO> loginUser(String userName, String userPassword) {
