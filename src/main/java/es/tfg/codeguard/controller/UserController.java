@@ -1,32 +1,21 @@
 package es.tfg.codeguard.controller;
 
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
+
+import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
 
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:4200")
 public interface UserController {
-
-    //TODO: Eliminar este método
-
-    @DeleteMapping("/deleteUser")
-    @Operation(summary = "Delete user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "User couldn't be deleted")
-    })
-    public ResponseEntity<UserDTO> deleteUser(@RequestParam(name = "UserName") String UserName);
 
     @DeleteMapping("/delete")
     @Operation(summary = "Delete user")
@@ -34,15 +23,15 @@ public interface UserController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "User couldn't be deleted")
     })
-    public ResponseEntity<UserDTO> deleteUser(Principal principal);
+    public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken);
 
-    @GetMapping("/{userName}")
+    @GetMapping("/{username}")
     @Operation(summary = "Get user by name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
-            @ApiResponse(responseCode = "404", description = "Any user found")
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("userName") String userName);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String username);
 
     @GetMapping("/allUsers")
     @Operation(summary = "Get all users")
@@ -55,8 +44,9 @@ public interface UserController {
     @Operation(summary = "Update user password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
-            @ApiResponse(responseCode = "304", description = "Password couldn't updated")
+            @ApiResponse(responseCode = "304", description = "Password couldn't de updated")
     })
-    public ResponseEntity<UserPassDTO> updateUser(@RequestParam(name = "userName") String userName, @RequestParam(name = "newUserPass") String newUserPass);
+    public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass);
+
 
 }

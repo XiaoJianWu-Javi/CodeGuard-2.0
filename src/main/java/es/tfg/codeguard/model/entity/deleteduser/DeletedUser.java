@@ -1,15 +1,15 @@
 package es.tfg.codeguard.model.entity.deleteduser;
 
-import es.tfg.codeguard.model.entity.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+
+import es.tfg.codeguard.model.entity.user.User;
 
 @Entity
 @Table(name = "DELETED_USER")
 public class DeletedUser extends User {
 
-    public DeletedUser() {
-    }
+    public DeletedUser() {}
 
     public DeletedUser(User user) {
         super();

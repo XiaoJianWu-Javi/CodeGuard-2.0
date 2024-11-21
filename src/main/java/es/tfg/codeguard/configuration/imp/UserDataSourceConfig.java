@@ -1,7 +1,5 @@
 package es.tfg.codeguard.configuration.imp;
 
-import es.tfg.codeguard.configuration.DataSourceConfig;
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -16,20 +14,23 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import jakarta.persistence.EntityManagerFactory;
+
+import es.tfg.codeguard.configuration.DataSourceConfig;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        basePackages = {"es.tfg.codeguard.model.repository.user"},
-        entityManagerFactoryRef = "entityManagerFactoryUsers",
-        transactionManagerRef = "transactionManagerUser"
-)
+@EnableJpaRepositories(basePackages = { "es.tfg.codeguard.model.repository.user" },
+                        entityManagerFactoryRef = "entityManagerFactoryUsers",
+                        transactionManagerRef = "transactionManagerUser")
 public class UserDataSourceConfig implements DataSourceConfig {
 
+    @Override
     @Primary
     @Bean(name = "usersDataSource")
-    @ConfigurationProperties(prefix = "spring.users.datasource") //Rename this prefix in .properties to something better
+    @ConfigurationProperties(prefix = "spring.users.datasource")
     public DataSource dataSource(){
+
         return DataSourceBuilder.create()
                 .url("jdbc:h2:mem:users")
                 .username("users")
@@ -38,11 +39,13 @@ public class UserDataSourceConfig implements DataSourceConfig {
                 .build();
     }
 
+    @Override
     @Primary
     @Bean(name = "entityManagerFactoryUsers")
     public LocalContainerEntityManagerFactoryBean entityManager(
             EntityManagerFactoryBuilder builder,
             @Qualifier("usersDataSource")DataSource dataSource) {
+
         return builder
                 .dataSource(dataSource)
                 .packages("es.tfg.codeguard.model.entity.user")
@@ -50,10 +53,12 @@ public class UserDataSourceConfig implements DataSourceConfig {
                 .build();
     }
 
+    @Override
     @Primary
     @Bean(name = "transactionManagerUser")
     public PlatformTransactionManager platformTransactionManager(
             @Qualifier("entityManagerFactoryUsers") EntityManagerFactory entityManagerFactory) {
+
         return new JpaTransactionManager(entityManagerFactory);
     }
 

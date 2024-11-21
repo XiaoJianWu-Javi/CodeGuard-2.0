@@ -1,6 +1,6 @@
 package es.tfg.codeguard.service;
 
-import es.tfg.codeguard.model.dto.JsonParserUserPassDTO;
+import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
@@ -36,11 +36,11 @@ public class RegisterServiceTest {
     @InjectMocks
     private RegisterServiceImp registerServiceImp;
 
-    private JsonParserUserPassDTO jsonParserDTO;
+    private AuthDTO jsonParserDTO;
 
     @BeforeEach
     void setup(){
-        jsonParserDTO = new JsonParserUserPassDTO("Gandalf", "cantpass");
+        jsonParserDTO = new AuthDTO("Gandalf", "cantpass");
     }
 
     @Test
