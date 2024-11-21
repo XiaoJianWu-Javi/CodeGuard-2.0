@@ -33,19 +33,19 @@ public class RegisterServiceImp implements RegisterService {
 
     public Optional<UserPassDTO> registerUser(JsonParserUserPassDTO jsonParserUserPassDTO) throws IllegalArgumentException{
 
-        if(userPassRepository.findById(jsonParserUserPassDTO.getUsername()).isEmpty()){
+        if(userPassRepository.findById(jsonParserUserPassDTO.username()).isEmpty()){
 
         }
 
-        if(userPassRepository.findById(jsonParserUserPassDTO.getUsername()).isPresent()){
+        if(userPassRepository.findById(jsonParserUserPassDTO.username()).isPresent()){
             return Optional.empty();
         }
 
         UserPass userPassEncript = new UserPass();
 
         try{
-            userPassEncript.setUsername(jsonParserUserPassDTO.getUsername());
-            userPassEncript.setHashedPass(passwordEncoder.encode(jsonParserUserPassDTO.getPassword()));
+            userPassEncript.setUsername(jsonParserUserPassDTO.username());
+            userPassEncript.setHashedPass(passwordEncoder.encode(jsonParserUserPassDTO.password()));
         }catch (IllegalArgumentException e){
             throw new UsernameNotValid("NOMBRE O CONTRASEÑA INCORRECTO");
         }
@@ -54,7 +54,7 @@ public class RegisterServiceImp implements RegisterService {
         userPassRepository.save(userPassEncript);
 
 
-        userRepository.save(new User(jsonParserUserPassDTO.getUsername()));
+        userRepository.save(new User(jsonParserUserPassDTO.username()));
 
 
         return Optional.of(new UserPassDTO(userPassEncript));

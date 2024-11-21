@@ -33,10 +33,7 @@ class AdminControllerTests {
 
     @BeforeEach
     void setup() {
-        userDTO = new UserDTO();
-        userDTO.setTester(false);
-        userDTO.setCreator(false);
-
+        userDTO = new UserDTO("", false, false, new java.util.ArrayList<>());
     }
 
 
