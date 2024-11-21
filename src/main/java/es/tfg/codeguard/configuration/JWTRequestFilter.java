@@ -2,6 +2,7 @@ package es.tfg.codeguard.configuration;
 
 import java.io.IOException;
 
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +25,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jwtService;
     @Autowired
-    private UserPassRepository userPassRepository;
+    private UserRepository userRepository;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,7 +36,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
             UserPass userPass = jwtService.extractUserPass(token);
 
-            if (userPass.getUsername().equals(userPassRepository.findByUsername(userPass.getUsername()).get().getUsername())) {
+            if (userPass.getUsername().equals(userRepository.findById(userPass.getUsername()).get().getUsername())) {
                 SecurityContextHolder.getContext()
                         .setAuthentication(new UsernamePasswordAuthenticationToken(userPass, null, null));
 
@@ -44,5 +46,3 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-
-

@@ -1,12 +1,5 @@
 package es.tfg.codeguard.service.imp;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.user.User;
@@ -15,30 +8,36 @@ import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.RegisterService;
 import es.tfg.codeguard.util.UsernameNotValidException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class RegisterServiceImp implements RegisterService {
 
-    //TODO: Debería utilizar la inyección de la Bean de PasswordEncoder
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private UserPassRepository userPassRepository;
     @Autowired
     private UserRepository userRepository;
 
     @Override
-    public Optional<UserPassDTO> registerUser(AuthDTO authDTO) throws IllegalArgumentException{
+    public Optional<UserPassDTO> registerUser(AuthDTO authDTO) throws IllegalArgumentException {
 
-        if(userPassRepository.findById(authDTO.username()).isPresent()){
+        if (userPassRepository.findById(authDTO.username()).isPresent()) {
             return Optional.empty();
         }
 
         UserPass userPassEncript = new UserPass();
 
-        try{
+        try {
             userPassEncript.setUsername(authDTO.username());
             userPassEncript.setHashedPass(passwordEncoder.encode(authDTO.password()));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new UsernameNotValidException("NOMBRE O CONTRASEÑA INCORRECTO");
         }
 

@@ -3,6 +3,7 @@ package es.tfg.codeguard.controller.imp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UserControllerImp implements UserController {
     private AdminService adminService;
 
     @Override
-    public ResponseEntity<UserDTO> deleteUser(String userToken) {
+    public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken) {
 
         return userService.deleteUser(userToken)
                 .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))

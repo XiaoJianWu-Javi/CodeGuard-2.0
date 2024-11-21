@@ -11,8 +11,10 @@ import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +39,9 @@ class UserServiceTests {
     private UserServiceImp userServiceImp;
 
     @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
     private JWTService jwtService;
 
     @Test
@@ -50,10 +55,12 @@ class UserServiceTests {
     @Test
     public void TestFineUserServiceDeleteMethod() {
 
+        when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
+
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
         userPass.setAdmin(false);
-        userPass.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
+        userPass.setHashedPass(passwordEncoder.encode("cantpass"));
 
         when(userPassRepository.findByUsername(userPass.getUsername())).thenReturn(Optional.of(userPass));
         when(jwtService.extractUserPass("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE")).thenReturn(userPass);

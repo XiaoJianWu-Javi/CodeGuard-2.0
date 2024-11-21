@@ -20,8 +20,8 @@ import es.tfg.codeguard.service.AdminService;
 @Service
 public class AdminServiceImp implements AdminService {
 
-    //TODO: Debería utilizar la inyección de la Bean de PasswordEncoder
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -32,7 +32,7 @@ public class AdminServiceImp implements AdminService {
     @Override
     public Optional<UserDTO> deleteUser(String username) {
 
-        if(userPassRepository.findById(username).isEmpty()){
+        if (userPassRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -47,9 +47,9 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     //TODO: Actualizar para permitir cambiar cualquier campo del usuario menos el id
-    public Optional<UserPassDTO> updateUser(String username, String newUserPass){
+    public Optional<UserPassDTO> updateUser(String username, String newUserPass) {
 
-        if(userPassRepository.findById(username).isEmpty()){
+        if (userPassRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -66,9 +66,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> grantTester(String username){
+    public Optional<UserDTO> grantTester(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -83,9 +83,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> grantCreator(String username){
+    public Optional<UserDTO> grantCreator(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -100,9 +100,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> revokeTester(String username){
+    public Optional<UserDTO> revokeTester(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -117,9 +117,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> revokeCreator(String username){
+    public Optional<UserDTO> revokeCreator(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -134,9 +134,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> grantAllPrivileges(String username){
+    public Optional<UserDTO> grantAllPrivileges(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 
@@ -149,9 +149,9 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public Optional<UserDTO> revokeAllPrivileges(String username){
+    public Optional<UserDTO> revokeAllPrivileges(String username) {
 
-        if(userRepository.findById(username).isEmpty()){
+        if (userRepository.findById(username).isEmpty()) {
             return Optional.empty();
         }
 

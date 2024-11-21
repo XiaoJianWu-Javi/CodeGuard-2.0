@@ -15,9 +15,9 @@ import es.tfg.codeguard.model.dto.ExerciseDTO;
 @Table(name = "EXERCISE")
 public class Exercise {
 
-    @Id 
+    @Id
     private String id;
-    @NotBlank 
+    @NotBlank
     private String title;
     @Lob @NotBlank
     private String description;
@@ -25,7 +25,7 @@ public class Exercise {
     private String creator;
     private String tester;
 
-    @Lob 
+    @Lob
     private String test;
     @Lob @ElementCollection
     private List<String> solutions; //TODO: Add username column
