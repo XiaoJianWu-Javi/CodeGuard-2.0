@@ -1,15 +1,11 @@
 package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
-import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
-import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
-import es.tfg.codeguard.service.imp.UserServiceImp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -108,6 +104,34 @@ public class ExerciseServiceTest {
         Optional<Exercise> exercise = exerciseRepository.findById("1");
 
         assertThat(Optional.of(exerciseExpected)).usingRecursiveComparison().isEqualTo(exercise);
+    }
+
+    @Test
+    public void testFailGetTestFromExercise(){
+        when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
+
+        Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
+
+        assertThat(tests).isEmpty();
+    }
+
+    @Test
+    public void testFineGetTestFromExercise(){
+
+        Exercise exerciseExpected = new Exercise();
+        exerciseExpected.setTitle("tittle1");
+        exerciseExpected.setDescription("description1");
+        exerciseExpected.setTest("tester1");
+        exerciseExpected.setCreator("creator1");
+        String expectedTests = "import org.junit.jupiter.api.Test;" +
+                "public TestTest{ @Test void test(){}}";
+        exerciseExpected.setTest(expectedTests);
+
+        when(exerciseRepository.findById("1")).thenReturn(Optional.of(exerciseExpected));
+
+        Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
+
+        assertThat(expectedTests).isEqualTo(tests.get());
     }
 
 }
