@@ -1,4 +1,4 @@
-package es.tfg.codeguard.compilerTest;
+package es.tfg.codeguard.util;
 
 public class CompilationErrorException extends Exception {
 

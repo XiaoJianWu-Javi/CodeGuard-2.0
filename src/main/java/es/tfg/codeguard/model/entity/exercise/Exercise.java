@@ -1,15 +1,10 @@
 package es.tfg.codeguard.model.entity.exercise;
 
-import java.util.List;
-
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import java.util.Map;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "EXERCISE")
@@ -27,8 +22,13 @@ public class Exercise {
 
     @Lob
     private String test;
-    @Lob @ElementCollection
-    private List<String> solutions; //TODO: Add username column
+    @Lob
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "EXERCISE_SOLUTIONS",
+            joinColumns = {@JoinColumn(name = "exercise_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "username")
+    @Column(name = "solution")
+    private Map<String, String> solutions;
 
     public Exercise() {}
 
@@ -36,7 +36,7 @@ public class Exercise {
         setId(id);
         setTitle(title);
         setDescription(description);
-        setSolutions(new java.util.ArrayList<>());
+        setSolutions(new java.util.HashMap<>());
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
@@ -95,15 +95,21 @@ public class Exercise {
         this.test = test;
     }
 
-    public List<String> getSolutions() {
-        return solutions;
+    public Map<String, String> getSolutions() {
+        return new java.util.HashMap<>(solutions);
     }
 
-    public void setSolutions(List<String> solutions) {
+    public void setSolutions(Map<String, String> solutions) {
+        checkSolutions(solutions);
         this.solutions = solutions;
     }
 
-    public void addSolution(String solution) {
-        solutions.add(solution);
+    public void addSolution(String username, String solution) {
+        solutions.put(username, solution);
+    }
+    
+    private void checkSolutions(Map<String, String> solutions) {
+    	for (Map.Entry<String, String> solution : solutions.entrySet()) 
+            if (solution == null) throw new IllegalArgumentException();
     }
 }

@@ -90,4 +90,8 @@ public class User {
         for (String exerciseID : exercises)
             if (exerciseID == null || exerciseID.isBlank()) throw new IllegalArgumentException();
     }
+
+    public void addExercise(String exerciseId) {
+        exercises.add(exerciseId);
+    }
 }
