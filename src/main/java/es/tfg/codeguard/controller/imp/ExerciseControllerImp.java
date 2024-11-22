@@ -25,13 +25,11 @@ public class ExerciseControllerImp implements ExerciseController {
 
     @Override
     public ResponseEntity<ExerciseDTO> getExercise(String exerciseId) {
-    	
-    	try {
-    		return new ResponseEntity<>(exerciseService.getExerciseById(exerciseId), HttpStatus.OK);
-    	} catch (ExerciseNotFoundException e) {
-    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
 
+		return exerciseService
+				.getExerciseById(exerciseId)
+				.map(exerciseDTO -> new ResponseEntity<>(exerciseDTO, HttpStatus.OK))
+				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Override

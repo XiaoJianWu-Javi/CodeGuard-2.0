@@ -19,13 +19,13 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
 
     @Override
-    public ExerciseDTO getExerciseById(String exerciseId) {
+    public Optional<ExerciseDTO> getExerciseById(String exerciseId) {
 
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	throw new ExerciseNotFoundException(exerciseId);
+        	return Optional.empty();
         }
 
-        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new).get();
+        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new);
 
     }
 

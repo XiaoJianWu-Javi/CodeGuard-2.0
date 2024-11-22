@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public interface ExerciseService {
 
-    public ExerciseDTO getExerciseById(String exerciseId);
+    public Optional<ExerciseDTO> getExerciseById(String exerciseId);
 
     public List<ExerciseDTO> getAllExercises();
     
