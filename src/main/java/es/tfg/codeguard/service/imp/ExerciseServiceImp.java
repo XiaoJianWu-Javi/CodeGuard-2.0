@@ -1,8 +1,11 @@
 package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
+import es.tfg.codeguard.model.dto.SolutionsDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.ExerciseService;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +19,13 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
 
     @Override
-    public Optional<ExerciseDTO> getExerciseById(String exerciseId) {
+    public ExerciseDTO getExerciseById(String exerciseId) {
 
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
-            return Optional.empty();
+        	throw new ExerciseNotFoundException(exerciseId);
         }
 
-        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new);
+        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new).get();
 
     }
 
@@ -31,6 +34,15 @@ public class ExerciseServiceImp implements ExerciseService {
 
         return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
 
-
     }
+
+	@Override
+	public SolutionsDTO getAllSolutionsForExercise(String exerciseId) {
+		
+		if (exerciseRepository.findById(exerciseId).isEmpty()) {
+        	throw new ExerciseNotFoundException(exerciseId);
+        }
+		
+		return exerciseRepository.findById(exerciseId).map(SolutionsDTO::new).get();
+	}
 }
