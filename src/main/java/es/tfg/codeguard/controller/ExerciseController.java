@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public interface ExerciseController {
             @ApiResponse(responseCode = "200", description = "Exercise found"),
             @ApiResponse(responseCode = "404", description = "Exercise not found")
     })
-    public ResponseEntity<ExerciseDTO> getExercise(@RequestParam String exerciseId);
+    public ResponseEntity<ExerciseDTO> getExercise(@PathVariable String exerciseId);
 
     @GetMapping("/allExercise")
     @Operation(summary = "Get all exercises")

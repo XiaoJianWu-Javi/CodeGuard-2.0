@@ -21,7 +21,7 @@ public interface UserController {
     @Operation(summary = "Delete user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "500", description = "User couldn't be deleted")
+            @ApiResponse(responseCode = "404", description = "User couldn't be found")
     })
     public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken);
 

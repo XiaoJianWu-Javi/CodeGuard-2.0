@@ -2,6 +2,7 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,18 @@ public class LoginServiceImp implements LoginService {
     @Autowired
     private UserPassRepository userPassRepository;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<UserPassDTO> loginUser(String userName, String userPassword) {
 
-        Optional<UserPass> userOp = userPassRepository.findByUsername(userName);
-
-        if(userOp.isEmpty()){
+        if(userRepository.findById(userName).isEmpty()){
             return Optional.empty();
         }
+
+        Optional<UserPass> userOp = userPassRepository.findByUsername(userName);
 
         UserPass user = userOp.get();
 

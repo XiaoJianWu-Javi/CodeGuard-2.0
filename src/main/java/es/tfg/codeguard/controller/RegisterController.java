@@ -22,9 +22,9 @@ public interface RegisterController {
     @PostMapping("")
     @Operation(summary = "Register new user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User registered succesfully"),
+            @ApiResponse(responseCode = "201", description = "User registered successfully"),
             @ApiResponse(responseCode = "400", description = "User name not valid"),
-            @ApiResponse(responseCode = "409", description = "User couldn`t be registered")
+            @ApiResponse(responseCode = "409", description = "User couldn't be registered")
     })
     public ResponseEntity<UserPassDTO> registerUser(@RequestBody AuthDTO authDTO);
 }
