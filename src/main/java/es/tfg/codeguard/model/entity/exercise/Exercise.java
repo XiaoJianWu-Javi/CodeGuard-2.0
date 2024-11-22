@@ -50,7 +50,6 @@ public class Exercise {
         setTitle(title);
         setDescription(description);
         setSolutions(new java.util.HashMap<>());
-        setCompilerClass();
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
@@ -65,6 +64,7 @@ public class Exercise {
 
     public void setId(String id) {
         this.id = id;
+        setCompilerClass();
     }
 
     public String getTitle() {
@@ -133,7 +133,8 @@ public class Exercise {
     }
     
     private void checkSolutions(Map<String, String> solutions) {
+        if (solutions == null) throw new IllegalArgumentException();
     	for (Map.Entry<String, String> solution : solutions.entrySet()) 
-            if (solution == null) throw new IllegalArgumentException();
+            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new IllegalArgumentException();
     }
 }
