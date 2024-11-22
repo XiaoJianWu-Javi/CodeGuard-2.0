@@ -33,4 +33,14 @@ public class ExerciseServiceImp implements ExerciseService {
 
 
     }
+
+    @Override
+    public Optional<String> getTestFromExercise(String exerciseId) {
+
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exerciseRepository.findById(exerciseId).get().getTest());
+    }
 }

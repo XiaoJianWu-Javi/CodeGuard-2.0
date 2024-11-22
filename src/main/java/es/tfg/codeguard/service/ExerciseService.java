@@ -13,4 +13,6 @@ public interface ExerciseService {
 
     public List<ExerciseDTO> getAllExercises();
 
+    public Optional<String> getTestFromExercise(String exerciseId);
+
 }
