@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.util.UsernameNotValidException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,72 +42,74 @@ class RegisterControllerTest {
 
         userPassDTO = new UserPassDTO("FirstUser", false);
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.of(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(userPassDTO);
 
-        Optional<UserPassDTO> resultado = registerService.registerUser(jsonParserDTO);
+        UserPassDTO resultado = registerService.registerUser(jsonParserDTO);
 
         ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.CREATED));
 
 
         jsonParserDTO = new AuthDTO("UserSecond", "9876");
         
         userPassDTO = new UserPassDTO("UserSecond", false);
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(userPassDTO);
 
         resultado = registerService.registerUser(jsonParserDTO);
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.CREATED));
 
 
         jsonParserDTO = new AuthDTO("User3", "bestUser123");
         
         userPassDTO = new UserPassDTO("User3", false);
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.ofNullable(userPassDTO));
+        when(registerService.registerUser(jsonParserDTO)).thenReturn(userPassDTO);
 
         resultado = registerService.registerUser(jsonParserDTO);
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.CREATED));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.CREATED));
 
     }
 
+    //TODO: TEST CONTRASEÑA VACIA O NULA Y NOMBRE YA USADO
     @Test
     void invalidRegisterUserTest() {
 
 
         jsonParserDTO = new AuthDTO("FirstUserñ", "1234");
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
+        when(registerService.registerUser(jsonParserDTO)).thenThrow(new UsernameNotValidException("Username not valid [" +jsonParserDTO.username() +"]"));
 
         ResponseEntity<UserPassDTO> esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
 
         jsonParserDTO = new AuthDTO("FirstUserñ", "1234");
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
+        when(registerService.registerUser(jsonParserDTO)).thenThrow(new UsernameNotValidException("Username not valid [" +jsonParserDTO.username() +"]"));
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
 
         jsonParserDTO = new AuthDTO("User3;;:.+", "bestUser123");
 
-        when(registerService.registerUser(jsonParserDTO)).thenReturn(Optional.empty());
+        when(registerService.registerUser(jsonParserDTO)).thenThrow(new UsernameNotValidException("Username not valid [" +jsonParserDTO.username() +"]"));
 
         esperado = registerControllerImp.registerUser(jsonParserDTO);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.CONFLICT));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 
     }
+
 
 }

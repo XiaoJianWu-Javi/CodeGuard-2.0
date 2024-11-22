@@ -2,6 +2,8 @@ package es.tfg.codeguard.model.entity.exercise;
 
 import java.util.List;
 
+import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
+import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -58,7 +60,7 @@ public class Exercise {
     }
 
     public void setTitle(String title) {
-        if (title == null || title.isBlank()) throw new IllegalArgumentException();
+        if (title == null || title.isBlank()) throw new ExerciseTitleNotValidException("Exercise title not valid [" +title +"]");
         this.title = title;
     }
 
@@ -67,7 +69,7 @@ public class Exercise {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) throw new IllegalArgumentException();
+        if (description == null || description.isBlank()) throw new ExerciseDescriptionNotValid("Exercise description not valid [" +description +"]");
         this.description = description;
     }
 

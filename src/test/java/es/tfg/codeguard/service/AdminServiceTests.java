@@ -9,6 +9,7 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.imp.AdminServiceImp;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class AdminServiceTests {
@@ -63,10 +65,11 @@ class AdminServiceTests {
 
     @Test
     void TestFailAdminServiceDeleteMethod() {
-        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> deleteUser = adminServiceImp.deleteUser("Gandalf");
-        assertThat(deleteUser).isEmpty();
+        when(adminServiceImp.deleteUser("iudgiqdqi????!=¿!02'31")).thenThrow(new UserNotFoundException("User not found [ iudgiqdqi????!=¿!02'31 ]"));
+
+        assertThrows(UserNotFoundException.class, () -> adminServiceImp.deleteUser("iudgiqdqi????!=¿!02'31"));
+
     }
 
     @Test

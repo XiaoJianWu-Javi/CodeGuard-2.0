@@ -44,6 +44,7 @@ public interface UserController {
     @Operation(summary = "Update user password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "304", description = "Password couldn't de updated")
     })
     public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass);

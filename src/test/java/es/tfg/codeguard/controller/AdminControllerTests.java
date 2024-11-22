@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +44,13 @@ class AdminControllerTests {
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void deleteUserByIdTest(String username) {
 
-        when(adminService.deleteUser(username)).thenReturn(Optional.ofNullable(userDTO));
+        when(adminService.deleteUser(username)).thenReturn(userDTO);
 
-        Optional<UserDTO> resultado = adminService.deleteUser(username);
+        UserDTO resultado = adminService.deleteUser(username);
 
         ResponseEntity<UserDTO> esperado = adminControllerImp.deleteUser(username);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
     }
 
@@ -57,7 +58,7 @@ class AdminControllerTests {
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void InvalidDeleteUserByIdTest(String username) {
 
-        when(adminService.deleteUser(username)).thenReturn(Optional.empty());
+        when(adminService.deleteUser(username)).thenThrow(new UserNotFoundException("User not found [" +username +"]"));
 
         ResponseEntity<UserDTO> esperado = adminControllerImp.deleteUser(username);
 
