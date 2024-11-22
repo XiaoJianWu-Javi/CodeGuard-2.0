@@ -1,6 +1,8 @@
 package es.tfg.codeguard.model.entity.exercise;
 
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import jakarta.persistence.CollectionTable;
@@ -38,6 +40,8 @@ public class Exercise {
     @MapKeyColumn(name = "username")
     @Column(name = "solution")
     private Map<String, String> solutions;
+    @Column(name = "compiler_class")
+    private String compilerClass;
 
     public Exercise() {}
 
@@ -46,6 +50,7 @@ public class Exercise {
         setTitle(title);
         setDescription(description);
         setSolutions(new java.util.HashMap<>());
+        setCompilerClass();
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
@@ -111,6 +116,16 @@ public class Exercise {
     public void setSolutions(Map<String, String> solutions) {
         checkSolutions(solutions);
         this.solutions = solutions;
+    }
+    
+    public String getCompilerClass() {
+        return compilerClass;
+    }
+
+    private void setCompilerClass() {
+    	this.compilerClass = Stream.of(this.getId().split("-"))
+    								.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+    								.collect(Collectors.joining());
     }
 
     public void addSolution(String username, String solution) {
