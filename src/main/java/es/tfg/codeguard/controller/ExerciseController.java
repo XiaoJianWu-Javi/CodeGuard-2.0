@@ -1,7 +1,7 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.SolutionsDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -49,5 +49,5 @@ public interface ExerciseController {
     		@ApiResponse(responseCode = "200", description = "Solutions found"),
     		@ApiResponse(responseCode = "404", description = "Exercise not found")
     })
-    public ResponseEntity<SolutionsDTO> getAllSolutionsForExercise(@PathVariable String exerciseId);
+    public ResponseEntity<SolutionDTO> getAllSolutionsForExercise(@PathVariable String exerciseId);
 }

@@ -1,7 +1,7 @@
 package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.SolutionsDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
 
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ public interface ExerciseService {
 
     public List<ExerciseDTO> getAllExercises();
     
-    public SolutionsDTO getAllSolutionsForExercise(String exerciseId);
+    public SolutionDTO getAllSolutionsForExercise(String exerciseId);
 
 }

@@ -1,7 +1,7 @@
 package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.SolutionsDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
@@ -37,12 +37,12 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
 	@Override
-	public SolutionsDTO getAllSolutionsForExercise(String exerciseId) {
+	public SolutionDTO getAllSolutionsForExercise(String exerciseId) {
 		
 		if (exerciseRepository.findById(exerciseId).isEmpty()) {
         	throw new ExerciseNotFoundException(exerciseId);
         }
 		
-		return exerciseRepository.findById(exerciseId).map(SolutionsDTO::new).get();
+		return exerciseRepository.findById(exerciseId).map(SolutionDTO::new).get();
 	}
 }
