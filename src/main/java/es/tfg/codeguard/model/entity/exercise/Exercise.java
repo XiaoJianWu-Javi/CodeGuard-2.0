@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.MapKeyColumn;
@@ -31,7 +32,7 @@ public class Exercise {
     @Lob
     private String test;
     @Lob
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "EXERCISE_SOLUTIONS", 
     	      joinColumns = {@JoinColumn(name = "exercise_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "username")
