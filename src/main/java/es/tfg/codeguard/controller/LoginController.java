@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 public interface LoginController {
 
     @PostMapping("")
-    @Operation(summary = "Update user password")
+    @Operation(summary = "Login user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
-            @ApiResponse(responseCode = "304", description = "Password couldn't updated")
+            @ApiResponse(responseCode = "200", description = "Login user successfully"),
+            @ApiResponse(responseCode = "304", description = "Couldn't login")
     })
     public ResponseEntity<UserPassDTO> loginUser(@RequestBody AuthDTO authDTO);
 
