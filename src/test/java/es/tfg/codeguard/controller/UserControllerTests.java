@@ -1,26 +1,29 @@
 package es.tfg.codeguard.controller;
 
-import es.tfg.codeguard.controller.imp.UserControllerImp;
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.service.AdminService;
-import es.tfg.codeguard.service.UserService;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import es.tfg.codeguard.controller.imp.UserControllerImp;
+import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.service.AdminService;
+import es.tfg.codeguard.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -42,15 +45,15 @@ class UserControllerTests {
     private UserPassDTO userPassDTO;
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
-    void deleteUserTest(String userName) {
+    void deleteUserTest(String username) {
 
-        userDTO = new UserDTO(userName, false, false, new ArrayList<>());
+        userDTO = new UserDTO(username, false, false, new ArrayList<>());
 
-        when(userService.deleteUser(userName)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.deleteUser(username)).thenReturn(Optional.ofNullable(userDTO));
 
-        Optional<UserDTO> resultado = userService.deleteUser(userName);
+        Optional<UserDTO> resultado = userService.deleteUser(username);
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(userName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(username);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
@@ -58,11 +61,11 @@ class UserControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
-    void InvalidDeleteUserTest(String userName) {
+    void InvalidDeleteUserTest(String username) {
 
-        when(userService.deleteUser(userName)).thenReturn(Optional.empty());
+        when(userService.deleteUser(username)).thenReturn(Optional.empty());
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(userName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(username);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
@@ -70,15 +73,15 @@ class UserControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"aaron_pp", "saul_af", "dani_ro", "diego_ra"})
-    void GetUserByIdTest(String userName) {
+    void GetUserByIdTest(String username) {
 
-        userDTO = new UserDTO(userName, false, false, new ArrayList<>());
+        userDTO = new UserDTO(username, false, false, new ArrayList<>());
 
-        when(userService.getUserById(userName)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.getUserById(username)).thenReturn(Optional.ofNullable(userDTO));
 
-        Optional<UserDTO> resultado = userService.getUserById(userName);
+        Optional<UserDTO> resultado = userService.getUserById(username);
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(userName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(username);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
 
@@ -86,11 +89,11 @@ class UserControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"huwhqñ", "duhqñidqidiq", "qi@dqiqdqdmiqdnqijdqjq", "#iuqdqdq", "uhy@", "_adam", "ad_am", "adam_#", "udhwqduqid???", "?¿ñ", "ññññññ", "adam#¿?!¡"})
-    void InvalidGetUserByIdTest(String userName) {
+    void InvalidGetUserByIdTest(String username) {
 
-        when(userService.getUserById(userName)).thenReturn(Optional.empty());
+        when(userService.getUserById(username)).thenReturn(Optional.empty());
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(userName);
+        ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(username);
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 

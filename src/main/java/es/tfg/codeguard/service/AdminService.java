@@ -1,30 +1,26 @@
 package es.tfg.codeguard.service;
 
+import java.util.Optional;
+
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 
-import java.util.Optional;
-
 public interface AdminService {
 
-    public abstract Optional<UserDTO> deleteUser(String userName);
+    public abstract Optional<UserDTO> deleteUser(String username);
 
-    public abstract Optional<UserPassDTO> updateUser(String userName, String newUserPass);
+    public abstract Optional<UserPassDTO> updateUser(String username, String newUserPass);
 
-    public abstract Optional<UserDTO> grantTester(String userName);
+    public abstract Optional<UserDTO> grantTester(String username);
 
-    public abstract Optional<UserDTO> grantCreator(String userName);
+    public abstract Optional<UserDTO> grantCreator(String username);
 
-    public abstract Optional<UserDTO> revokeTester(String userName);
+    public abstract Optional<UserDTO> revokeTester(String username);
 
-    public abstract Optional<UserDTO> revokeCreator(String userName);
+    public abstract Optional<UserDTO> revokeCreator(String username);
 
-    public abstract Optional<UserDTO> grantAllPrivileges(String userName);
+    public abstract Optional<UserDTO> grantAllPrivileges(String username);
 
-    public abstract Optional<UserDTO> revokeAllPrivileges(String userName);
-
-
-
-
+    public abstract Optional<UserDTO> revokeAllPrivileges(String username);
 
 }

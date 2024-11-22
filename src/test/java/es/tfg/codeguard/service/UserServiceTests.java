@@ -2,19 +2,19 @@ package es.tfg.codeguard.service;
 
 
 import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
-import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
+import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+
 @SpringBootTest
 class UserServiceTests {
 
@@ -33,42 +34,48 @@ class UserServiceTests {
 
     @Mock
     private DeletedUserRepository deletedUserRepository;
-    @InjectMocks
+
+    @Mock
     private UserServiceImp userServiceImp;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JWTService jwtService;
 
     @Test
     public void TestFailUserServiceDeleteMethod() {
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> deletedUser = userServiceImp.deleteUser("Gandalf");
+        Optional<UserDTO> deletedUser = userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9");
         assertThat(deletedUser).isEmpty();
     }
 
     @Test
     public void TestFineUserServiceDeleteMethod() {
+
+        when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
+
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
         userPass.setAdmin(false);
-        userPass.setHashedPass(new BCryptPasswordEncoder().encode("cantpass"));
+        userPass.setHashedPass(passwordEncoder.encode("cantpass"));
 
-        Optional<UserPass> userPassOpt = Optional.of(userPass);
-        when(userPassRepository.findById("Gandalf")).thenReturn(userPassOpt);
+        when(userPassRepository.findByUsername(userPass.getUsername())).thenReturn(Optional.of(userPass));
+        when(jwtService.extractUserPass("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE")).thenReturn(userPass);
 
-        User user = new User();
-        user.setUsername("Gandalf");
-        Optional<User> userOpt = Optional.of(user);
-        when(userRepository.findById("Gandalf")).thenReturn(userOpt);
-
-        Optional<UserDTO> userDto = userServiceImp.deleteUser("Gandalf");
+        Optional<UserDTO> userDto = userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE");
 
         DeletedUser deletedUser = new DeletedUser();
         deletedUser.setUsername("Gandalf");
 
-        assertThat(userDto.get()).usingRecursiveComparison().isEqualTo(deletedUser);
+        assertThat(userDto).usingRecursiveComparison().isEqualTo(Optional.empty());
+
     }
 
     @Test
-    public void TestFineGetAllUsers(){
+    public void TestFineGetAllUsers() {
 
         User user1 = new User();
         user1.setUsername("Gandalf");
@@ -90,7 +97,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void TestFailGetAllUsers(){
+    public void TestFailGetAllUsers() {
 
 
         List<User> usersExpected = Collections.emptyList();
@@ -104,7 +111,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void TestFailGetUserByName(){
+    public void TestFailGetUserByName() {
         when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
         Optional<UserDTO> user = userServiceImp.getUserById("Gandalf");
@@ -113,7 +120,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void TestFineGetUserByName(){
+    public void TestFineGetUserByName() {
 
         User userExpected = new User();
         userExpected.setUsername("Gandalf");

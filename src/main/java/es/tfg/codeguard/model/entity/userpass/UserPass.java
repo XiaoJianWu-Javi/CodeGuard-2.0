@@ -14,7 +14,7 @@ public class UserPass {
 
     @Id
     @NotBlank
-    @Pattern(regexp = USERNAME_REGEXP, message = "{wizardname.invalidPattern}")
+    @Pattern(regexp = USERNAME_REGEXP, message = "{username.invalidPattern}")
     private String username;
 
     @NotBlank
@@ -24,6 +24,13 @@ public class UserPass {
 
     public UserPass() {
         setAdmin(false);
+    }
+
+    public UserPass(String username, String hashedPass, boolean admin) {
+        this();
+        setUsername(username);
+        setHashedPass(hashedPass);
+        setAdmin(admin);
     }
 
     public String getUsername() {
