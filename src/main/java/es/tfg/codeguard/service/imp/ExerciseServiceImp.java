@@ -36,8 +36,6 @@ public class ExerciseServiceImp implements ExerciseService {
 
     }
 
-    }
-
     @Override
     public Optional<String> getTestFromExercise(String exerciseId) {
 
@@ -47,13 +45,13 @@ public class ExerciseServiceImp implements ExerciseService {
 
         return Optional.of(exerciseRepository.findById(exerciseId).get().getTest());
     }
-	@Override
-	public SolutionDTO getAllSolutionsForExercise(String exerciseId) {
+    @Override
+    public SolutionDTO getAllSolutionsForExercise(String exerciseId) {
 
-		if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	throw new ExerciseNotFoundException(exerciseId);
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            throw new ExerciseNotFoundException(exerciseId);
         }
 
-		return exerciseRepository.findById(exerciseId).map(SolutionDTO::new).get();
-	}
+        return exerciseRepository.findById(exerciseId).map(SolutionDTO::new).get();
+    }
 }

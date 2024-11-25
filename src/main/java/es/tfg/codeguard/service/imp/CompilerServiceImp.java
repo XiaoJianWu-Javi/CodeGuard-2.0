@@ -1,6 +1,7 @@
 package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.CompilerResponseDTO;
+import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.user.UserRepository;
@@ -38,7 +39,7 @@ public class CompilerServiceImp implements CompilerService {
     Logger logger = LoggerFactory.getLogger(CompilerServiceImp.class);
 
     @Override
-    public Optional<CompilerResponseDTO> compile(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
+    public Optional<CompilerResponseDTO> compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
         Optional<String> tests = exerciseService.getTestFromExercise(compileInfo.exerciseId());
         if(tests.isEmpty()){
             throw new TestCasesNotFoundException("You can't compile an spell without tests");
@@ -46,6 +47,36 @@ public class CompilerServiceImp implements CompilerService {
         String javaCode = compileInfo.exerciseSolution();
         String testCode = tests.get();
 
+        CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
+
+        if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
+            //Se guarda la solucion del usuario
+            //TODO: cambiar la implementacion del guardado de la solucion utilizando un servicio de userUpdate y exerciseUpdate
+            User user = userRepository.findById(jwtService.extractUserPass(userToken).getUsername()).get();
+            user.addExercise(compileInfo.exerciseId());
+            Exercise exercise = exerciseRepository.findById(compileInfo.exerciseId()).get();
+            exercise.addSolution(user.getUsername(), javaCode);
+            userRepository.save(user);
+            exerciseRepository.save(exercise);
+        }
+        return Optional.of(compilerResponse);
+    }
+
+    public Optional<CompilerResponseDTO> compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
+        String javaCode = compileInfo.exerciseSolution();
+        String testCode = compileInfo.exerciseTests();
+
+        CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
+
+        if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
+            //Se guardan los tests del ejercicio
+            //TODO: cambiar la implementacion del guardado de los test utilizando un servicio
+
+        }
+        return Optional.of(compilerResponse);
+    }
+
+    private CompilerResponseDTO compilator(String userToken, String javaCode, String testCode) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
         Pattern javaClassPattern = Pattern.compile("(?:public)(?:\\s+)(?:class)(?:\\s+)(\\w+)");
         Matcher appClassNameMatcher = javaClassPattern.matcher(javaCode);
         String javaClassName = "";
@@ -106,7 +137,7 @@ public class CompilerServiceImp implements CompilerService {
         if(compilationExitCode!=0){
             compilationExitMessage = "Compilation Error: " + compilationErrorMessage.toString();
             FileUtils.deleteDirectory(userFolder);
-            return Optional.of(new CompilerResponseDTO(compilationExitCode, compilationExitMessage, null, null));
+            return new CompilerResponseDTO(compilationExitCode, compilationExitMessage, null, null);
         }
 
         //JUnit 5 console execution
@@ -145,15 +176,7 @@ public class CompilerServiceImp implements CompilerService {
         String executionExitMessage = filterConsoleOutput(executionMessage.toString());
 
         FileUtils.deleteDirectory(userFolder);
-        //Se guarda la solucion del usuario
-        //TODO: cambiar la implementacion del guardado de la solucion utilizando un servicio de userUpdate y exerciseUpdate
-        User user = userRepository.findById(jwtService.extractUserPass(userToken).getUsername()).get();
-        user.addExercise(compileInfo.exerciseId());
-        Exercise exercise = exerciseRepository.findById(compileInfo.exerciseId()).get();
-        exercise.addSolution(user.getUsername(), javaCode);
-        userRepository.save(user);
-        exerciseRepository.save(exercise);
-        return Optional.of(new CompilerResponseDTO(compilationExitCode, compilationExitMessage, executionExitCode, executionExitMessage));
+        return new CompilerResponseDTO(compilationExitCode, compilationExitMessage, executionExitCode, executionExitMessage);
     }
 
     private String filterConsoleOutput(String consoleOutput){

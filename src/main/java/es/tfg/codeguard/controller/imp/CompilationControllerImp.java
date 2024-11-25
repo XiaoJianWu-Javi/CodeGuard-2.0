@@ -26,7 +26,7 @@ public class CompilationControllerImp implements CompilationController {
     public ResponseEntity<CompilerResponseDTO> compileCode(@RequestHeader("Authorization") String userToken, @RequestBody CompilerRequestDTO compilerRequestDTO) {
         try {
             //TODO: crear respuestas con codigos y mensajes personalizados dependiendo de lo que falle
-            return  compilerService.compile(userToken, compilerRequestDTO)
+            return  compilerService.compileSolution(userToken, compilerRequestDTO)
                     .map(compilerResponse -> new ResponseEntity<>(compilerResponse, HttpStatus.OK))
                     .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
         } catch (TestCasesNotFoundException e) {

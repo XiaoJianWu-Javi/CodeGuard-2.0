@@ -2,6 +2,7 @@ package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.CompilerRequestDTO;
 import es.tfg.codeguard.model.dto.CompilerResponseDTO;
+import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
 import es.tfg.codeguard.util.CompilationErrorException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
 
@@ -11,6 +12,9 @@ import java.util.concurrent.TimeoutException;
 
 public interface CompilerService {
 
-    public Optional<CompilerResponseDTO> compile(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
+    public Optional<CompilerResponseDTO> compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
+
+    //TODO: tiene que guardar al final los test tambien en los ejercicios
+    public Optional<CompilerResponseDTO> compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
 
 }

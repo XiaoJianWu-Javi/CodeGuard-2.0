@@ -54,7 +54,7 @@ public class CompilerServiceTests {
         );
 
         try {
-            Optional<CompilerResponseDTO> responseDTO = compilerService.compile(jwtToken, requestDTO);
+            Optional<CompilerResponseDTO> responseDTO = compilerService.compileSolution(jwtToken, requestDTO);
             assertThat(responseDTO.get().executionCode()).isEqualTo(0);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -69,7 +69,5 @@ public class CompilerServiceTests {
         } catch (TestCasesNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
