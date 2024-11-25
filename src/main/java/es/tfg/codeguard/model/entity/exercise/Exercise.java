@@ -1,15 +1,21 @@
 package es.tfg.codeguard.model.entity.exercise;
 
-import java.util.List;
-
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "EXERCISE")
@@ -27,8 +33,15 @@ public class Exercise {
 
     @Lob
     private String test;
-    @Lob @ElementCollection
-    private List<String> solutions; //TODO: Add username column
+    @Lob
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "EXERCISE_SOLUTIONS", 
+    	      joinColumns = {@JoinColumn(name = "exercise_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "username")
+    @Column(name = "solution")
+    private Map<String, String> solutions;
+    @Column(name = "compiler_class")
+    private String compilerClass;
 
     public Exercise() {}
 
@@ -36,7 +49,7 @@ public class Exercise {
         setId(id);
         setTitle(title);
         setDescription(description);
-        setSolutions(new java.util.ArrayList<>());
+        setSolutions(new java.util.HashMap<>());
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
@@ -51,6 +64,7 @@ public class Exercise {
 
     public void setId(String id) {
         this.id = id;
+        setCompilerClass();
     }
 
     public String getTitle() {
@@ -95,15 +109,32 @@ public class Exercise {
         this.test = test;
     }
 
-    public List<String> getSolutions() {
-        return solutions;
+    public Map<String, String> getSolutions() {
+        return new java.util.HashMap<>(solutions);
     }
 
-    public void setSolutions(List<String> solutions) {
+    public void setSolutions(Map<String, String> solutions) {
+        checkSolutions(solutions);
         this.solutions = solutions;
     }
+    
+    public String getCompilerClass() {
+        return compilerClass;
+    }
 
-    public void addSolution(String solution) {
-        solutions.add(solution);
+    private void setCompilerClass() {
+    	this.compilerClass = Stream.of(this.getId().split("-"))
+    								.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+    								.collect(Collectors.joining());
+    }
+
+    public void addSolution(String username, String solution) {
+        solutions.put(username, solution);
+    }
+    
+    private void checkSolutions(Map<String, String> solutions) {
+        if (solutions == null) throw new IllegalArgumentException();
+    	for (Map.Entry<String, String> solution : solutions.entrySet()) 
+            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new IllegalArgumentException();
     }
 }
