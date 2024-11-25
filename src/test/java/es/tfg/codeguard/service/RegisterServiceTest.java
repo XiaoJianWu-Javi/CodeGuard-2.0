@@ -7,6 +7,7 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.RegisterServiceImp;
+import es.tfg.codeguard.util.UsernameInUseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,11 +56,9 @@ public class RegisterServiceTest {
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
 
-        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
+        when(userPassRepository.findById("Gandalf")).thenThrow(UsernameInUseException.class);
 
-        Optional<UserPassDTO> userOpt = registerServiceImp.registerUser(jsonParserDTO);
-
-        assertThat(userOpt).isEmpty();
+        assertThrows(UsernameInUseException.class, () -> registerServiceImp.registerUser(jsonParserDTO));
     }
 
     @Test
@@ -67,11 +67,11 @@ public class RegisterServiceTest {
         when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserPassDTO> user = registerServiceImp.registerUser(jsonParserDTO);
+        UserPassDTO user = registerServiceImp.registerUser(jsonParserDTO);
 
-        UserPassDTO userPassDTO = new UserPassDTO("Gandalf", false);
-        Optional<UserPassDTO> userExpected = Optional.of(userPassDTO);
-        assertThat(userExpected).usingRecursiveComparison().isEqualTo(user);
+        UserPassDTO userPassExpected = new UserPassDTO("Gandalf", false);
+
+        assertThat(userPassExpected).usingRecursiveComparison().isEqualTo(user);
     }
 
 }

@@ -20,13 +20,15 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
 
     @Override
-    public Optional<ExerciseDTO> getExerciseById(String exerciseId) {
+    public ExerciseDTO getExerciseById(String exerciseId) {
 
-        if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	return Optional.empty();
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
+
+        if (exerciseOptional.isEmpty()) {
+            throw new ExerciseNotFoundException("Exercise not found [" +exerciseId +"]");
         }
 
-        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new);
+        return new ExerciseDTO(exerciseOptional.get());
 
     }
 
@@ -34,6 +36,7 @@ public class ExerciseServiceImp implements ExerciseService {
     public List<ExerciseDTO> getAllExercises() {
 
         return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+
 
     }
 

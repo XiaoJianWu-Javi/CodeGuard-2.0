@@ -8,7 +8,6 @@ import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -92,9 +91,7 @@ public class ExerciseServiceTest {
     public void testFailGetExerciseByName() {
         when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
 
-        Optional<ExerciseDTO> exercise = exerciseServiceImp.getExerciseById("1");
-
-        assertThat(exercise).isEmpty();
+        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getExerciseById("1"));
     }
 
     @Test

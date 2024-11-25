@@ -11,7 +11,7 @@ import es.tfg.codeguard.model.dto.SolutionDTO;
 @Service
 public interface ExerciseService {
 
-    public Optional<ExerciseDTO> getExerciseById(String exerciseId);
+    public ExerciseDTO getExerciseById(String exerciseId);
 
     public List<ExerciseDTO> getAllExercises();
     

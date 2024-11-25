@@ -5,6 +5,7 @@ import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.service.LoginService;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,21 +29,18 @@ public class LoginControllerImp implements LoginController {
     @Override
     public ResponseEntity<UserPassDTO> loginUser(@RequestBody AuthDTO authDTO) {
 
-        Optional<UserPassDTO> userOp = loginService.loginUser(authDTO.username(), authDTO.password());
+        UserPassDTO userPassDTO = null;
 
-        if (userOp.isEmpty()) {
-
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } else {
-
-            HttpHeaders headers = new HttpHeaders();
-
-            headers.set("Authorization", jwtService.createJwt(userOp.get()));
-
-            return ResponseEntity.ok().headers(headers).body(userOp.get());
-
+        try {
+            userPassDTO = loginService.loginUser(authDTO.username(), authDTO.password());
+        }catch (UserNotFoundException e){
+            return ResponseEntity.badRequest().build();
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", jwtService.createJwt(userPassDTO));
+
+        return ResponseEntity.ok().headers(headers).body(userPassDTO);
 
     }
 }

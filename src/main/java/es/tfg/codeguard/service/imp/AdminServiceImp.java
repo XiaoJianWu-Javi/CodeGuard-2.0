@@ -2,6 +2,8 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
+import es.tfg.codeguard.util.PasswordNotValidException;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,137 +32,156 @@ public class AdminServiceImp implements AdminService {
     private DeletedUserRepository deletedUserRepository;
 
     @Override
-    public Optional<UserDTO> deleteUser(String username) {
+    public UserDTO deleteUser(String username) {
 
-        if (userPassRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        DeletedUser user = new DeletedUser(userRepository.findById(username).get());
+        User user = userOptional.get();
 
-        deletedUserRepository.save(user);
+        DeletedUser deletedUser = new DeletedUser(user);
 
-        userRepository.delete(userRepository.findById(username).get());
+        deletedUserRepository.save(deletedUser);
 
-        return Optional.of(new UserDTO(user));
+        userRepository.delete(user);
+
+        return new UserDTO(deletedUser);
     }
 
     @Override
     //TODO: Actualizar para permitir cambiar cualquier campo del usuario menos el id
-    public Optional<UserPassDTO> updateUser(String username, String newUserPass) {
+    public UserPassDTO updateUser(String username, String newUserPass) {
 
-        if (userPassRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        UserPass newUser = userPassRepository.findById(username).get();
+        UserPass userPass = userPassRepository.findById(username).get();
 
-        newUser.setHashedPass(passwordEncoder.encode(newUserPass));
+        try{
+            checkPassword(newUserPass);
+            userPass.setHashedPass(passwordEncoder.encode(newUserPass));
+        }catch (PasswordNotValidException e){
+            throw new PasswordNotValidException("Password not valid [" +newUserPass +"]");
+        }
 
-        userPassRepository.save(newUser);
+        userPassRepository.save(userPass);
 
-        UserPassDTO userPassDTO = new UserPassDTO(newUser);
-
-        return Optional.of(userPassDTO);
+        return new UserPassDTO(userPass);
 
     }
 
     @Override
-    public Optional<UserDTO> grantTester(String username) {
+    public UserDTO grantTester(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
-
+        User user = userOptional.get();
         user.setTester(true);
+
         userRepository.save(user);
 
-        UserDTO userDTO = new UserDTO(user);
-
-        return Optional.of(userDTO);
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> grantCreator(String username) {
+    public UserDTO grantCreator(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
-
+        User user = userOptional.get();
         user.setCreator(true);
+
         userRepository.save(user);
 
-        UserDTO userDTO = new UserDTO(user);
-
-        return Optional.of(userDTO);
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> revokeTester(String username) {
+    public UserDTO revokeTester(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
-
+        User user = userOptional.get();
         user.setTester(false);
+
         userRepository.save(user);
 
-        UserDTO userDTO = new UserDTO(user);
-
-        return Optional.of(userDTO);
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> revokeCreator(String username) {
+    public UserDTO revokeCreator(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
-
+        User user = userOptional.get();
         user.setCreator(false);
+
         userRepository.save(user);
 
-        UserDTO userDTO = new UserDTO(user);
-
-        return Optional.of(userDTO);
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> grantAllPrivileges(String username) {
+    public UserDTO grantAllPrivileges(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
+        User user = userOptional.get();
         user.setTester(true);
         user.setCreator(true);
+
         userRepository.save(user);
 
-        return Optional.of(new UserDTO(user));
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> revokeAllPrivileges(String username) {
+    public UserDTO revokeAllPrivileges(String username) {
 
-        if (userRepository.findById(username).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" +username +"]");
         }
 
-        User user = userRepository.findById(username).get();
+        User user = userOptional.get();
         user.setTester(false);
         user.setCreator(false);
+
         userRepository.save(user);
 
-        return Optional.of(new UserDTO(user));
+        return new UserDTO(user);
+    }
+
+    private void checkPassword(String password){
+        if(password == null || password.equals("")) throw new PasswordNotValidException("Password not valid [ " +password +" ]");
     }
 
 }

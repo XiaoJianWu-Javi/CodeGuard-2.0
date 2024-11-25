@@ -1,5 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
+import es.tfg.codeguard.util.PasswordNotValidException;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,32 +29,42 @@ public class UserControllerImp implements UserController {
     @Override
     public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken) {
 
-        return userService.deleteUser(userToken)
-                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            return ResponseEntity.ok(userService.deleteUser(userToken));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
     }
 
     @Override
     public ResponseEntity<UserDTO> getUserById(@PathVariable String username) {
 
-        return userService.getUserById(username)
-                .map(userDTO -> new ResponseEntity<>(userDTO, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try{
+            return ResponseEntity.ok(userService.getUserById(username));
+        }catch (UserNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     @Override
     public ResponseEntity<List<UserDTO>> getAllUser() {
 
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    //TODO: Implementar UpdateUser en servicio usuario
     @Override
     public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass) {
 
-        return adminService.updateUser(username, newUserPass)
-                .map(userPassDTO -> new ResponseEntity<>(userPassDTO, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+        try{
+            return ResponseEntity.ok(adminService.updateUser(username,newUserPass));
+        }catch (UserNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }catch (PasswordNotValidException i){
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
 
         //TODO: Cambiar junto al serivcio cuando esté bien implementado el UPDATE
     }
