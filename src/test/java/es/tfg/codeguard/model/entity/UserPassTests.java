@@ -1,16 +1,14 @@
 package es.tfg.codeguard.model.entity;
 
-import java.util.NoSuchElementException;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.util.UsernameNotValidException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserPassTests {
@@ -24,21 +22,21 @@ class UserPassTests {
 
     @Test
     void notValidSetUsername() {
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername(null));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername(""));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("   "));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("\n"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a.aa2"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("2213"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a??asda"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a<a223e"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a1122"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("1aaa"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("aa324a1"));
-        assertThrows(IllegalArgumentException.class, () -> userPass.setUsername("a1231aa1"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername(null));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername(""));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("   "));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("\n"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a.aa2"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("2213"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a??asda"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a<a223e"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a1122"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("1aaa"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("aa324a1"));
+        assertThrows(UsernameNotValidException.class, () -> userPass.setUsername("a1231aa1"));
     }
-    
+
     @Test
     void validSetUsername() {
         assertDoesNotThrow(() -> userPass.setUsername("aaa1"));
@@ -54,7 +52,10 @@ class UserPassTests {
     @Test
     void getNotInitializedUsername() {
         assertThrows(NoSuchElementException.class, () -> userPass.getUsername());
-        try { userPass.setUsername(""); } catch(Exception e) {}
+        try {
+            userPass.setUsername("");
+        } catch (Exception e) {
+        }
         assertThrows(NoSuchElementException.class, () -> userPass.getUsername());
     }
 
@@ -64,7 +65,10 @@ class UserPassTests {
 
         userPass.setUsername(sarumanName);
         assertEquals(sarumanName, userPass.getUsername());
-        try { userPass.setUsername(""); } catch(Exception e) {}
+        try {
+            userPass.setUsername("");
+        } catch (Exception e) {
+        }
         assertEquals(sarumanName, userPass.getUsername());
     }
 
@@ -96,7 +100,10 @@ class UserPassTests {
     @Test
     void getNotInitializedHashedPass() {
         assertThrows(NoSuchElementException.class, () -> userPass.getHashedPass());
-        try { userPass.setHashedPass(""); } catch(Exception e) {}
+        try {
+            userPass.setHashedPass("");
+        } catch (Exception e) {
+        }
         assertThrows(NoSuchElementException.class, () -> userPass.getHashedPass());
     }
 
@@ -106,7 +113,10 @@ class UserPassTests {
 
         userPass.setHashedPass(hashedPass);
         assertEquals(hashedPass, userPass.getHashedPass());
-        try { userPass.setHashedPass(""); } catch(Exception e) {}
+        try {
+            userPass.setHashedPass("");
+        } catch (Exception e) {
+        }
         assertEquals(hashedPass, userPass.getHashedPass());
     }
 }

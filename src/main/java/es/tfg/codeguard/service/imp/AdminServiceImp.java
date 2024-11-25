@@ -64,6 +64,7 @@ public class AdminServiceImp implements AdminService {
         UserPass userPass = userPassRepository.findById(username).get();
 
         try{
+            checkPassword(newUserPass);
             userPass.setHashedPass(passwordEncoder.encode(newUserPass));
         }catch (PasswordNotValidException e){
             throw new PasswordNotValidException("Password not valid [" +newUserPass +"]");
@@ -177,6 +178,10 @@ public class AdminServiceImp implements AdminService {
         userRepository.save(user);
 
         return new UserDTO(user);
+    }
+
+    private void checkPassword(String password){
+        if(password == null || password.equals("")) throw new PasswordNotValidException("Password not valid [ " +password +" ]");
     }
 
 }
