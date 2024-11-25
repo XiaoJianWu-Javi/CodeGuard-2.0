@@ -20,7 +20,7 @@ public interface AdminController {
     @DeleteMapping("/delete")
     @Operation(summary = "Delete user by name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User deleted succsesfully"),
+            @ApiResponse(responseCode = "200", description = "User deleted successfully"),
             @ApiResponse(responseCode = "404", description = "User couldn't be deleted")
     })
     public ResponseEntity<UserDTO> deleteUser(@RequestParam String username);   //TODO: Salta error 403 (forbidden)
