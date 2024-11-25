@@ -12,9 +12,10 @@ import java.util.concurrent.TimeoutException;
 
 public interface CompilerService {
 
-    public Optional<CompilerResponseDTO> compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
+    public CompilerResponseDTO compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
 
     //TODO: tiene que guardar al final los test tambien en los ejercicios
+    //TODO: hacer controlador para este endpoint
     public Optional<CompilerResponseDTO> compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException;
 
 }

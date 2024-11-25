@@ -18,8 +18,12 @@ public interface CompilationController {
     @Operation(summary = "Compile the code")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Compiled successfully"),
-            @ApiResponse(responseCode = "400", description = "Can't compile"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")
+            @ApiResponse(responseCode = "400", description = "The class is not well written"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "408", description = "The exercise takes too much time to execute"),
+            @ApiResponse(responseCode = "500", description = "The server could not process the exercise")
     })
     public ResponseEntity<CompilerResponseDTO> compileCode(@RequestHeader("Authorization") String userToken, @RequestBody CompilerRequestDTO compilerRequestDTO);
+
+    //TODO: make a controller for the compile tests
 }

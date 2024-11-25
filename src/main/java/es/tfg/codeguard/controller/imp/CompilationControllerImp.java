@@ -26,28 +26,26 @@ public class CompilationControllerImp implements CompilationController {
     public ResponseEntity<CompilerResponseDTO> compileCode(@RequestHeader("Authorization") String userToken, @RequestBody CompilerRequestDTO compilerRequestDTO) {
         try {
             //TODO: crear respuestas con codigos y mensajes personalizados dependiendo de lo que falle
-            return  compilerService.compileSolution(userToken, compilerRequestDTO)
-                    .map(compilerResponse -> new ResponseEntity<>(compilerResponse, HttpStatus.OK))
-                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+            return  new ResponseEntity<CompilerResponseDTO>(compilerService.compileSolution(userToken, compilerRequestDTO), HttpStatus.OK);
         } catch (TestCasesNotFoundException e) {
             //Si no se encuentran los test para el ejercicio que quieres compilar
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ClassNotFoundException e){
             //Si no se encuentra el nombre de la clase en el código enviado o en los test
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (CompilationErrorException e) {
             //Si no se puede crear la carpeta para realizar la compilacion
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             //Si hay algun problema relacionado con la lectura o escritura en los archivos que se van a compilar
             //También si hay problemas con la ejecucion de procesos
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (TimeoutException e) {
             //Si la ejecución del ejercicio se va de tiempo o hay bucles infinitos
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
         } catch (InterruptedException e) {
-            //Si durante los 15 segundos se corta la ejecución del ejercicio salta la excepcion
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            //Si durante los 15 segundos de ejecucion del ejercicio algo mata el proceso que lo esta ejecutando
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -2,8 +2,6 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.CompilerResponseDTO;
 import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
-import es.tfg.codeguard.model.entity.exercise.Exercise;
-import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.service.JWTService;
@@ -39,7 +37,7 @@ public class CompilerServiceImp implements CompilerService {
     Logger logger = LoggerFactory.getLogger(CompilerServiceImp.class);
 
     @Override
-    public Optional<CompilerResponseDTO> compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
+    public CompilerResponseDTO compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
         Optional<String> tests = exerciseService.getTestFromExercise(compileInfo.exerciseId());
         if(tests.isEmpty()){
             throw new TestCasesNotFoundException("You can't compile an spell without tests");
@@ -52,14 +50,16 @@ public class CompilerServiceImp implements CompilerService {
         if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
             //Se guarda la solucion del usuario
             //TODO: cambiar la implementacion del guardado de la solucion utilizando un servicio de userUpdate y exerciseUpdate
+            /*
             User user = userRepository.findById(jwtService.extractUserPass(userToken).getUsername()).get();
             user.addExercise(compileInfo.exerciseId());
             Exercise exercise = exerciseRepository.findById(compileInfo.exerciseId()).get();
             exercise.addSolution(user.getUsername(), javaCode);
             userRepository.save(user);
             exerciseRepository.save(exercise);
+             */
         }
-        return Optional.of(compilerResponse);
+        return compilerResponse;
     }
 
     public Optional<CompilerResponseDTO> compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
@@ -161,6 +161,7 @@ public class CompilerServiceImp implements CompilerService {
         //Se esperan 15 segundos antes de destruir el proceso para evitar bucles infinitos
         if(!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)){
             testExecutorProcess.destroy();
+            FileUtils.deleteDirectory(userFolder);
             throw new TimeoutException("Exceeded the 15 seconds time limit");
         }else{
             try(BufferedReader br = new BufferedReader(new InputStreamReader(testExecutorProcess.getInputStream()))){
