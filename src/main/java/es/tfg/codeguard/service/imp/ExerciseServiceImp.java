@@ -2,9 +2,12 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
+import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +38,16 @@ public class ExerciseServiceImp implements ExerciseService {
 
         return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
 
+
     }
+
+	@Override
+	public SolutionDTO getAllSolutionsForExercise(String exerciseId) {
+
+		if (exerciseRepository.findById(exerciseId).isEmpty()) {
+        	throw new ExerciseNotFoundException(exerciseId);
+        }
+
+		return exerciseRepository.findById(exerciseId).map(SolutionDTO::new).get();
+	}
 }

@@ -3,6 +3,17 @@ package es.tfg.codeguard.model.entity;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,5 +83,36 @@ class ExerciseTests {
         exercise.setCreator("Saruman");
         assertEquals(expected, exercise.getTester());
         assertEquals(expected, exercise.getCreator());
+    }
+
+    @Test
+    void setAndGetCompilerClass() {
+        assertNotNull(exercise.getCompilerClass());
+        assertNotEquals("", exercise.getCompilerClass());
+
+        String expected = "TestClass";
+        exercise.setId("test-class");
+        assertEquals(expected, exercise.getCompilerClass());
+    }
+
+    @Test
+    void setAndGetSolutions() {
+        assertEquals(0, exercise.getSolutions().size()); //Not Initialized
+
+        assertThrows(IllegalArgumentException.class,
+                            () -> exercise.setSolutions(null));
+        assertThrows(IllegalArgumentException.class,
+                            () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, null);}}));
+        assertThrows(IllegalArgumentException.class,
+                            () -> exercise.setSolutions(new HashMap<String, String>() {{put("", null);}}));
+        assertThrows(IllegalArgumentException.class,
+                            () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, "");}}));
+        assertThrows(IllegalArgumentException.class,
+                            () -> exercise.setSolutions(new HashMap<String, String>() {{put("", ""); put(null, "");}}));
+
+        Map<String, String> original = new HashMap<String, String>() {{put("", ""); put("", "");}};
+        assertDoesNotThrow(() -> exercise.setSolutions(original));
+        assertEquals(original.size(), exercise.getSolutions().size());
+        assertArrayEquals(original.entrySet().toArray(), exercise.getSolutions().entrySet().toArray());
     }
 }
