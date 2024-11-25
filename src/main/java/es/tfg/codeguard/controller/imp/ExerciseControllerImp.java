@@ -41,10 +41,20 @@ public class ExerciseControllerImp implements ExerciseController {
     }
 
 	@Override
-	public ResponseEntity<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
-
+	public ResponseEntity<List<SolutionDTO>> getAllSolutionsForExercise(String exerciseId) {
+		
 		try {
     		return new ResponseEntity<>(exerciseService.getAllSolutionsForExercise(exerciseId), HttpStatus.OK);
+    	} catch (ExerciseNotFoundException e) {
+    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+	}
+
+	@Override
+	public ResponseEntity<SolutionDTO> getUserSolutionForExercise(String username, String exerciseId) {
+		
+		try {
+    		return new ResponseEntity<>(exerciseService.getUserSolutionForExercise(username, exerciseId), HttpStatus.OK);
     	} catch (ExerciseNotFoundException e) {
     		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
