@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
+import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import jakarta.persistence.CollectionTable;
@@ -135,8 +136,8 @@ public class Exercise {
     }
 
     private void checkSolutions(Map<String, String> solutions) {
-        if (solutions == null) throw new IllegalArgumentException();
+        if (solutions == null) throw new ExerciseSolutionNotValidException("Solution not valid [ null ]");
     	for (Map.Entry<String, String> solution : solutions.entrySet())
-            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new IllegalArgumentException();
+            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new ExerciseSolutionNotValidException("Solution not valid [ key: " +solution.getKey() +", value: " +solution.getValue() +" ]");
     }
 }

@@ -2,6 +2,7 @@ package es.tfg.codeguard.model.entity;
 
 import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
+import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -99,15 +100,15 @@ class ExerciseTests {
     void setAndGetSolutions() {
         assertEquals(0, exercise.getSolutions().size()); //Not Initialized
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(null));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, null);}}));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put("", null);}}));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, "");}}));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put("", ""); put(null, "");}}));
 
         Map<String, String> original = new HashMap<String, String>() {{put("", ""); put("", "");}};
