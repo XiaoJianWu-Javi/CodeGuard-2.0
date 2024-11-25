@@ -1,13 +1,12 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.controller.imp.ExerciseControllerImp;
-import es.tfg.codeguard.controller.imp.UserControllerImp;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.ExerciseService;
-import es.tfg.codeguard.service.UserService;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -57,21 +55,21 @@ public class ExerciseControllerTest {
 
         ExerciseDTO exerciseDTO = new ExerciseDTO(exerciseId, "title" + exerciseId, "description" + exerciseId, "tester" + exerciseId, "creator" + exerciseId);
 
-        when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.ofNullable(exerciseDTO));
+        when(exerciseService.getExerciseById(exerciseId)).thenReturn(exerciseDTO);
 
-        Optional<ExerciseDTO> resultado = exerciseService.getExerciseById(exerciseId);
+        ExerciseDTO resultado = exerciseService.getExerciseById(exerciseId);
 
         ResponseEntity<ExerciseDTO> esperado = exerciseControllerImp.getExercise(exerciseId);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"1p", "2ter", "t30", "a4", "54uri"})
-    void InvalidGetExerciseByIdTest(String exerciseId) {
+    void NotFoundExerciseById(String exerciseId) {
 
-        when(exerciseService.getExerciseById(exerciseId)).thenReturn(Optional.empty());
+        when(exerciseService.getExerciseById(exerciseId)).thenThrow(new ExerciseNotFoundException("Exercise not found [" + exerciseId + "]"));
 
         ResponseEntity<ExerciseDTO> esperado = exerciseControllerImp.getExercise(exerciseId);
 

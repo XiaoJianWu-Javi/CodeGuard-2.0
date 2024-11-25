@@ -3,6 +3,9 @@ package es.tfg.codeguard.service.imp;
 import java.util.Optional;
 
 import es.tfg.codeguard.model.repository.user.UserRepository;
+import es.tfg.codeguard.util.IncorrectPasswordException;
+import es.tfg.codeguard.util.UserNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +26,21 @@ public class LoginServiceImp implements LoginService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<UserPassDTO> loginUser(String userName, String userPassword) {
+    public UserPassDTO loginUser(String userName, String userPassword) {
 
         if(userRepository.findById(userName).isEmpty()){
-            return Optional.empty();
+            throw new UserNotFoundException("User not found [" +userName +"]");
         }
 
         Optional<UserPass> userOp = userPassRepository.findByUsername(userName);
 
         UserPass user = userOp.get();
 
-        if(passwordEncoder.matches(userPassword, user.getHashedPass())){
-            return Optional.of(new UserPassDTO(user));
+        if(!passwordEncoder.matches(userPassword, user.getHashedPass())){
+            throw new IncorrectPasswordException("Incorrect password [" +userPassword +"for user [" +userName +"]");
         }
 
-        return Optional.empty();
+        return new UserPassDTO(user);
 
     }
 }

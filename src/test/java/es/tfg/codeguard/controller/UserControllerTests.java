@@ -1,31 +1,32 @@
 package es.tfg.codeguard.controller;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
+import es.tfg.codeguard.controller.imp.UserControllerImp;
+import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.repository.user.UserRepository;
+import es.tfg.codeguard.service.AdminService;
+import es.tfg.codeguard.service.UserService;
+import es.tfg.codeguard.util.PasswordNotValidException;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
-import es.tfg.codeguard.controller.imp.UserControllerImp;
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.service.AdminService;
-import es.tfg.codeguard.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,24 +39,28 @@ class UserControllerTests {
     @Mock
     private AdminService adminService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private UserControllerImp userControllerImp;
 
     private UserDTO userDTO;
     private UserPassDTO userPassDTO;
+
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void deleteUserTest(String username) {
 
         userDTO = new UserDTO(username, false, false, new ArrayList<>());
 
-        when(userService.deleteUser(username)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.deleteUser(username)).thenReturn(userDTO);
 
-        Optional<UserDTO> resultado = userService.deleteUser(username);
+        UserDTO resultado = userService.deleteUser(username);
 
         ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(username);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
     }
 
@@ -63,7 +68,7 @@ class UserControllerTests {
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void InvalidDeleteUserTest(String username) {
 
-        when(userService.deleteUser(username)).thenReturn(Optional.empty());
+        when(userService.deleteUser(username)).thenThrow(new UserNotFoundException("User not found [ " + username + " ]"));
 
         ResponseEntity<UserDTO> esperado = userControllerImp.deleteUser(username);
 
@@ -77,13 +82,13 @@ class UserControllerTests {
 
         userDTO = new UserDTO(username, false, false, new ArrayList<>());
 
-        when(userService.getUserById(username)).thenReturn(Optional.ofNullable(userDTO));
+        when(userService.getUserById(username)).thenReturn(userDTO);
 
-        Optional<UserDTO> resultado = userService.getUserById(username);
+        UserDTO resultado = userService.getUserById(username);
 
         ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(username);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
     }
 
@@ -91,7 +96,7 @@ class UserControllerTests {
     @ValueSource(strings = {"huwhqñ", "duhqñidqidiq", "qi@dqiqdqdmiqdnqijdqjq", "#iuqdqdq", "uhy@", "_adam", "ad_am", "adam_#", "udhwqduqid???", "?¿ñ", "ññññññ", "adam#¿?!¡"})
     void InvalidGetUserByIdTest(String username) {
 
-        when(userService.getUserById(username)).thenReturn(Optional.empty());
+        when(userService.getUserById(username)).thenThrow(new UserNotFoundException("Username not valid [" + username + "]"));
 
         ResponseEntity<UserDTO> esperado = userControllerImp.getUserById(username);
 
@@ -105,7 +110,7 @@ class UserControllerTests {
         UserDTO user1 = new UserDTO("user1", false, false, new ArrayList<>());
         UserDTO user2 = new UserDTO("user2", false, false, new ArrayList<>());
         UserDTO user3 = new UserDTO("user3", false, false, new ArrayList<>());
-        
+
 
         when(userService.getAllUsers()).thenReturn(new ArrayList<UserDTO>(Arrays.asList()));
 
@@ -153,86 +158,82 @@ class UserControllerTests {
 
         userPassDTO = new UserPassDTO("FirstUser", false);
 
-        when(adminService.updateUser("FirstUser", "1234new")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(adminService.updateUser("FirstUser", "1234new")).thenReturn(userPassDTO);
 
-        Optional<UserPassDTO> resultado = adminService.updateUser("FirstUser", "1234new");
+        UserPassDTO resultado = adminService.updateUser("FirstUser", "1234new");
 
         ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "1234new");
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
 
         userPassDTO = new UserPassDTO("SecondUser", false);
 
-        when(adminService.updateUser("SecondUser", "9876new")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(adminService.updateUser("SecondUser", "9876new")).thenReturn(userPassDTO);
 
         resultado = adminService.updateUser("SecondUser", "9876new");
 
         esperado = userControllerImp.updateUser("SecondUser", "9876new");
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
 
         userPassDTO = new UserPassDTO("ThirdtUser", false);
 
-        when(adminService.updateUser("ThirdtUser", "newpass")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(adminService.updateUser("ThirdtUser", "newpass")).thenReturn(userPassDTO);
 
         resultado = adminService.updateUser("ThirdtUser", "newpass");
 
         esperado = userControllerImp.updateUser("ThirdtUser", "newpass");
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
 
         userPassDTO = new UserPassDTO("FourthUser", false);
 
-        when(adminService.updateUser("FourthUser", "newhola1234")).thenReturn(Optional.ofNullable(userPassDTO));
+        when(adminService.updateUser("FourthUser", "newhola1234")).thenReturn(userPassDTO);
 
         resultado = adminService.updateUser("FourthUser", "newhola1234");
 
         esperado = userControllerImp.updateUser("FourthUser", "newhola1234");
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado.get(), HttpStatus.OK));
+        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
     }
 
     @Test
     void InvalidUpdateUserPasswordTest() {
 
-        when(adminService.updateUser("FirstUser", "new1234;;")).thenReturn(Optional.empty());
-
-        Optional<UserPassDTO> resultado = adminService.updateUser("FirstUser", "new1234;;");
-
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "new1234;;");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+        User user = new User();
+        user.setUsername("FirstUser");
+        user.setTester(false);
+        user.setCreator(false);
+        user.setExercises(List.of());
 
 
-        when(adminService.updateUser("SecondUser", "newhola1234ºº")).thenReturn(Optional.empty());
+        when(adminService.updateUser("FirstUser", "new1234;;")).thenThrow(new UserNotFoundException("User not found [ FirstUser ]"));
 
-        resultado = adminService.updateUser("SecondUser", "newhola1234ºº");
-
-        esperado = userControllerImp.updateUser("SecondUser", "newhola1234ºº");
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+        assertThrows(UserNotFoundException.class, () -> adminService.updateUser("FirstUser", "new1234;;"));
 
 
-        when(adminService.updateUser("ThirdUser", "ªªaaaa")).thenReturn(Optional.empty());
+        user.setUsername("FirstUser");
 
-        resultado = adminService.updateUser("ThirdUser", "ªªaaa");
+        when(adminService.updateUser("SecondUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ ]"));
 
-        esperado = userControllerImp.updateUser("ThirdUser", "ªªaaaa");
+        assertThrows(PasswordNotValidException.class, () -> adminService.updateUser("SecondUser", ""));
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+        user.setUsername("FirstUser");
+
+        when(adminService.updateUser("ThirdUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ null ]"));
 
 
-        when(adminService.updateUser("FourthUser", "juitenDiten,,,,")).thenReturn(Optional.empty());
+        assertThrows(PasswordNotValidException.class, () -> adminService.updateUser("ThirdUser", ""));
 
-        resultado = adminService.updateUser("FourthUser", "juitenDiten,,,,");
+        user.setUsername("FirstUser");
 
-        esperado = userControllerImp.updateUser("FourthUser", "juitenDiten,,,,");
+        when(adminService.updateUser("juitenDiten,ºªªaaa,,,", "1234")).thenThrow(new UserNotFoundException("User not found exception [ juitenDiten,ºªªaaa,,, ]"));
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_MODIFIED));
+        assertThrows(UserNotFoundException.class, () -> adminService.updateUser("juitenDiten,ºªªaaa,,,", "1234"));
 
     }
 

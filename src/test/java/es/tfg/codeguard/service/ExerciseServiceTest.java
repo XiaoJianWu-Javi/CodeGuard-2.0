@@ -1,15 +1,11 @@
 package es.tfg.codeguard.service;
 
-import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
-import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
-import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
-import es.tfg.codeguard.service.imp.UserServiceImp;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -87,11 +84,9 @@ public class ExerciseServiceTest {
 
     @Test
     public void TestFailGetUserByName() {
-        when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
+        when(exerciseRepository.findById("1")).thenThrow(ExerciseNotFoundException.class);
 
-        Optional<ExerciseDTO> exercise = exerciseServiceImp.getExerciseById("1");
-
-        assertThat(exercise).isEmpty();
+        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getExerciseById("1"));
     }
 
     @Test
@@ -105,9 +100,9 @@ public class ExerciseServiceTest {
 
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exerciseExpected));
 
-        Optional<Exercise> exercise = exerciseRepository.findById("1");
+        Exercise exercise = exerciseRepository.findById("1").get();
 
-        assertThat(Optional.of(exerciseExpected)).usingRecursiveComparison().isEqualTo(exercise);
+        assertThat(exerciseExpected).usingRecursiveComparison().isEqualTo(exercise);
     }
 
 }

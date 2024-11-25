@@ -2,6 +2,7 @@ package es.tfg.codeguard.service;
 
 
 import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
@@ -9,8 +10,12 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,8 +27,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceTests {
 
     @Mock
@@ -35,7 +42,7 @@ class UserServiceTests {
     @Mock
     private DeletedUserRepository deletedUserRepository;
 
-    @Mock
+    @InjectMocks
     private UserServiceImp userServiceImp;
 
     @Mock
@@ -46,31 +53,41 @@ class UserServiceTests {
 
     @Test
     public void TestFailUserServiceDeleteMethod() {
-        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> deletedUser = userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9");
-        assertThat(deletedUser).isEmpty();
+        UserPass userPass = new UserPass();
+        userPass.setUsername("Saruman");
+        userPass.setAdmin(false);
+
+        when(jwtService.extractUserPass("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9")).thenReturn(userPass);
+
+        assertThrows(UserNotFoundException.class, () -> userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9"));
     }
 
     @Test
     public void TestFineUserServiceDeleteMethod() {
 
-        when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
+        //when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
 
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
-        userPass.setAdmin(false);
-        userPass.setHashedPass(passwordEncoder.encode("cantpass"));
 
-        when(userPassRepository.findByUsername(userPass.getUsername())).thenReturn(Optional.of(userPass));
+        User user = new User();
+        user.setUsername("Gandalf");
+
+
+        UserDTO userDTOMock = new UserDTO("Gandalf", false, false, List.of());
+
+        when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
+
         when(jwtService.extractUserPass("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE")).thenReturn(userPass);
 
-        Optional<UserDTO> userDto = userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE");
+
+        UserDTO userDto = userServiceImp.deleteUser("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyMTE0MjExLCJleHAiOjE3MzIyMDA2MTF9.crcagQMEN62awSn258JlKmknhFHRDOH_Jgjvqu0G7qE");
 
         DeletedUser deletedUser = new DeletedUser();
         deletedUser.setUsername("Gandalf");
 
-        assertThat(userDto).usingRecursiveComparison().isEqualTo(Optional.empty());
+        assertThat(userDto).usingRecursiveComparison().isEqualTo(new UserDTO(deletedUser));
 
     }
 
@@ -112,11 +129,9 @@ class UserServiceTests {
 
     @Test
     public void TestFailGetUserByName() {
-        when(userRepository.findById("Gandalf")).thenReturn(Optional.empty());
+        when(userRepository.findById("d2hoqdhqiuhduwd")).thenReturn(Optional.empty());
 
-        Optional<UserDTO> user = userServiceImp.getUserById("Gandalf");
-
-        assertThat(user).isEmpty();
+        assertThrows(UserNotFoundException.class, () -> userServiceImp.getUserById("d2hoqdhqiuhduwd"));
     }
 
     @Test

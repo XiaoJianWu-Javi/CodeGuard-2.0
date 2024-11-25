@@ -7,6 +7,8 @@ import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.RegisterService;
+import es.tfg.codeguard.util.PasswordNotValidException;
+import es.tfg.codeguard.util.UsernameInUseException;
 import es.tfg.codeguard.util.UsernameNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,27 +28,29 @@ public class RegisterServiceImp implements RegisterService {
     private UserRepository userRepository;
 
     @Override
-    public Optional<UserPassDTO> registerUser(AuthDTO authDTO) throws IllegalArgumentException {
+    public UserPassDTO registerUser(AuthDTO authDTO) {
 
         if (userPassRepository.findById(authDTO.username()).isPresent()) {
-            return Optional.empty();
+            throw new UsernameInUseException("Username is already in use [" +authDTO.username() +"]");
         }
 
-        UserPass userPassEncript = new UserPass();
+        UserPass userPass = new UserPass();
+        userPass.setAdmin(false);
 
         try {
-            userPassEncript.setUsername(authDTO.username());
-            userPassEncript.setHashedPass(passwordEncoder.encode(authDTO.password()));
-        } catch (IllegalArgumentException e) {
-            throw new UsernameNotValidException("NOMBRE O CONTRASEÑA INCORRECTO");
+            userPass.setUsername(authDTO.username());
+            userPass.setHashedPass(passwordEncoder.encode(authDTO.password()));
+        } catch (UsernameNotValidException e) {
+            throw new UsernameNotValidException("Username not valid [" +authDTO.username() +"]");
+        } catch (PasswordNotValidException i){
+            throw new PasswordNotValidException("Password not valid [" +authDTO.password() +"]");
         }
 
-        userPassEncript.setAdmin(false);
-        userPassRepository.save(userPassEncript);
+        userPassRepository.save(userPass);
 
         userRepository.save(new User(authDTO.username()));
 
-        return Optional.of(new UserPassDTO(userPassEncript));
+        return new UserPassDTO(userPass);
 
     }
 
