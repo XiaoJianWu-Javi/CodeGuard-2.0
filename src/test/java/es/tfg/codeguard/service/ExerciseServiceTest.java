@@ -102,12 +102,14 @@ public class ExerciseServiceTest {
         exercise.setDescription("description1");
         exercise.setTest("tester1");
         exercise.setCreator("creator1");
+        
 
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
 
-        Optional<ExerciseDTO> actualExercise = exerciseServiceImp.getExerciseById("1");
+        ExerciseDTO expectedExercise = new ExerciseDTO(exercise);
+        ExerciseDTO actualExercise = exerciseServiceImp.getExerciseById("1");
 
-        assertThat(Optional.of(new ExerciseDTO(exercise))).usingRecursiveComparison().isEqualTo(actualExercise);
+        assertThat(expectedExercise).usingRecursiveComparison().isEqualTo(actualExercise);
     }
     
     @Test

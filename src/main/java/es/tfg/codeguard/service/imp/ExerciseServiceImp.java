@@ -75,7 +75,7 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
     @Override
-    public void addTestToExercise(SolutionDTO solution, String test) {
+    public void addTestToExercise(SolutionDTO solution, String test, String placeholder) {
 
     	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
         	throw new ExerciseNotFoundException(solution.exerciseId());
@@ -88,4 +88,6 @@ public class ExerciseServiceImp implements ExerciseService {
 		
 		exerciseRepository.save(exercise);
     }
+
+
 }

@@ -21,5 +21,5 @@ public interface ExerciseService {
 
     public void addSolutionToExercise(SolutionDTO solution);
 
-    public void addTestToExercise(SolutionDTO solution, String test);
+    public void addTestToExercise(SolutionDTO solution, String test, String placeholder);
 }

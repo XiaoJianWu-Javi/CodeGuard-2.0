@@ -45,6 +45,8 @@ public class Exercise {
     private Map<String, String> solutions;
     @Column(name = "compiler_class")
     private String compilerClass;
+    @Lob
+    private String placeholder;
 
     public Exercise() {}
 
@@ -53,12 +55,14 @@ public class Exercise {
         setTitle(title);
         setDescription(description);
         setSolutions(new java.util.HashMap<>());
+        setPlaceholder("");
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
         this(exerciseDTO.id(), exerciseDTO.title(), exerciseDTO.description());
         setTester(exerciseDTO.tester());
         setCreator(exerciseDTO.creator());
+        setPlaceholder(exerciseDTO.placeholder());
     }
 
     public String getId() {
@@ -133,6 +137,14 @@ public class Exercise {
 
     public void addSolution(String username, String solution) {
         solutions.put(username, solution);
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
     }
 
     private void checkSolutions(Map<String, String> solutions) {
