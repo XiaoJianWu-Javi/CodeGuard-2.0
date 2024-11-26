@@ -24,6 +24,7 @@ public class TestCompilerServiceTests {
     //We use here an infinite token because we need the token explicitly to get the username for the folder creation
     static final String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyNTMwMjgwfQ.u96ApA5WdZMlD80wfCRs6YvGskOmAXTA3ASwkRuOxQQ";
 
+    //TODO: mirar que todo lo que se persista este bien persistido en el test
     @Test
     void testingValidSolution(){
 

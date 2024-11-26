@@ -87,16 +87,6 @@ class ExerciseTests {
     }
 
     @Test
-    void setAndGetCompilerClass() {
-        assertNotNull(exercise.getCompilerClass());
-        assertNotEquals("", exercise.getCompilerClass());
-
-        String expected = "TestClass";
-        exercise.setId("test-class");
-        assertEquals(expected, exercise.getCompilerClass());
-    }
-
-    @Test
     void setAndGetSolutions() {
         assertEquals(0, exercise.getSolutions().size()); //Not Initialized
 

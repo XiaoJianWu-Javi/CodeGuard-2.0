@@ -107,6 +107,7 @@ public class ExerciseServiceImp implements ExerciseService {
     	exercise.addSolution(solution.username(), solution.solution());
     	exercise.setTest(test);
     	exercise.setTester(solution.username());
+        exercise.setPlaceholder(placeholder);
 
 		exerciseRepository.save(exercise);
     }

@@ -58,7 +58,7 @@ public class CompilerServiceImp implements CompilerService {
         return compilerResponse;
     }
 
-    public CompilerResponseDTO compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
+    public CompilerResponseDTO compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException, PlaceholderNotFoundException {
         if(compileInfo.exerciseTests().isEmpty()){
             throw new TestCasesNotFoundException("No test cases are given");
         }
