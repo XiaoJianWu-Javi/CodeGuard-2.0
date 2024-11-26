@@ -115,14 +115,14 @@ public class ExerciseServiceTest {
     @Test
     public void testFineGetAllSolutionsForExercise() {
 
-    	java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
 
         List<SolutionDTO> expectedSolutions = solutions.entrySet().stream()
-        															.map(entry -> new SolutionDTO("1", entry.getKey(), entry.getValue()))
-        															.toList();
+                .map(entry -> new SolutionDTO("1", entry.getKey(), entry.getValue()))
+                .toList();
 
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
 
@@ -131,11 +131,10 @@ public class ExerciseServiceTest {
         assertArrayEquals(expectedSolutions.toArray(),actualSolutions.toArray());
     }
 
-
     @Test
     public void testFailGetAllSolutionsForExercise() {
 
-    	Exercise exercise = new Exercise("1", "titulo", "desc");
+        Exercise exercise = new Exercise("1", "titulo", "desc");
 
         List<Exercise> expectedSolutions = Collections.emptyList();
 
@@ -150,7 +149,7 @@ public class ExerciseServiceTest {
     @Test
     public void testGetUserSolutionForExercise() {
 
-    	java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
@@ -164,9 +163,13 @@ public class ExerciseServiceTest {
 
     @Test
     public void testFailGetUserSolutionForExercise() {
-    	Exercise exercise = new Exercise("1", "titulo", "desc");
+        Exercise exercise = new Exercise("1", "titulo", "desc");
         when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
         when(exerciseRepository.findById("2")).thenReturn(Optional.of(exercise));
+
+        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "1"));
+        assertThrows(NoSuchElementException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "2"));
+    }
 
     @Test
     public void testFailGetTestFromExercise(){
@@ -196,7 +199,4 @@ public class ExerciseServiceTest {
         assertThat(expectedTests).isEqualTo(tests.get());
     }
 
-        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "1"));
-        assertThrows(NoSuchElementException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "2"));
-    }
 }

@@ -49,6 +49,7 @@ public class CompilerServiceTests {
             throw new RuntimeException(e);
         }
     }
+
     @Test
     void testingCompilationError(){
 
