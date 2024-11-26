@@ -1,5 +1,6 @@
 package es.tfg.codeguard.service.imp;
 
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,28 +30,35 @@ public class UserServiceImp implements UserService {
     private JWTService jwtService;
 
     @Override
-    public Optional<UserDTO> deleteUser(String userToken) {
+    public UserDTO deleteUser(String userToken) {
 
         UserPassDTO userPassDTO = new UserPassDTO(jwtService.extractUserPass(userToken));
 
-        if (userPassRepository.findById(userPassDTO.username()).isEmpty()) {
-            return Optional.empty();
+        Optional<User> userOptional = userRepository.findById(userPassDTO.username());
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" + userPassDTO.username() + "]");
         }
 
-        User user = userRepository.findById(userPassDTO.username()).get();
+        User user = userOptional.get();
 
         deletedUserRepository.save(new DeletedUser(user));
 
-        userRepository.delete(userRepository.findById(userPassDTO.username()).get());
+        userRepository.delete(user);
 
-        return Optional.of(new UserDTO(user));
+        return new UserDTO(user);
     }
 
     @Override
-    public Optional<UserDTO> getUserById(String username){
+    public UserDTO getUserById(String username) {
 
         Optional<User> userOptional = userRepository.findById(username);
-        return userOptional.map(UserDTO::new);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [" + username + "]");
+        }
+
+        return new UserDTO(userOptional.get());
     }
 
     @Override

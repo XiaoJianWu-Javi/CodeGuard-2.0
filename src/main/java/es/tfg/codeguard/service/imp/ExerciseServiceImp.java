@@ -1,16 +1,17 @@
 package es.tfg.codeguard.service.imp;
 
-import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.SolutionDTO;
-import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
-import es.tfg.codeguard.service.ExerciseService;
-import es.tfg.codeguard.util.ExerciseNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import es.tfg.codeguard.model.dto.ExerciseDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
+import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
+import es.tfg.codeguard.service.ExerciseService;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
 
 @Service
 public class ExerciseServiceImp implements ExerciseService {
@@ -19,13 +20,15 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
 
     @Override
-    public Optional<ExerciseDTO> getExerciseById(String exerciseId) {
+    public ExerciseDTO getExerciseById(String exerciseId) {
 
-        if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	return Optional.empty();
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
+
+        if (exerciseOptional.isEmpty()) {
+            throw new ExerciseNotFoundException("Exercise not found [" +exerciseId +"]");
         }
 
-        return exerciseRepository.findById(exerciseId).map(ExerciseDTO::new);
+        return new ExerciseDTO(exerciseOptional.get());
 
     }
 
@@ -33,6 +36,7 @@ public class ExerciseServiceImp implements ExerciseService {
     public List<ExerciseDTO> getAllExercises() {
 
         return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+
 
     }
 
@@ -50,8 +54,57 @@ public class ExerciseServiceImp implements ExerciseService {
 
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
             throw new ExerciseNotFoundException(exerciseId);
+	@Override
+	public List<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
+
+		if (exerciseRepository.findById(exerciseId).isEmpty()) {
+        	throw new ExerciseNotFoundException(exerciseId);
         }
 
         return exerciseRepository.findById(exerciseId).map(SolutionDTO::new).get();
     }
+
+		return exerciseRepository.findById(exerciseId).get().getSolutions().entrySet()
+															.stream()
+															.map(solution -> new SolutionDTO(exerciseId, solution.getKey(), solution.getValue()))
+															.toList();
+	}
+
+    @Override
+    public SolutionDTO getUserSolutionForExercise(String username, String exerciseId) {
+
+    	return getAllSolutionsForExercise(exerciseId).stream()
+    													.filter(solution -> solution.username().equals(username))
+    													.toList().getFirst();
+    }
+
+    @Override
+    public void addSolutionToExercise(SolutionDTO solution) {
+
+    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+        	throw new ExerciseNotFoundException(solution.exerciseId());
+        }
+
+    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+    	exercise.addSolution(solution.username(), solution.solution());
+
+		exerciseRepository.save(exercise);
+    }
+
+    @Override
+    public void addTestToExercise(SolutionDTO solution, String test, String placeholder) {
+
+    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+        	throw new ExerciseNotFoundException(solution.exerciseId());
+        }
+
+    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+    	exercise.addSolution(solution.username(), solution.solution());
+    	exercise.setTest(test);
+    	exercise.setTester(solution.username());
+
+		exerciseRepository.save(exercise);
+    }
+
+
 }

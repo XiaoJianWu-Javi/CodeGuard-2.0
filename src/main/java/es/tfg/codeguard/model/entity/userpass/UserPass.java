@@ -1,5 +1,6 @@
 package es.tfg.codeguard.model.entity.userpass;
 
+import es.tfg.codeguard.util.UsernameNotValidException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -39,8 +40,8 @@ public class UserPass {
     }
 
     public void setUsername(String username) {
-        if (username == null || username.isBlank()) throw new IllegalArgumentException();
-        if (!username.matches(USERNAME_REGEXP)) throw new IllegalArgumentException();
+        if (username == null || username.isBlank()) throw new UsernameNotValidException("Username not valid [" +username +"]");
+        if (!username.matches(USERNAME_REGEXP)) throw new UsernameNotValidException("Username not valid [" +username +"]");
         this.username = username;
     }
 

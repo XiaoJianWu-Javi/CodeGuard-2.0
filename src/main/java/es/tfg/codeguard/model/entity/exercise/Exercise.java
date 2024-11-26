@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
+import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
+import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -35,13 +38,15 @@ public class Exercise {
     private String test;
     @Lob
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "EXERCISE_SOLUTIONS", 
+    @CollectionTable(name = "EXERCISE_SOLUTIONS",
     	      joinColumns = {@JoinColumn(name = "exercise_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "username")
     @Column(name = "solution")
     private Map<String, String> solutions;
     @Column(name = "compiler_class")
     private String compilerClass;
+    @Lob
+    private String placeholder;
 
     public Exercise() {}
 
@@ -50,12 +55,14 @@ public class Exercise {
         setTitle(title);
         setDescription(description);
         setSolutions(new java.util.HashMap<>());
+        setPlaceholder("");
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
         this(exerciseDTO.id(), exerciseDTO.title(), exerciseDTO.description());
         setTester(exerciseDTO.tester());
         setCreator(exerciseDTO.creator());
+        setPlaceholder(exerciseDTO.placeholder());
     }
 
     public String getId() {
@@ -72,7 +79,7 @@ public class Exercise {
     }
 
     public void setTitle(String title) {
-        if (title == null || title.isBlank()) throw new IllegalArgumentException();
+        if (title == null || title.isBlank()) throw new ExerciseTitleNotValidException("Exercise title not valid [" +title +"]");
         this.title = title;
     }
 
@@ -81,7 +88,7 @@ public class Exercise {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) throw new IllegalArgumentException();
+        if (description == null || description.isBlank()) throw new ExerciseDescriptionNotValid("Exercise description not valid [" +description +"]");
         this.description = description;
     }
 
@@ -117,7 +124,7 @@ public class Exercise {
         checkSolutions(solutions);
         this.solutions = solutions;
     }
-    
+
     public String getCompilerClass() {
         return compilerClass;
     }
@@ -131,10 +138,18 @@ public class Exercise {
     public void addSolution(String username, String solution) {
         solutions.put(username, solution);
     }
-    
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
     private void checkSolutions(Map<String, String> solutions) {
-        if (solutions == null) throw new IllegalArgumentException();
-    	for (Map.Entry<String, String> solution : solutions.entrySet()) 
-            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new IllegalArgumentException();
+        if (solutions == null) throw new ExerciseSolutionNotValidException("Solution not valid [ null ]");
+    	for (Map.Entry<String, String> solution : solutions.entrySet())
+            if (solution == null || solution.getKey() == null || solution.getValue() == null) throw new ExerciseSolutionNotValidException("Solution not valid [ key: " +solution.getKey() +", value: " +solution.getValue() +" ]");
     }
 }

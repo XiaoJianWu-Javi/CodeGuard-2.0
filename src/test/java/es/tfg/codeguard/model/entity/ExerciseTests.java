@@ -1,5 +1,9 @@
 package es.tfg.codeguard.model.entity;
 
+import es.tfg.codeguard.model.entity.exercise.Exercise;
+import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
+import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
+import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import es.tfg.codeguard.model.entity.exercise.Exercise;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ExerciseTests {
@@ -29,12 +33,12 @@ class ExerciseTests {
 
     @Test
     void notValidSetTitle() {
-        assertThrows(IllegalArgumentException.class, () -> exercise.setTitle(null));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setTitle(""));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setTitle("   "));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setTitle("\n"));
+        assertThrows(ExerciseTitleNotValidException.class, () -> exercise.setTitle(null));
+        assertThrows(ExerciseTitleNotValidException.class, () -> exercise.setTitle(""));
+        assertThrows(ExerciseTitleNotValidException.class, () -> exercise.setTitle("   "));
+        assertThrows(ExerciseTitleNotValidException.class, () -> exercise.setTitle("\n"));
     }
-    
+
     @Test
     void validSetTitle() {
         assertDoesNotThrow(() -> exercise.setTitle("aaa1"));
@@ -43,12 +47,12 @@ class ExerciseTests {
 
     @Test
     void notValidSetDescription() {
-        assertThrows(IllegalArgumentException.class, () -> exercise.setDescription(null));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setDescription(""));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setDescription("   "));
-        assertThrows(IllegalArgumentException.class, () -> exercise.setDescription("\n"));
+        assertThrows(ExerciseDescriptionNotValid.class, () -> exercise.setDescription(null));
+        assertThrows(ExerciseDescriptionNotValid.class, () -> exercise.setDescription(""));
+        assertThrows(ExerciseDescriptionNotValid.class, () -> exercise.setDescription("   "));
+        assertThrows(ExerciseDescriptionNotValid.class, () -> exercise.setDescription("\n"));
     }
-    
+
     @Test
     void validSetDescription() {
         assertDoesNotThrow(() -> exercise.setDescription("a"));
@@ -96,15 +100,15 @@ class ExerciseTests {
     void setAndGetSolutions() {
         assertEquals(0, exercise.getSolutions().size()); //Not Initialized
 
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(null));
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, null);}}));
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put("", null);}}));
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put(null, "");}}));
-        assertThrows(IllegalArgumentException.class, 
+        assertThrows(ExerciseSolutionNotValidException.class,
                             () -> exercise.setSolutions(new HashMap<String, String>() {{put("", ""); put(null, "");}}));
 
         Map<String, String> original = new HashMap<String, String>() {{put("", ""); put("", "");}};
