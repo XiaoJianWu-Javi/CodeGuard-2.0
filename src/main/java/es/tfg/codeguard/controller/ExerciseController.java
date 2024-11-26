@@ -35,7 +35,7 @@ public interface ExerciseController {
     public ResponseEntity<ExerciseDTO> getExercise(@PathVariable String exerciseId);
 
     @GetMapping("/allExercisesPaginated")
-    @Operation(summary = "Get all exercises")
+    @Operation(summary = "Get all exercises with pagination and optional filtering")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Exercises found")
     })
