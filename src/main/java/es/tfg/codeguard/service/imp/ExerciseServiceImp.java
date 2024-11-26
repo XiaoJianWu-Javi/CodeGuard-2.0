@@ -1,5 +1,6 @@
 package es.tfg.codeguard.service.imp;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,9 @@ import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
@@ -30,7 +34,7 @@ public class ExerciseServiceImp implements ExerciseService {
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
 
         if (exerciseOptional.isEmpty()) {
-            throw new ExerciseNotFoundException("Exercise not found [" +exerciseId +"]");
+            throw new ExerciseNotFoundException("Exercise not found [" + exerciseId + "]");
         }
 
         return new ExerciseDTO(exerciseOptional.get());
@@ -38,13 +42,31 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
     @Override
-    public List<ExerciseDTO> getAllExercises() {
+    public List<ExerciseDTO> getAllExercisesPaginated(String search, Integer page, boolean desc) {
 
-        return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+        if (desc) {
+            Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "title"));
+            return exerciseRepository.findByTitleContaining(search, pageable).stream().map(ExerciseDTO::new).toList();
+        }
 
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "title"));
+        return exerciseRepository.findByTitleContaining(search, pageable).stream().map(ExerciseDTO::new).toList();
+
+
+        //return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
 
     }
 
+    @Override
+    public List<ExerciseDTO> getAllExercises() {
+        return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+    }
+
+    @Override
+    public List<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
+
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            throw new ExerciseNotFoundException(exerciseId);
     @Override
     public Optional<String> getTestFromExercise(String exerciseId) {
 
@@ -71,9 +93,9 @@ public class ExerciseServiceImp implements ExerciseService {
     @Override
     public SolutionDTO getUserSolutionForExercise(String username, String exerciseId) {
 
-    	return getAllSolutionsForExercise(exerciseId).stream()
-    													.filter(solution -> solution.username().equals(username))
-    													.toList().getFirst();
+        return getAllSolutionsForExercise(exerciseId).stream()
+                .filter(solution -> solution.username().equals(username))
+                .toList().getFirst();
     }
 
     @Override
@@ -99,8 +121,8 @@ public class ExerciseServiceImp implements ExerciseService {
     @Override
     public void addTestToExercise(SolutionDTO solution, String test, String placeholder) {
 
-    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
-        	throw new ExerciseNotFoundException(solution.exerciseId());
+        if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+            throw new ExerciseNotFoundException(solution.exerciseId());
         }
 
     	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();

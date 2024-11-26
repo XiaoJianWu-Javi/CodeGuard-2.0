@@ -14,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -70,6 +73,59 @@ public class ExerciseServiceTest {
         List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercises();
 
         assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+
+    }
+
+    @Test
+    public void testFineGetAllExercisesPaginated() {
+
+        Exercise exercise1 = new Exercise();
+        exercise1.setId("project-euler-9");
+        exercise1.setTitle("Project Euler 9");
+        exercise1.setDescription("description1");
+        exercise1.setTest("tester1");
+        exercise1.setCreator("creator1");
+
+        Exercise exercise2 = new Exercise();
+        exercise2.setId("saruman-123");
+        exercise2.setTitle("La Traición de Isengard");
+        exercise2.setDescription("description2");
+        exercise2.setTest("tester2");
+        exercise2.setCreator("creator2");
+
+        Exercise exercise3 = new Exercise();
+        exercise3.setId("magic-music-box");
+        exercise3.setTitle("Magic Music Box");
+        exercise3.setDescription("description3");
+        exercise3.setTest("tester3");
+        exercise3.setCreator("creator3");
+
+
+        List<Exercise> exercisesExpected = List.of(exercise1, exercise2, exercise3);
+
+        when(exerciseRepository.findByTitleContaining("Je", PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(List.of()));
+
+        List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercisesPaginated("Je",0,false);
+
+        assertThat(List.of()).usingRecursiveComparison().isEqualTo(exercises);
+
+
+        exercisesExpected = List.of(exercise1);
+
+        when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(exercisesExpected));
+
+        exercises = exerciseServiceImp.getAllExercisesPaginated("je",1,false);
+
+        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+
+        exercisesExpected = List.of(exercise2,exercise3);
+
+        when(exerciseRepository.findByTitleContaining("g", PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(exercisesExpected));
+
+        exercises = exerciseServiceImp.getAllExercisesPaginated("g",0,false);
+
+        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+
 
     }
 
