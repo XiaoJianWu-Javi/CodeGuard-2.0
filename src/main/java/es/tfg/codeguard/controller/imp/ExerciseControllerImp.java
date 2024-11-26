@@ -5,12 +5,9 @@ import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,11 +25,11 @@ public class ExerciseControllerImp implements ExerciseController {
     @Override
     public ResponseEntity<ExerciseDTO> getExercise(String exerciseId) {
 
-            try{
-                return ResponseEntity.ok(exerciseService.getExerciseById(exerciseId));
-            }catch (ExerciseNotFoundException e){
-                return ResponseEntity.notFound().build();
-            }
+        try {
+            return ResponseEntity.ok(exerciseService.getExerciseById(exerciseId));
+        } catch (ExerciseNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
     }
 
@@ -42,26 +39,24 @@ public class ExerciseControllerImp implements ExerciseController {
     }
 
     @Override
-	public ResponseEntity<List<SolutionDTO>> getAllSolutionsForExercise(String exerciseId) {
-		
-		try {
-    		return new ResponseEntity<>(exerciseService.getAllSolutionsForExercise(exerciseId), HttpStatus.OK);
-    	} catch (ExerciseNotFoundException e) {
-    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
-	}
+    public ResponseEntity<List<SolutionDTO>> getAllSolutionsForExercise(String exerciseId) {
 
+        try {
+            return new ResponseEntity<>(exerciseService.getAllSolutionsForExercise(exerciseId), HttpStatus.OK);
+        } catch (ExerciseNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @Override
+    public ResponseEntity<SolutionDTO> getUserSolutionForExercise(String username, String exerciseId) {
 
-	@Override
-	public ResponseEntity<SolutionDTO> getUserSolutionForExercise(String username, String exerciseId) {
-		
-		try {
-    		return new ResponseEntity<>(exerciseService.getUserSolutionForExercise(username, exerciseId), HttpStatus.OK);
-    	} catch (ExerciseNotFoundException e) {
-    		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	}
-	}
+        try {
+            return new ResponseEntity<>(exerciseService.getUserSolutionForExercise(username, exerciseId), HttpStatus.OK);
+        } catch (ExerciseNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     @Override
     public ResponseEntity<List<ExerciseDTO>> getAllExercises() {

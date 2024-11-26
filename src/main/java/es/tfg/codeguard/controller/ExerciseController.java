@@ -44,19 +44,16 @@ public interface ExerciseController {
     @GetMapping("/{exerciseId}/allSolutions")
     @Operation(summary = "Get all solutions for a given exercise")
     @ApiResponses(value = {
-    		@ApiResponse(responseCode = "200", description = "Solutions found"),
-    		@ApiResponse(responseCode = "404", description = "Exercise not found")
+            @ApiResponse(responseCode = "200", description = "Solutions found"),
+            @ApiResponse(responseCode = "404", description = "Exercise not found")
     })
     public ResponseEntity<List<SolutionDTO>> getAllSolutionsForExercise(@PathVariable String exerciseId);
-
-
-
 
     @GetMapping("/{exerciseId}/{username}")
     @Operation(summary = "Get the solution made by a user for a specific exercise")
     @ApiResponses(value = {
-    		@ApiResponse(responseCode = "200", description = "Solution found"),
-    		@ApiResponse(responseCode = "404", description = "Exercise or username not found")
+            @ApiResponse(responseCode = "200", description = "Solution found"),
+            @ApiResponse(responseCode = "404", description = "Exercise or username not found")
     })
     public ResponseEntity<SolutionDTO> getUserSolutionForExercise(@PathVariable String username, @PathVariable String exerciseId);
 
