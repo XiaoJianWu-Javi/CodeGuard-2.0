@@ -1,9 +1,15 @@
 package es.tfg.codeguard.service.imp;
 
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
@@ -25,7 +31,7 @@ public class ExerciseServiceImp implements ExerciseService {
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
 
         if (exerciseOptional.isEmpty()) {
-            throw new ExerciseNotFoundException("Exercise not found [" +exerciseId +"]");
+            throw new ExerciseNotFoundException("Exercise not found [" + exerciseId + "]");
         }
 
         return new ExerciseDTO(exerciseOptional.get());
@@ -33,60 +39,73 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
     @Override
-    public List<ExerciseDTO> getAllExercises() {
+    public List<ExerciseDTO> getAllExercisesPaginated(String search, Integer page, boolean desc) {
 
-        return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+        if (desc) {
+            Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "title"));
+            return exerciseRepository.findByTitleContaining(search, pageable).stream().map(ExerciseDTO::new).toList();
+        }
 
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "title"));
+        return exerciseRepository.findByTitleContaining(search, pageable).stream().map(ExerciseDTO::new).toList();
+
+
+        //return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
 
     }
 
-	@Override
-	public List<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
-		
-		if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	throw new ExerciseNotFoundException(exerciseId);
+    @Override
+    public List<ExerciseDTO> getAllExercises() {
+        return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
+    }
+
+    @Override
+    public List<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
+
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            throw new ExerciseNotFoundException(exerciseId);
         }
-		
-		return exerciseRepository.findById(exerciseId).get().getSolutions().entrySet()
-															.stream()
-															.map(solution -> new SolutionDTO(exerciseId, solution.getKey(), solution.getValue()))
-															.toList();
-	}
+
+        return exerciseRepository.findById(exerciseId).get().getSolutions().entrySet()
+                .stream()
+                .map(solution -> new SolutionDTO(exerciseId, solution.getKey(), solution.getValue()))
+                .toList();
+    }
 
     @Override
     public SolutionDTO getUserSolutionForExercise(String username, String exerciseId) {
 
-    	return getAllSolutionsForExercise(exerciseId).stream()
-    													.filter(solution -> solution.username().equals(username))
-    													.toList().getFirst();
+        return getAllSolutionsForExercise(exerciseId).stream()
+                .filter(solution -> solution.username().equals(username))
+                .toList().getFirst();
     }
 
     @Override
     public void addSolutionToExercise(SolutionDTO solution) {
-    	
-    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
-        	throw new ExerciseNotFoundException(solution.exerciseId());
+
+        if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+            throw new ExerciseNotFoundException(solution.exerciseId());
         }
-    	
-    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
-    	exercise.addSolution(solution.username(), solution.solution());
-		
-		exerciseRepository.save(exercise);
+
+        Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+        exercise.addSolution(solution.username(), solution.solution());
+
+        exerciseRepository.save(exercise);
     }
 
     @Override
     public void addTestToExercise(SolutionDTO solution, String test, String placeholder) {
 
-    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
-        	throw new ExerciseNotFoundException(solution.exerciseId());
+        if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+            throw new ExerciseNotFoundException(solution.exerciseId());
         }
-    	
-    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
-    	exercise.addSolution(solution.username(), solution.solution());
-    	exercise.setTest(test);
-    	exercise.setTester(solution.username());
-		
-		exerciseRepository.save(exercise);
+
+        Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+        exercise.addSolution(solution.username(), solution.solution());
+        exercise.setTest(test);
+        exercise.setTester(solution.username());
+
+        exerciseRepository.save(exercise);
     }
 
 

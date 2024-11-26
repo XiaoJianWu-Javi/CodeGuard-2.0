@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,12 +34,12 @@ public interface ExerciseController {
     })
     public ResponseEntity<ExerciseDTO> getExercise(@PathVariable String exerciseId);
 
-    @GetMapping("/allExercise")
+    @GetMapping("/allExercisesPaginated")
     @Operation(summary = "Get all exercises")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Exercises found")
     })
-    public ResponseEntity<List<ExerciseDTO>> getAllExercises();
+    public ResponseEntity<List<ExerciseDTO>> getAllExercisesPaginated(@RequestParam String search, @RequestParam Integer page, @RequestParam(required = false) boolean desc);
 
     @GetMapping("/{exerciseId}/allSolutions")
     @Operation(summary = "Get all solutions for a given exercise")
@@ -51,7 +48,10 @@ public interface ExerciseController {
     		@ApiResponse(responseCode = "404", description = "Exercise not found")
     })
     public ResponseEntity<List<SolutionDTO>> getAllSolutionsForExercise(@PathVariable String exerciseId);
-    
+
+
+
+
     @GetMapping("/{exerciseId}/{username}")
     @Operation(summary = "Get the solution made by a user for a specific exercise")
     @ApiResponses(value = {
@@ -59,4 +59,12 @@ public interface ExerciseController {
     		@ApiResponse(responseCode = "404", description = "Exercise or username not found")
     })
     public ResponseEntity<SolutionDTO> getUserSolutionForExercise(@PathVariable String username, @PathVariable String exerciseId);
+
+    @GetMapping("/allExercises")
+    @Operation(summary = "Get all exercises")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Exercises found")
+    })
+    public ResponseEntity<List<ExerciseDTO>> getAllExercises();
+
 }

@@ -1,6 +1,10 @@
 package es.tfg.codeguard.service.imp;
 
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.util.UserNotFoundException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,6 +65,7 @@ public class UserServiceImp implements UserService {
         return new UserDTO(userOptional.get());
     }
 
+    //TODO: BORRAR MÉTODO Y BORRAR GETALLEXERCISES
     @Override
     public List<UserDTO> getAllUsers() {
 
