@@ -2,6 +2,7 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.CompilerResponseDTO;
 import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.service.JWTService;
@@ -9,6 +10,7 @@ import es.tfg.codeguard.util.CompilationErrorException;
 import es.tfg.codeguard.model.dto.CompilerRequestDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.CompilerService;
+import es.tfg.codeguard.util.PlaceholderNotFoundException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
@@ -49,35 +51,39 @@ public class CompilerServiceImp implements CompilerService {
 
         if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
             //Se guarda la solucion del usuario
-            //TODO: cambiar la implementacion del guardado de la solucion utilizando un servicio de userUpdate y exerciseUpdate
-            /*
-            User user = userRepository.findById(jwtService.extractUserPass(userToken).getUsername()).get();
-            user.addExercise(compileInfo.exerciseId());
-            Exercise exercise = exerciseRepository.findById(compileInfo.exerciseId()).get();
-            exercise.addSolution(user.getUsername(), javaCode);
-            userRepository.save(user);
-            exerciseRepository.save(exercise);
-             */
+            exerciseService.addSolutionToExercise(new SolutionDTO(compileInfo.exerciseId(),
+                    jwtService.extractUserPass(userToken).getUsername(),
+                    javaCode));
         }
         return compilerResponse;
     }
 
-    public Optional<CompilerResponseDTO> compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
+    public CompilerResponseDTO compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
+        if(compileInfo.exerciseTests().isEmpty()){
+            throw new TestCasesNotFoundException("No test cases are given");
+        }
+        if(compileInfo.exercisePlaceHolder().isEmpty()){
+            throw new PlaceholderNotFoundException("No placeholder is given to the exercise");
+        }
         String javaCode = compileInfo.exerciseSolution();
         String testCode = compileInfo.exerciseTests();
 
         CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
 
         if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
-            //Se guardan los tests del ejercicio
-            //TODO: cambiar la implementacion del guardado de los test utilizando un servicio
-
+            exerciseService.addTestToExercise(new SolutionDTO(compileInfo.exerciseId(),
+                    jwtService.extractUserPass(userToken).getUsername(),
+                    javaCode),
+                    testCode,
+                    compileInfo.exercisePlaceHolder());
         }
-        return Optional.of(compilerResponse);
+        return compilerResponse;
     }
 
     private CompilerResponseDTO compilator(String userToken, String javaCode, String testCode) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
+
         Pattern javaClassPattern = Pattern.compile("(?:public)(?:\\s+)(?:class)(?:\\s+)(\\w+)");
+
         Matcher appClassNameMatcher = javaClassPattern.matcher(javaCode);
         String javaClassName = "";
         if(appClassNameMatcher.find()){
@@ -86,8 +92,7 @@ public class CompilerServiceImp implements CompilerService {
             throw new ClassNotFoundException("Could not find the class name inside the Java Code");
         }
 
-        Pattern testClassPattern = Pattern.compile("(?:class)(?:\\s+)(\\w+)");
-        Matcher testClassNameMatcher = testClassPattern.matcher(testCode);
+        Matcher testClassNameMatcher = javaClassPattern.matcher(testCode);
         String testClassName = "";
         if(testClassNameMatcher.find()){
             testClassName = testClassNameMatcher.group(1);

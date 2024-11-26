@@ -22,7 +22,7 @@ public class DataIntializer {
     @Autowired
     private UserPassRepository userPassRepository;
     @Autowired
-    private ExerciseRepository exerciseRepository; //TODO: utilizar el servicio cuando esté implementado
+    private ExerciseRepository exerciseRepository;
 
     @Bean
     void firstAdmin() {
