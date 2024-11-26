@@ -67,9 +67,9 @@ public class ExerciseServiceTest {
 
         when(exerciseRepository.findAll()).thenReturn(exercisesExpected);
 
-        List<Exercise> exercises = exerciseRepository.findAll();
+        List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercises();
 
-        assertThat(exercisesExpected).usingRecursiveComparison().isEqualTo(exercises);
+        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
 
     }
 
@@ -81,9 +81,9 @@ public class ExerciseServiceTest {
 
         when(exerciseRepository.findAll()).thenReturn(exercisesExpected);
 
-        List<Exercise> exercises = exerciseRepository.findAll();
+        List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercises();
 
-        assertThat(exercisesExpected).usingRecursiveComparison().isEqualTo(exercises);
+        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
 
     }
 
