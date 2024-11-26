@@ -5,7 +5,6 @@ import java.util.Optional;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.UserNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;

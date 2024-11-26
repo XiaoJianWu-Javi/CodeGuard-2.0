@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository;
 import es.tfg.codeguard.model.entity.user.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {}
+public interface UserRepository extends JpaRepository<User, String> { }
