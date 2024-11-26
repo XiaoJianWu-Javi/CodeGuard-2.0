@@ -61,7 +61,6 @@ public class UserServiceImp implements UserService {
         return new UserDTO(userOptional.get());
     }
 
-    //TODO: BORRAR MÉTODO Y BORRAR GETALLEXERCISES
     @Override
     public List<UserDTO> getAllUsers() {
 
