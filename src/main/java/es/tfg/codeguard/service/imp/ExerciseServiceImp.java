@@ -67,23 +67,7 @@ public class ExerciseServiceImp implements ExerciseService {
 
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
             throw new ExerciseNotFoundException(exerciseId);
-    @Override
-    public Optional<String> getTestFromExercise(String exerciseId) {
-
-        if (exerciseRepository.findById(exerciseId).isEmpty()) {
-            return Optional.empty();
         }
-
-        return Optional.of(exerciseRepository.findById(exerciseId).get().getTest());
-    }
-
-	@Override
-	public List<SolutionDTO> getAllSolutionsForExercise(String exerciseId) {
-
-		if (exerciseRepository.findById(exerciseId).isEmpty()) {
-        	throw new ExerciseNotFoundException(exerciseId);
-        }
-
         return exerciseRepository.findById(exerciseId).get().getSolutions().entrySet()
                 .stream()
                 .map(solution -> new SolutionDTO(exerciseId, solution.getKey(), solution.getValue()))
@@ -99,23 +83,33 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
     @Override
+    public Optional<String> getTestFromExercise(String exerciseId) {
+
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exerciseRepository.findById(exerciseId).get().getTest());
+    }
+
+    @Override
     public void addSolutionToExercise(SolutionDTO solution) {
 
-    	if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
-        	throw new ExerciseNotFoundException(solution.exerciseId());
+        if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
+            throw new ExerciseNotFoundException(solution.exerciseId());
         }
         if (userRepository.findById(solution.username()).isEmpty()) {
             throw new UserNotFoundException(solution.username());
         }
 
-    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
-    	exercise.addSolution(solution.username(), solution.solution());
+        Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+        exercise.addSolution(solution.username(), solution.solution());
 
         User user = userRepository.findById(solution.username()).get();
         user.addExercise(solution.exerciseId());
 
         userRepository.save(user);
-		exerciseRepository.save(exercise);
+        exerciseRepository.save(exercise);
     }
 
     @Override
@@ -125,13 +119,16 @@ public class ExerciseServiceImp implements ExerciseService {
             throw new ExerciseNotFoundException(solution.exerciseId());
         }
 
-    	Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
-    	exercise.addSolution(solution.username(), solution.solution());
-    	exercise.setTest(test);
-    	exercise.setTester(solution.username());
+        Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
+        exercise.addSolution(solution.username(), solution.solution());
+        exercise.setTest(test);
+        exercise.setTester(solution.username());
         exercise.setPlaceholder(placeholder);
 
-		exerciseRepository.save(exercise);
+        exerciseRepository.save(exercise);
     }
-
 }
+
+
+
+
