@@ -40,7 +40,7 @@ public class ExerciseServiceTest {
 
     @Mock
     private DeletedUserRepository deletedUserRepository;
-    
+
     @InjectMocks
     private ExerciseServiceImp exerciseServiceImp;
 
@@ -158,7 +158,7 @@ public class ExerciseServiceTest {
         exercise.setDescription("description1");
         exercise.setTest("tester1");
         exercise.setCreator("creator1");
-        
+
 
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
 
@@ -167,64 +167,92 @@ public class ExerciseServiceTest {
 
         assertThat(expectedExercise).usingRecursiveComparison().isEqualTo(actualExercise);
     }
-    
+
     @Test
     public void testFineGetAllSolutionsForExercise() {
-    	
-    	java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
 
         List<SolutionDTO> expectedSolutions = solutions.entrySet().stream()
-        															.map(entry -> new SolutionDTO("1", entry.getKey(), entry.getValue()))
-        															.toList();
-        
+                .map(entry -> new SolutionDTO("1", entry.getKey(), entry.getValue()))
+                .toList();
+
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
 
         List<SolutionDTO> actualSolutions = exerciseServiceImp.getAllSolutionsForExercise("1");
 
         assertArrayEquals(expectedSolutions.toArray(),actualSolutions.toArray());
     }
-    
-    
+
     @Test
     public void testFailGetAllSolutionsForExercise() {
 
-    	Exercise exercise = new Exercise("1", "titulo", "desc");
+        Exercise exercise = new Exercise("1", "titulo", "desc");
 
         List<Exercise> expectedSolutions = Collections.emptyList();
 
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
-        
+
         List<SolutionDTO> actualSolutions = exerciseServiceImp.getAllSolutionsForExercise("1");
 
         assertArrayEquals(expectedSolutions.toArray(), actualSolutions.toArray());
 
     }
-    
+
     @Test
     public void testGetUserSolutionForExercise() {
-    	
-    	java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
-        
+
         when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
-        
+
         SolutionDTO expectedSolution = new SolutionDTO(exercise.getId(), "user2", solutions.get("user2"));
-        
+
         assertThat(expectedSolution).usingRecursiveComparison().isEqualTo(exerciseServiceImp.getUserSolutionForExercise("user2", "1"));
     }
-    
+
     @Test
     public void testFailGetUserSolutionForExercise() {
-    	Exercise exercise = new Exercise("1", "titulo", "desc");
+        Exercise exercise = new Exercise("1", "titulo", "desc");
         when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
         when(exerciseRepository.findById("2")).thenReturn(Optional.of(exercise));
 
         assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "1"));
         assertThrows(NoSuchElementException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "2"));
     }
+
+    @Test
+    public void testFailGetTestFromExercise(){
+        when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
+
+        Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
+
+        assertThat(tests).isEmpty();
+    }
+
+    @Test
+    public void testFineGetTestFromExercise(){
+
+        Exercise exerciseExpected = new Exercise();
+        exerciseExpected.setTitle("tittle1");
+        exerciseExpected.setDescription("description1");
+        exerciseExpected.setTest("tester1");
+        exerciseExpected.setCreator("creator1");
+        String expectedTests = "import org.junit.jupiter.api.Test;" +
+                "public TestTest{ @Test void test(){}}";
+        exerciseExpected.setTest(expectedTests);
+
+        when(exerciseRepository.findById("1")).thenReturn(Optional.of(exerciseExpected));
+
+        Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
+
+        assertThat(expectedTests).isEqualTo(tests.get());
+    }
+
 }

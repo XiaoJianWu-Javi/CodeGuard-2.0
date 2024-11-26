@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -27,7 +22,7 @@ public class User {
 
     private Boolean tester;
     private Boolean creator;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> exercises;
 
     public User() {
@@ -89,5 +84,9 @@ public class User {
     private void checkExercises(List<String> exercises) {
         for (String exerciseID : exercises)
             if (exerciseID == null || exerciseID.isBlank()) throw new IllegalArgumentException();
+    }
+
+    public void addExercise(String exerciseId) {
+        exercises.add(exerciseId);
     }
 }

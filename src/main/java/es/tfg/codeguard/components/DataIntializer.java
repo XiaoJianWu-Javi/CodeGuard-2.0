@@ -22,7 +22,7 @@ public class DataIntializer {
     @Autowired
     private UserPassRepository userPassRepository;
     @Autowired
-    private ExerciseRepository exerciseRepository; //TODO: utilizar el servicio cuando esté implementado
+    private ExerciseRepository exerciseRepository;
 
     @Bean
     void firstAdmin() {
@@ -48,26 +48,26 @@ public class DataIntializer {
         //Users
         User userTester = new User("Merlin", true, false);
         UserPass userTesterPass = new UserPass("Merlin",
-                                                passwordEncoder.encode("merlin"), 
+                                                passwordEncoder.encode("merlin"),
                                                 false);
         userRepository.save(userTester);
         userPassRepository.save(userTesterPass);
         User userCreator = new User("Gandalf", false, true);
         UserPass userCreatorPass = new UserPass("Gandalf",
-                                                passwordEncoder.encode("gandalf"), 
+                                                passwordEncoder.encode("gandalf"),
                                                 false);
         userRepository.save(userCreator);
         userPassRepository.save(userCreatorPass);
         User userNormal = new User("Dumbledore", false, false);
         UserPass userNormalPass = new UserPass("Dumbledore",
-                                                passwordEncoder.encode("dumbledore"), 
+                                                passwordEncoder.encode("dumbledore"),
                                                 false);
         userRepository.save(userNormal);
         userPassRepository.save(userNormalPass);
         User userTryhard = new User("Harry", false, false);
         userTryhard.setExercises(new java.util.ArrayList<>(){{ add("goldbach"); add("gandalf-1");}});
         UserPass userTryhardPass = new UserPass("Harry",
-                                                passwordEncoder.encode("potter"), 
+                                                passwordEncoder.encode("potter"),
                                                 false);
         userRepository.save(userTryhard);
         userPassRepository.save(userTryhardPass);
@@ -85,6 +85,33 @@ public class DataIntializer {
         solvedExercise.setCreator("Saruman"); sarumanExercise.setTester("Saruman");
         solvedExercise.addSolution("Saruman", "Mi magnífica solución");
         exerciseRepository.save(solvedExercise);
+    }
+
+    @Bean
+    void compileExercise() {
+        Exercise firstExercise = new Exercise("plural", "Plural",
+                "We need a simple function that determines if a plural is needed or not. It should take a number, and return true if a plural should be used with that number or false if not. This would be useful when printing out a string such as 5 minutes, 14 apples, or 1 sun.\n" +
+                        "\n" +
+                        "You only need to worry about english grammar rules for this kata, where anything that isn't singular (one of something), it is plural (not one of something).\n" +
+                        "\n" +
+                        "All values will be positive integers or floats, or zero.");
+        firstExercise.setCreator("Saruman");
+        firstExercise.setTester("Saruman");
+        firstExercise.setTest("" +
+                "import org.junit.jupiter.api.Test;\n" +
+                "import static org.junit.jupiter.api.Assertions.assertEquals;\n" +
+                "\n" +
+                "\n" +
+                "public class PluralTest {\n" +
+                "    @Test\n" +
+                "    public void BasicTest() {\n" +
+                "      assertEquals(true,Plural.isPlural(0f));\n" +
+                "      assertEquals(true,Plural.isPlural(0.5f));\n" +
+                "      assertEquals(false,Plural.isPlural(1f));\n" +
+                "      assertEquals(true,Plural.isPlural(100f));\n" +
+                "    }\n" +
+                "}");
+        exerciseRepository.save(firstExercise);
     }
 
 }

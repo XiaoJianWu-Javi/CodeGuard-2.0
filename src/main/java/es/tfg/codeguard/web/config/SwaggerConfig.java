@@ -60,4 +60,13 @@ public class SwaggerConfig {
             .build();
     }
 
+    @Bean
+    public GroupedOpenApi publicCompilerApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("compiler")
+                .pathsToMatch("/compiler/**")
+                .build();
+    }
+
 }

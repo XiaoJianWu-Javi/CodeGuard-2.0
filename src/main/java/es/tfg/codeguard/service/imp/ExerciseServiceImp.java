@@ -4,6 +4,9 @@ package es.tfg.codeguard.service.imp;
 import java.util.List;
 import java.util.Optional;
 
+import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.repository.user.UserRepository;
+import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,8 @@ public class ExerciseServiceImp implements ExerciseService {
 
     @Autowired
     private ExerciseRepository exerciseRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public ExerciseDTO getExerciseById(String exerciseId) {
@@ -63,7 +68,6 @@ public class ExerciseServiceImp implements ExerciseService {
         if (exerciseRepository.findById(exerciseId).isEmpty()) {
             throw new ExerciseNotFoundException(exerciseId);
         }
-
         return exerciseRepository.findById(exerciseId).get().getSolutions().entrySet()
                 .stream()
                 .map(solution -> new SolutionDTO(exerciseId, solution.getKey(), solution.getValue()))
@@ -79,15 +83,32 @@ public class ExerciseServiceImp implements ExerciseService {
     }
 
     @Override
+    public Optional<String> getTestFromExercise(String exerciseId) {
+
+        if (exerciseRepository.findById(exerciseId).isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(exerciseRepository.findById(exerciseId).get().getTest());
+    }
+
+    @Override
     public void addSolutionToExercise(SolutionDTO solution) {
 
         if (exerciseRepository.findById(solution.exerciseId()).isEmpty()) {
             throw new ExerciseNotFoundException(solution.exerciseId());
         }
+        if (userRepository.findById(solution.username()).isEmpty()) {
+            throw new UserNotFoundException(solution.username());
+        }
 
         Exercise exercise = exerciseRepository.findById(solution.exerciseId()).get();
         exercise.addSolution(solution.username(), solution.solution());
 
+        User user = userRepository.findById(solution.username()).get();
+        user.addExercise(solution.exerciseId());
+
+        userRepository.save(user);
         exerciseRepository.save(exercise);
     }
 
@@ -102,9 +123,12 @@ public class ExerciseServiceImp implements ExerciseService {
         exercise.addSolution(solution.username(), solution.solution());
         exercise.setTest(test);
         exercise.setTester(solution.username());
+        exercise.setPlaceholder(placeholder);
 
         exerciseRepository.save(exercise);
     }
-
-
 }
+
+
+
+

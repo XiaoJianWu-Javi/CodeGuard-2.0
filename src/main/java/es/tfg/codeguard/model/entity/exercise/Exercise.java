@@ -43,8 +43,6 @@ public class Exercise {
     @MapKeyColumn(name = "username")
     @Column(name = "solution")
     private Map<String, String> solutions;
-    @Column(name = "compiler_class")
-    private String compilerClass;
     @Lob
     private String placeholder;
 
@@ -71,7 +69,6 @@ public class Exercise {
 
     public void setId(String id) {
         this.id = id;
-        setCompilerClass();
     }
 
     public String getTitle() {
@@ -123,16 +120,6 @@ public class Exercise {
     public void setSolutions(Map<String, String> solutions) {
         checkSolutions(solutions);
         this.solutions = solutions;
-    }
-
-    public String getCompilerClass() {
-        return compilerClass;
-    }
-
-    private void setCompilerClass() {
-    	this.compilerClass = Stream.of(this.getId().split("-"))
-    								.map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-    								.collect(Collectors.joining());
     }
 
     public void addSolution(String username, String solution) {
