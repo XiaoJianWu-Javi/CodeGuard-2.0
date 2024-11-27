@@ -21,9 +21,9 @@ public class AdminControllerImp implements AdminController {
     @Override
     public ResponseEntity<UserDTO> deleteUser(@RequestParam String username) {
 
-        try{
+        try {
             return ResponseEntity.ok(adminService.deleteUser(username));
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
 
@@ -32,11 +32,11 @@ public class AdminControllerImp implements AdminController {
     @Override
     public ResponseEntity<UserPassDTO> updateUser(AuthDTO authDTO) {
 
-        try{
+        try {
             return ResponseEntity.ok(adminService.updateUser(authDTO.username(), authDTO.password()));
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (PasswordNotValidException e){
+        } catch (PasswordNotValidException e) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -44,54 +44,54 @@ public class AdminControllerImp implements AdminController {
 
     @Override
     public ResponseEntity<UserDTO> grantTester(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.grantTester(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.grantTester(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<UserDTO> grantCreator(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.grantCreator(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.grantCreator(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<UserDTO> revokeTester(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.revokeTester(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.revokeTester(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<UserDTO> revokeCreator(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.revokeCreator(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.revokeCreator(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<UserDTO> grantAllPrivileges(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.grantAllPrivileges(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.grantAllPrivileges(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<UserDTO> revokeAllPrivileges(String username) {
-        try{
-            return  ResponseEntity.ok(adminService.revokeAllPrivileges(username));
-        }catch (UserNotFoundException e){
+        try {
+            return ResponseEntity.ok(adminService.revokeAllPrivileges(username));
+        } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

@@ -62,14 +62,11 @@ class AdminControllerTests {
 
     }
 
-
-    //TODO: UPDATE TESTER
-
     @Test
-    void UpdatePasswordControllerTest(){
+    void UpdatePasswordControllerTest() {
 
         AuthDTO authDTOGandalf = new AuthDTO("Gandalf", "newSecurePassword1234");
-        UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf",true);
+        UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf", true);
 
         when(adminService.updateUser(authDTOGandalf.username(), "newSecurePassword1234")).thenReturn(userPassDTOGandalf);
 
@@ -80,7 +77,7 @@ class AdminControllerTests {
 
 
         AuthDTO authDTOHoudini = new AuthDTO("Houdini", "myBestFlight9876");
-        UserPassDTO userPassDTOHoudini = new UserPassDTO("Houdini",true);
+        UserPassDTO userPassDTOHoudini = new UserPassDTO("Houdini", true);
 
         when(adminService.updateUser(authDTOHoudini.username(), "myBestFlight9876")).thenReturn(userPassDTOHoudini);
 
@@ -91,7 +88,7 @@ class AdminControllerTests {
 
 
         AuthDTO authDTOMickeyMouse = new AuthDTO("MickeyMouse", "myBestFlight9876");
-        UserPassDTO userPassDTOMickeyMouse = new UserPassDTO("MickeyMouse",true);
+        UserPassDTO userPassDTOMickeyMouse = new UserPassDTO("MickeyMouse", true);
 
         when(adminService.updateUser(authDTOMickeyMouse.username(), "myBestFlight9876")).thenReturn(userPassDTOMickeyMouse);
 
@@ -103,10 +100,10 @@ class AdminControllerTests {
     }
 
     @Test
-    void FailedUpdatePasswordControllerTest(){
+    void FailedUpdatePasswordControllerTest() {
 
         AuthDTO authDTOGandalf = new AuthDTO("Gandalf", "");
-        UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf",true);
+        UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf", true);
 
         when(adminService.updateUser(authDTOGandalf.username(), "")).thenThrow(PasswordNotValidException.class);
 
@@ -116,7 +113,7 @@ class AdminControllerTests {
 
 
         AuthDTO authDTOHoudini = new AuthDTO("Houdini", "");
-        UserPassDTO userPassDTOHoudini = new UserPassDTO("Houdini",true);
+        UserPassDTO userPassDTOHoudini = new UserPassDTO("Houdini", true);
 
         when(adminService.updateUser(authDTOHoudini.username(), "")).thenThrow(PasswordNotValidException.class);
 
@@ -126,7 +123,7 @@ class AdminControllerTests {
 
 
         AuthDTO authDTOMickeyMouse = new AuthDTO("MickeyMouse", "MagicMagicianMickey234");
-        UserPassDTO userPassDTOHMickeyMouse = new UserPassDTO("MickeyMouse",true);
+        UserPassDTO userPassDTOHMickeyMouse = new UserPassDTO("MickeyMouse", true);
 
         when(adminService.updateUser(authDTOMickeyMouse.username(), "MagicMagicianMickey234")).thenThrow(UserNotFoundException.class);
 
@@ -136,7 +133,7 @@ class AdminControllerTests {
 
 
         AuthDTO authDTODrStrange = new AuthDTO("DrStrange", "newSecurePassword1234");
-        UserPassDTO userPassDTODrStrange = new UserPassDTO("DrStrange",true);
+        UserPassDTO userPassDTODrStrange = new UserPassDTO("DrStrange", true);
 
         when(adminService.updateUser(authDTODrStrange.username(), "newSecurePassword1234")).thenThrow(UserNotFoundException.class);
 
@@ -148,7 +145,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void GrantTesterControllerTest(String username){
+    void GrantTesterControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -164,7 +161,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedGrantTesterControllerTest(String username){
+    void FailedGrantTesterControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -178,7 +175,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void GrantCreatorControllerTest(String username){
+    void GrantCreatorControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -194,7 +191,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedGrantCreatorControllerTest(String username){
+    void FailedGrantCreatorControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -208,7 +205,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void RevokeTesterControllerTest(String username){
+    void RevokeTesterControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -224,7 +221,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedRevokeTesterControllerTest(String username){
+    void FailedRevokeTesterControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -238,7 +235,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void RevokeCreatorControllerTest(String username){
+    void RevokeCreatorControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -254,7 +251,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedRevokeCreatorControllerTest(String username){
+    void FailedRevokeCreatorControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -268,7 +265,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void GrantAllPrivilegesControllerTest(String username){
+    void GrantAllPrivilegesControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -284,7 +281,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedGrantAllPrivilegesControllerTest(String username){
+    void FailedGrantAllPrivilegesControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -298,7 +295,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void RevokeAllPrivilegesControllerTest(String username){
+    void RevokeAllPrivilegesControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
@@ -314,7 +311,7 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "Damian", "Rachel"})
-    void FailedRevokeAllPrivilegesControllerTest(String username){
+    void FailedRevokeAllPrivilegesControllerTest(String username) {
 
         UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
 
