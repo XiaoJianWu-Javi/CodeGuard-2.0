@@ -158,9 +158,9 @@ class UserControllerTests {
 
         userPassDTO = new UserPassDTO("FirstUser", false);
 
-        when(adminService.updateUser("FirstUser", "1234new")).thenReturn(userPassDTO);
+        when(adminService.updatePassword("FirstUser", "1234new")).thenReturn(userPassDTO);
 
-        UserPassDTO resultado = adminService.updateUser("FirstUser", "1234new");
+        UserPassDTO resultado = adminService.updatePassword("FirstUser", "1234new");
 
         ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "1234new");
 
@@ -169,9 +169,9 @@ class UserControllerTests {
 
         userPassDTO = new UserPassDTO("SecondUser", false);
 
-        when(adminService.updateUser("SecondUser", "9876new")).thenReturn(userPassDTO);
+        when(adminService.updatePassword("SecondUser", "9876new")).thenReturn(userPassDTO);
 
-        resultado = adminService.updateUser("SecondUser", "9876new");
+        resultado = adminService.updatePassword("SecondUser", "9876new");
 
         esperado = userControllerImp.updateUser("SecondUser", "9876new");
 
@@ -180,9 +180,9 @@ class UserControllerTests {
 
         userPassDTO = new UserPassDTO("ThirdtUser", false);
 
-        when(adminService.updateUser("ThirdtUser", "newpass")).thenReturn(userPassDTO);
+        when(adminService.updatePassword("ThirdtUser", "newpass")).thenReturn(userPassDTO);
 
-        resultado = adminService.updateUser("ThirdtUser", "newpass");
+        resultado = adminService.updatePassword("ThirdtUser", "newpass");
 
         esperado = userControllerImp.updateUser("ThirdtUser", "newpass");
 
@@ -191,9 +191,9 @@ class UserControllerTests {
 
         userPassDTO = new UserPassDTO("FourthUser", false);
 
-        when(adminService.updateUser("FourthUser", "newhola1234")).thenReturn(userPassDTO);
+        when(adminService.updatePassword("FourthUser", "newhola1234")).thenReturn(userPassDTO);
 
-        resultado = adminService.updateUser("FourthUser", "newhola1234");
+        resultado = adminService.updatePassword("FourthUser", "newhola1234");
 
         esperado = userControllerImp.updateUser("FourthUser", "newhola1234");
 
@@ -211,29 +211,29 @@ class UserControllerTests {
         user.setExercises(List.of());
 
 
-        when(adminService.updateUser("FirstUser", "new1234;;")).thenThrow(new UserNotFoundException("User not found [ FirstUser ]"));
+        when(adminService.updatePassword("FirstUser", "new1234;;")).thenThrow(new UserNotFoundException("User not found [ FirstUser ]"));
 
-        assertThrows(UserNotFoundException.class, () -> adminService.updateUser("FirstUser", "new1234;;"));
+        assertThrows(UserNotFoundException.class, () -> adminService.updatePassword("FirstUser", "new1234;;"));
 
 
         user.setUsername("FirstUser");
 
-        when(adminService.updateUser("SecondUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ ]"));
+        when(adminService.updatePassword("SecondUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ ]"));
 
-        assertThrows(PasswordNotValidException.class, () -> adminService.updateUser("SecondUser", ""));
-
-        user.setUsername("FirstUser");
-
-        when(adminService.updateUser("ThirdUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ null ]"));
-
-
-        assertThrows(PasswordNotValidException.class, () -> adminService.updateUser("ThirdUser", ""));
+        assertThrows(PasswordNotValidException.class, () -> adminService.updatePassword("SecondUser", ""));
 
         user.setUsername("FirstUser");
 
-        when(adminService.updateUser("juitenDiten,ºªªaaa,,,", "1234")).thenThrow(new UserNotFoundException("User not found exception [ juitenDiten,ºªªaaa,,, ]"));
+        when(adminService.updatePassword("ThirdUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ null ]"));
 
-        assertThrows(UserNotFoundException.class, () -> adminService.updateUser("juitenDiten,ºªªaaa,,,", "1234"));
+
+        assertThrows(PasswordNotValidException.class, () -> adminService.updatePassword("ThirdUser", ""));
+
+        user.setUsername("FirstUser");
+
+        when(adminService.updatePassword("juitenDiten,ºªªaaa,,,", "1234")).thenThrow(new UserNotFoundException("User not found exception [ juitenDiten,ºªªaaa,,, ]"));
+
+        assertThrows(UserNotFoundException.class, () -> adminService.updatePassword("juitenDiten,ºªªaaa,,,", "1234"));
 
     }
 

@@ -1,6 +1,7 @@
 package es.tfg.codeguard.service;
 
 
+import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
@@ -10,9 +11,12 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
+import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -146,5 +150,89 @@ class UserServiceTests {
 
         assertThat(Optional.of(userExpected)).usingRecursiveComparison().isEqualTo(user);
     }
+
+    @Test
+    void ChangeUserPasswordServiceTest(){
+
+        String houdiniToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzE0NTU4LCJleHAiOjE3MzI4MDA5NTh9.qBlNfje8pDRtoKzZWmfPsNQf6qKOpGOqsqvzNxlq9Gw";
+
+        String rachelToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3MTQ2MzAsImV4cCI6MTczMjgwMTAzMH0.G3dIq1wo-zJCvHqAocDWTXEfaqT1wsyf1ddqXk1B9bM";
+
+        String drStrangeToken= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEclN0cmFuZ2UiLCJpYXQiOjE3MzI3MTQ3NTYsImV4cCI6MTczMjgwMTE1Nn0.615S7M2Bi9CK4q7NksMyeHs4YnGyCVouKmRQdXxvvFM";
+
+        String dinamoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEeW5hbW8iLCJpYXQiOjE3MzI3MTUwNTIsImV4cCI6MTczMjgwMTQ1Mn0.mFa0MeoxrjZ0TUtFftHp2SbEYNioNazfWaLhTEbEetI";
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
+        UserDTO expectedUser = new UserDTO("Houdini",false,false,List.of());
+
+        UserPass userPass = new UserPass("Houdini", passwordEncoder.encode("1234"), false);
+
+        when(userPassRepository.findById(jwtService.extractUserPass(houdiniToken).getUsername())).thenReturn(Optional.of(userPass));
+
+        UserDTO resultUser = userServiceImp.changePassword(houdiniToken, new ChangePasswordDTO("1234", "newSecurePassword1234"));
+
+        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+
+
+
+        expectedUser = new UserDTO("Rachel",false,false,List.of());
+
+        userPass = new UserPass("Rachel", passwordEncoder.encode("9876"), false);
+
+        when(userPassRepository.findById(jwtService.extractUserPass(rachelToken).getUsername())).thenReturn(Optional.of(userPass));
+
+        resultUser = userServiceImp.changePassword(rachelToken, new ChangePasswordDTO("9876", "newSecurePassword9876"));
+
+        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+
+
+
+        expectedUser = new UserDTO("DrStrange",false,false,List.of());
+
+        userPass = new UserPass("DrStrange", passwordEncoder.encode("0000"), false);
+
+        when(userPassRepository.findById(jwtService.extractUserPass(drStrangeToken).getUsername())).thenReturn(Optional.of(userPass));
+
+        resultUser = userServiceImp.changePassword(drStrangeToken, new ChangePasswordDTO("0000", "DrStrangeHelpPeople67"));
+
+        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+
+
+
+        expectedUser = new UserDTO("Dinamo",false,false,List.of());
+
+        userPass = new UserPass("Dinamo", passwordEncoder.encode("a"), false);
+
+        when(userPassRepository.findById(jwtService.extractUserPass(dinamoToken).getUsername())).thenReturn(Optional.of(userPass));
+
+        resultUser = userServiceImp.changePassword(dinamoToken, new ChangePasswordDTO("a", "DinamoTheBestWizardOfTheWordl69"));
+
+        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
+    void FailChangePasswordUserNotFoundTest(String username){
+
+        when(userRepository.findById(username)).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "SecurePassword1234+")));
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
+    void FailChangePasswordNotValidTest(String username){
+
+        when(userRepository.findById(username)).thenThrow(PasswordNotValidException.class);
+
+        assertThrows(PasswordNotValidException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "")));
+
+    }
+
+
 
 }

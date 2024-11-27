@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,14 +41,14 @@ public interface UserController {
     })
     public ResponseEntity<List<UserDTO>> getAllUser();
 
-    @PatchMapping("/updateUser")
+    @PatchMapping("/changePassword")
     @Operation(summary = "Update user password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "304", description = "Password couldn't de updated")
     })
-    public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass);
+    public ResponseEntity<UserDTO> changePassword(@RequestHeader("Authorization") String userToken, @RequestBody ChangePasswordDTO changePasswordDTO);
 
 
 }

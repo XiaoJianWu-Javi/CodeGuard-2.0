@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller.imp;
 
+import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -54,18 +55,17 @@ public class UserControllerImp implements UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    //TODO: Implementar UpdateUser en servicio usuario
+
     @Override
-    public ResponseEntity<UserPassDTO> updateUser(@RequestParam String username, @RequestParam String newUserPass) {
+    public ResponseEntity<UserDTO> changePassword(String userToken, ChangePasswordDTO changePasswordDTO) {
 
         try{
-            return ResponseEntity.ok(adminService.updateUser(username,newUserPass));
+            return ResponseEntity.ok(userService.changePassword(userToken, changePasswordDTO));
         }catch (UserNotFoundException e){
             return ResponseEntity.notFound().build();
         }catch (PasswordNotValidException i){
             return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
         }
 
-        //TODO: Cambiar junto al serivcio cuando esté bien implementado el UPDATE
     }
 }
