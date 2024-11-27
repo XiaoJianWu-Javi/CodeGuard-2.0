@@ -103,12 +103,14 @@ public class CompilerServiceImp implements CompilerService {
         String folderRoute = "src/main/resources/compilation/" + jwtService.extractUserPass(userToken).getUsername();
 
         File userFolder = new File(folderRoute);
-        if(!userFolder.exists()){
-            if(userFolder.mkdirs()){
-                logger.info("User folder " + userFolder.toString() +  " created");
-            }else{
-                throw new CompilationErrorException("Could not create the folder for compilation");
-            }
+        if(userFolder.exists()){
+            FileUtils.deleteDirectory(userFolder);
+        }
+        if(userFolder.mkdirs()){
+            logger.info("User folder " + userFolder.toString() +  " created");
+        }else{
+            logger.error("User folder " + userFolder.toString() +  " could not be created");
+            throw new CompilationErrorException("Could not create the folder for compilation");
         }
 
         String javaFile = folderRoute + "/" + javaClassName + ".java";
@@ -166,6 +168,7 @@ public class CompilerServiceImp implements CompilerService {
         //Se esperan 15 segundos antes de destruir el proceso para evitar bucles infinitos
         if(!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)){
             testExecutorProcess.destroy();
+            logger.info("Execution Timeout");
             FileUtils.deleteDirectory(userFolder);
             throw new TimeoutException("Exceeded the 15 seconds time limit");
         }else{
@@ -180,6 +183,8 @@ public class CompilerServiceImp implements CompilerService {
 
         int executionExitCode = testExecutorProcess.exitValue();
         String executionExitMessage = filterConsoleOutput(executionMessage.toString());
+
+        logger.info("Execution successfully");
 
         FileUtils.deleteDirectory(userFolder);
         return new CompilerResponseDTO(compilationExitCode, compilationExitMessage, executionExitCode, executionExitMessage);
