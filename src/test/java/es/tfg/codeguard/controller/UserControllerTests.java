@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.controller.imp.UserControllerImp;
+import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.user.User;
@@ -162,7 +163,7 @@ class UserControllerTests {
 
         UserPassDTO resultado = adminService.updatePassword("FirstUser", "1234new");
 
-        ResponseEntity<UserPassDTO> esperado = userControllerImp.updateUser("FirstUser", "1234new");
+        ResponseEntity<UserDTO> esperado = userControllerImp.changePassword("FirstUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
@@ -173,7 +174,7 @@ class UserControllerTests {
 
         resultado = adminService.updatePassword("SecondUser", "9876new");
 
-        esperado = userControllerImp.updateUser("SecondUser", "9876new");
+        esperado = userControllerImp.changePassword("SecondUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
@@ -184,7 +185,7 @@ class UserControllerTests {
 
         resultado = adminService.updatePassword("ThirdtUser", "newpass");
 
-        esperado = userControllerImp.updateUser("ThirdtUser", "newpass");
+        esperado = userControllerImp.changePassword("ThirdtUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
@@ -195,7 +196,7 @@ class UserControllerTests {
 
         resultado = adminService.updatePassword("FourthUser", "newhola1234");
 
-        esperado = userControllerImp.updateUser("FourthUser", "newhola1234");
+        esperado = userControllerImp.changePassword("FourthUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
 
         assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
 
