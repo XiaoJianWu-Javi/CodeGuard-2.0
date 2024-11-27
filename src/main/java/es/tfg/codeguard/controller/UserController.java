@@ -46,7 +46,8 @@ public interface UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password updated sucsessfully"),
             @ApiResponse(responseCode = "404", description = "User not found"),
-            @ApiResponse(responseCode = "304", description = "Password couldn't de updated")
+            @ApiResponse(responseCode = "304", description = "The new password is not valid"),
+            @ApiResponse(responseCode = "400", description = "Old password incorrect")
     })
     public ResponseEntity<UserDTO> changePassword(@RequestHeader("Authorization") String userToken, @RequestBody ChangePasswordDTO changePasswordDTO);
 

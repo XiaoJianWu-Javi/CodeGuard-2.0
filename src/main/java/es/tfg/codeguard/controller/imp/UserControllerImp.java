@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
+import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,8 @@ public class UserControllerImp implements UserController {
             return ResponseEntity.notFound().build();
         }catch (PasswordNotValidException i){
             return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }catch (IncorrectPasswordException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }

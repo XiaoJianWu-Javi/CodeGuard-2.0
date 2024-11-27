@@ -11,14 +11,17 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.UserServiceImp;
+import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -169,7 +172,7 @@ class UserServiceTests {
 
         UserPass userPass = new UserPass("Houdini", passwordEncoder.encode("1234"), false);
 
-        when(userPassRepository.findById(jwtService.extractUserPass(houdiniToken).getUsername())).thenReturn(Optional.of(userPass));
+        when(userPassRepository.findById("Houdini")).thenReturn(Optional.of(userPass));
 
         UserDTO resultUser = userServiceImp.changePassword(houdiniToken, new ChangePasswordDTO("1234", "newSecurePassword1234"));
 
@@ -181,7 +184,7 @@ class UserServiceTests {
 
         userPass = new UserPass("Rachel", passwordEncoder.encode("9876"), false);
 
-        when(userPassRepository.findById(jwtService.extractUserPass(rachelToken).getUsername())).thenReturn(Optional.of(userPass));
+        when(userPassRepository.findById("Rachel")).thenReturn(Optional.of(userPass));
 
         resultUser = userServiceImp.changePassword(rachelToken, new ChangePasswordDTO("9876", "newSecurePassword9876"));
 
@@ -193,7 +196,7 @@ class UserServiceTests {
 
         userPass = new UserPass("DrStrange", passwordEncoder.encode("0000"), false);
 
-        when(userPassRepository.findById(jwtService.extractUserPass(drStrangeToken).getUsername())).thenReturn(Optional.of(userPass));
+        when(userPassRepository.findById("DrStrange")).thenReturn(Optional.of(userPass));
 
         resultUser = userServiceImp.changePassword(drStrangeToken, new ChangePasswordDTO("0000", "DrStrangeHelpPeople67"));
 
@@ -205,7 +208,7 @@ class UserServiceTests {
 
         userPass = new UserPass("Dinamo", passwordEncoder.encode("a"), false);
 
-        when(userPassRepository.findById(jwtService.extractUserPass(dinamoToken).getUsername())).thenReturn(Optional.of(userPass));
+        when(userPassRepository.findById("Dinamo")).thenReturn(Optional.of(userPass));
 
         resultUser = userServiceImp.changePassword(dinamoToken, new ChangePasswordDTO("a", "DinamoTheBestWizardOfTheWordl69"));
 
@@ -214,14 +217,23 @@ class UserServiceTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
-    void FailChangePasswordUserNotFoundTest(String username){
-
+    @CsvSource({
+            "Dext3r,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU,1234",
+            "Rach3l,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE,9876",
+            "marck43rc2,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk,hello",
+            "bob0b0b,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4,notsecure"
+    })
+    void FailChangePasswordUserNotFoundTest(String username, String token, String currentPassword) {
+        // Configurar mocks para cada iteración
         when(userRepository.findById(username)).thenThrow(UserNotFoundException.class);
+        when(jwtService.extractUserPass(token)).thenReturn(new UserPass(username, passwordEncoder.encode(currentPassword), false));
 
-        assertThrows(UserNotFoundException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "SecurePassword1234+")));
-
+        // Realizar la prueba
+        assertThrows(UserNotFoundException.class, () -> userServiceImp.changePassword(token, new ChangePasswordDTO(currentPassword, "SecurePassword1234+")));
     }
+
+
+
 
     @ParameterizedTest
     @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
@@ -233,6 +245,13 @@ class UserServiceTests {
 
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
+    void FailChangePasswordIncorrectPasswordTest(String username){
 
+        when(userRepository.findById(username)).thenThrow(IncorrectPasswordException.class);
 
+        assertThrows(IncorrectPasswordException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "")));
+
+    }
 }

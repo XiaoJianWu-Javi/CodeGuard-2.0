@@ -7,7 +7,9 @@ import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.AdminService;
+import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.service.UserService;
+import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +48,9 @@ class UserControllerTests {
 
     @InjectMocks
     private UserControllerImp userControllerImp;
+
+    @Mock
+    private JWTService jwtService;
 
     private UserDTO userDTO;
     private UserPassDTO userPassDTO;
@@ -157,84 +163,78 @@ class UserControllerTests {
     @Test
     void UpdateUserPasswordTest() {
 
-        userPassDTO = new UserPassDTO("FirstUser", false);
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO("Damian", false)), new ChangePasswordDTO("1234", "newSecurePassword1234"))).thenReturn(new UserDTO("Damian",false,false,List.of()));
 
-        when(adminService.updatePassword("FirstUser", "1234new")).thenReturn(userPassDTO);
+        UserDTO expectedUser = userService.changePassword(jwtService.createJwt(new UserPassDTO("Damian", false)), new ChangePasswordDTO("1234", "newSecurePassword1234"));
 
-        UserPassDTO resultado = adminService.updatePassword("FirstUser", "1234new");
+        ResponseEntity<UserDTO> result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO("Damian", false)), new ChangePasswordDTO("1234", "newSecurePassword1234"));
 
-        ResponseEntity<UserDTO> esperado = userControllerImp.changePassword("FirstUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        userPassDTO = new UserPassDTO("SecondUser", false);
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO("Rachel", false)), new ChangePasswordDTO("9876", "02_04_1999"))).thenReturn(new UserDTO("Rachel",false,false,List.of()));
 
-        when(adminService.updatePassword("SecondUser", "9876new")).thenReturn(userPassDTO);
+        expectedUser = userService.changePassword(jwtService.createJwt(new UserPassDTO("Rachel", false)), new ChangePasswordDTO("9876", "02_04_1999"));
 
-        resultado = adminService.updatePassword("SecondUser", "9876new");
+        result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO("Rachel", false)), new ChangePasswordDTO("9876", "02_04_1999"));
 
-        esperado = userControllerImp.changePassword("SecondUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        userPassDTO = new UserPassDTO("ThirdtUser", false);
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO("Dinamo", false)), new ChangePasswordDTO("hellowordl", "84l0nc3s70"))).thenReturn(new UserDTO("Dinamo",false,false,List.of()));
 
-        when(adminService.updatePassword("ThirdtUser", "newpass")).thenReturn(userPassDTO);
+        expectedUser = userService.changePassword(jwtService.createJwt(new UserPassDTO("Dinamo", false)), new ChangePasswordDTO("hellowordl", "84l0nc3s70"));
 
-        resultado = adminService.updatePassword("ThirdtUser", "newpass");
+        result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO("Dinamo", false)), new ChangePasswordDTO("hellowordl", "84l0nc3s70"));
 
-        esperado = userControllerImp.changePassword("ThirdtUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        userPassDTO = new UserPassDTO("FourthUser", false);
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO("Houdini", false)), new ChangePasswordDTO("aaa", "IwiCcR!7fOdIiNkE?6"))).thenReturn(new UserDTO("Houdini",false,false,List.of()));
 
-        when(adminService.updatePassword("FourthUser", "newhola1234")).thenReturn(userPassDTO);
+        expectedUser = userService.changePassword(jwtService.createJwt(new UserPassDTO("Houdini", false)), new ChangePasswordDTO("aaa", "IwiCcR!7fOdIiNkE?6"));
 
-        resultado = adminService.updatePassword("FourthUser", "newhola1234");
+        result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO("Houdini", false)), new ChangePasswordDTO("aaa", "IwiCcR!7fOdIiNkE?6"));
 
-        esperado = userControllerImp.changePassword("FourthUser", new ChangePasswordDTO("1234new","newSecurePassword1234"));
-
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
     }
 
-    @Test
-    void InvalidUpdateUserPasswordTest() {
-
-        User user = new User();
-        user.setUsername("FirstUser");
-        user.setTester(false);
-        user.setCreator(false);
-        user.setExercises(List.of());
 
 
-        when(adminService.updatePassword("FirstUser", "new1234;;")).thenThrow(new UserNotFoundException("User not found [ FirstUser ]"));
+    @ParameterizedTest
+    @ValueSource(strings = {"d3llano","3than","19grace","v1olet","333"})
+    void InvalidChangePasswordUserNotFoundTest(String username) {
 
-        assertThrows(UserNotFoundException.class, () -> adminService.updatePassword("FirstUser", "new1234;;"));
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("1234", "9876secure"))).thenThrow(UserNotFoundException.class);
 
+        ResponseEntity<UserDTO> result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("1234", "9876secure"));
 
-        user.setUsername("FirstUser");
+        assertThat(new ResponseEntity<>(HttpStatus.NOT_FOUND)).usingRecursiveComparison().isEqualTo(result);
 
-        when(adminService.updatePassword("SecondUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ ]"));
+    }
 
-        assertThrows(PasswordNotValidException.class, () -> adminService.updatePassword("SecondUser", ""));
+    @ParameterizedTest
+    @ValueSource(strings = {"Dellano","ethan","grace19","violet12","eeee"})
+    void InvalidChangePasswordPaswordNotValidTest(String username) {
 
-        user.setUsername("FirstUser");
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("9876", ""))).thenThrow(PasswordNotValidException.class);
 
-        when(adminService.updatePassword("ThirdUser", "")).thenThrow(new PasswordNotValidException("Password not valid [ null ]"));
+        ResponseEntity<UserDTO> result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("9876", ""));
 
+        assertThat(new ResponseEntity<>(HttpStatus.NOT_MODIFIED)).usingRecursiveComparison().isEqualTo(result);
 
-        assertThrows(PasswordNotValidException.class, () -> adminService.updatePassword("ThirdUser", ""));
+    }
 
-        user.setUsername("FirstUser");
+    @ParameterizedTest
+    @ValueSource(strings = {"Dellano","ethan","grace19","violet12","eeee"})
+    void InvalidChangePasswordIncorrectPasswordTest(String username) {
 
-        when(adminService.updatePassword("juitenDiten,ºªªaaa,,,", "1234")).thenThrow(new UserNotFoundException("User not found exception [ juitenDiten,ºªªaaa,,, ]"));
+        when(userService.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("hello", "1234securePassword9876"))).thenThrow(IncorrectPasswordException.class);
 
-        assertThrows(UserNotFoundException.class, () -> adminService.updatePassword("juitenDiten,ºªªaaa,,,", "1234"));
+        ResponseEntity<UserDTO> result = userControllerImp.changePassword(jwtService.createJwt(new UserPassDTO(username, false)), new ChangePasswordDTO("hello", "1234securePassword9876"));
+
+        assertThat(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).usingRecursiveComparison().isEqualTo(result);
 
     }
 

@@ -2,6 +2,8 @@ package es.tfg.codeguard.service.imp;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.util.IncorrectPasswordException;
+import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,8 @@ public class UserServiceImp implements UserService {
         return userRepository.findAll().stream().map(UserDTO::new).toList();
     }
 
+
+    //POSIBLE CAMBIO DEVOLVER UN USERPASSDTO
     @Override
     public UserDTO changePassword(String userToken, ChangePasswordDTO changePasswordDTO) {
 
@@ -87,11 +91,15 @@ public class UserServiceImp implements UserService {
 
         UserPass userPass = userPassRepository.findById(username).get();
 
-        if(passwordEncoder.matches(changePasswordDTO.oldPasword(), userPass.getHashedPass())){
-
+        if(!passwordEncoder.matches(changePasswordDTO.oldPasword(), userPass.getHashedPass())){
+            throw new IncorrectPasswordException("Incorrect password");
         }
 
-        return null;
+        userPass.setHashedPass(passwordEncoder.encode(changePasswordDTO.newPassword()));
+
+        userPassRepository.save(userPass);
+
+        return new UserDTO(userOptional.get());
 
     }
 
