@@ -161,6 +161,8 @@ public class CompilerServiceImp implements CompilerService {
                 "--disable-ansi-colors");
         testExecutor.redirectErrorStream(true);
         testExecutor.directory(userFolder);
+        File executionOutput = new File(folderRoute + "/execution_output.txt");
+        testExecutor.redirectOutput(executionOutput);
         Process testExecutorProcess = testExecutor.start();
 
 
@@ -172,7 +174,7 @@ public class CompilerServiceImp implements CompilerService {
             FileUtils.deleteDirectory(userFolder);
             throw new TimeoutException("Exceeded the 15 seconds time limit");
         }else{
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(testExecutorProcess.getInputStream()))){
+            try(BufferedReader br = new BufferedReader(new FileReader(executionOutput))){
                 String line;
                 while((line=br.readLine())!=null){
                     executionMessage.append(line);
