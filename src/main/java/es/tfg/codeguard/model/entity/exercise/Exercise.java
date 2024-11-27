@@ -1,20 +1,18 @@
 package es.tfg.codeguard.model.entity.exercise;
 
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
-import es.tfg.codeguard.model.dto.ExerciseDTO;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
@@ -119,7 +117,7 @@ public class Exercise {
 
     public void setSolutions(Map<String, String> solutions) {
         checkSolutions(solutions);
-        this.solutions = solutions;
+        this.solutions = new java.util.HashMap<>(solutions);
     }
 
     public void addSolution(String username, String solution) {
@@ -132,6 +130,10 @@ public class Exercise {
 
     public String getPlaceholder() {
         return placeholder;
+    }
+
+    public Integer getSolvedTimes() {
+        return getSolutions().size();
     }
 
     private void checkSolutions(Map<String, String> solutions) {
