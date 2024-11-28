@@ -29,6 +29,11 @@ public class ExerciseServiceImp implements ExerciseService {
     private UserRepository userRepository;
 
     @Override
+    public ExerciseDTO createExercise(String userToken, String title, String description) {
+        return null;
+    }
+
+    @Override
     public ExerciseDTO getExerciseById(String exerciseId) {
 
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);

@@ -16,14 +16,14 @@ import java.util.Optional;
 public interface ExerciseController {
 
 
-//    @GetMapping("createExercise")
-//    @Operation(summary = "Create a new exercise from external API")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "New exercise create"),
-//            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
-//            @ApiResponse(responseCode = "400", description = "Exercise name not valid")
-//    })
-//    public ResponseEntity<ExerciseDTO> createExercise();
+    @PostMapping("/createExercise")
+    @Operation(summary = "Create a new exercise")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "New exercise create"),
+            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
+            @ApiResponse(responseCode = "400", description = "Exercise title or description not valid")
+    })
+    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken , String title, String description);
 
 
     @GetMapping("/{exerciseId}")

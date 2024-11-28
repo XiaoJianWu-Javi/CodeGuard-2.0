@@ -23,6 +23,11 @@ public class ExerciseControllerImp implements ExerciseController {
     }
 
     @Override
+    public ResponseEntity<ExerciseDTO> createExercise(String userToken, String title, String description) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<ExerciseDTO> getExercise(String exerciseId) {
 
         try {

@@ -8,14 +8,11 @@ import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.RegisterService;
 import es.tfg.codeguard.util.PasswordNotValidException;
-import es.tfg.codeguard.util.UsernameInUseException;
+import es.tfg.codeguard.util.UsernameAlreadyExistException;
 import es.tfg.codeguard.util.UsernameNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class RegisterServiceImp implements RegisterService {
@@ -31,7 +28,7 @@ public class RegisterServiceImp implements RegisterService {
     public UserPassDTO registerUser(AuthDTO authDTO) {
 
         if (userPassRepository.findById(authDTO.username()).isPresent()) {
-            throw new UsernameInUseException("Username is already in use [" +authDTO.username() +"]");
+            throw new UsernameAlreadyExistException("Username is already in use [" +authDTO.username() +"]");
         }
 
         UserPass userPass = new UserPass();

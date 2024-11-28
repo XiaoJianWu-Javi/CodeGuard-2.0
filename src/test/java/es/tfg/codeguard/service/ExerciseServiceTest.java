@@ -3,13 +3,19 @@ package es.tfg.codeguard.service;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
+import es.tfg.codeguard.util.ExerciseAlreadyExistException;
+import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
+import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +23,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +49,12 @@ public class ExerciseServiceTest {
 
     @Mock
     private DeletedUserRepository deletedUserRepository;
+
+    @Mock
+    private JWTService jwtService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private ExerciseServiceImp exerciseServiceImp;
@@ -253,6 +268,90 @@ public class ExerciseServiceTest {
         Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
 
         assertThat(expectedTests).isEqualTo(tests.get());
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w,Magic Music Box,\"The Magic Music Box exercise involves simulating a music box\",magic-music-box",
+            "Rachel,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA,Build Square,\"I will give you an integer. Give me back a shape that is as long and wide as the integer\",build-square",
+            "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,Delta Bits,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
+            "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,\"Complete the function that accepts a string parameter, and reverses each word in the string\",reverse-words"
+    })
+    void CreateExerciseServiceTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId){
+
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+        when(jwtService.extractUserPass(userToken)).thenReturn(new UserPass(username, passwordEncoder.encode("1234"), false));
+
+        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId,exerciseTitle,exerciseDescription,"",username);
+
+        ExerciseDTO result = exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription);
+
+        assertThat(expectedExerciseDTO).usingRecursiveComparison().isEqualTo(result);
+
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w,Magic Music Box,\"The Magic Music Box exercise involves simulating a music box\",magic-music-box",
+            "Rachel,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA,Build Square,\"I will give you an integer. Give me back a shape that is as long and wide as the integer\",build-square",
+            "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,Delta Bits,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
+            "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,\"Complete the function that accepts a string parameter, and reverses each word in the string\",reverse-words"
+    })
+    void CreateExerciseAlredyExistTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId){
+
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(new Exercise(exerciseId,exerciseTitle,exerciseDescription)));
+        when(jwtService.extractUserPass(userToken)).thenReturn(new UserPass(username, passwordEncoder.encode("1234"), false));
+
+//        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId,exerciseTitle,exerciseDescription,"",username);
+//
+//        ExerciseDTO result = exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription);
+
+        assertThrows(ExerciseAlreadyExistException.class, ()-> exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription));
+
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w,,\"The Magic Music Box exercise involves simulating a music box\",magic-music-box",
+            "Rachel,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA,,\"I will give you an integer. Give me back a shape that is as long and wide as the integer\",build-square",
+            "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
+            "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"Complete the function that accepts a string parameter, and reverses each word in the string\",reverse-words"
+    })
+    void CreateExerciseTitleNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId){
+
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(new Exercise(exerciseId,exerciseTitle,exerciseDescription)));
+        when(jwtService.extractUserPass(userToken)).thenReturn(new UserPass(username, passwordEncoder.encode("1234"), false));
+
+//        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId,exerciseTitle,exerciseDescription,"",username);
+//
+//        ExerciseDTO result = exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription);
+
+        assertThrows(ExerciseTitleNotValidException.class, ()-> exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription));
+
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w,Magic Music Box,,magic-music-box",
+            "Rachel,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA,Build Square,,build-square",
+            "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,Delta Bits,,delta-bits",
+            "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse Words,,reverse-words"
+    })
+    void CreateExerciseDescriptionNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId){
+
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(new Exercise(exerciseId,exerciseTitle,exerciseDescription)));
+        when(jwtService.extractUserPass(userToken)).thenReturn(new UserPass(username, passwordEncoder.encode("1234"), false));
+
+//        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId,exerciseTitle,exerciseDescription,"",username);
+//
+//        ExerciseDTO result = exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription);
+
+        assertThrows(ExerciseDescriptionNotValid.class, ()-> exerciseServiceImp.createExercise(userToken,exerciseTitle,exerciseDescription));
+
     }
 
 }

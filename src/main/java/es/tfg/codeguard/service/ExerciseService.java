@@ -12,6 +12,8 @@ import es.tfg.codeguard.model.dto.SolutionDTO;
 @Service
 public interface ExerciseService {
 
+    public ExerciseDTO createExercise(String userToken, String title, String description);
+
     public ExerciseDTO getExerciseById(String exerciseId);
 
     public List<ExerciseDTO> getAllExercisesPaginated(String search, Integer page, boolean desc);
