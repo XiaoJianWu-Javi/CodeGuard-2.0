@@ -79,7 +79,9 @@ public class UserServiceImp implements UserService {
     @Override
     public UserDTO changePassword(String userToken, ChangePasswordDTO changePasswordDTO) {
 
-        //POSIBLE IF COMPROBANDO SI LA CONTRASEÑA ES VÁLIDA
+        if(!isValidPassword(changePasswordDTO.newPassword())){
+            throw new PasswordNotValidException("New password not valid");
+        }
 
         String username = jwtService.extractUserPass(userToken).getUsername();
 
@@ -91,7 +93,7 @@ public class UserServiceImp implements UserService {
 
         UserPass userPass = userPassRepository.findById(username).get();
 
-        if(!passwordEncoder.matches(changePasswordDTO.oldPasword(), userPass.getHashedPass())){
+        if(!passwordEncoder.matches(changePasswordDTO.oldPassword(), userPass.getHashedPass())){
             throw new IncorrectPasswordException("Incorrect password");
         }
 
@@ -101,6 +103,10 @@ public class UserServiceImp implements UserService {
 
         return new UserDTO(userOptional.get());
 
+    }
+
+    private boolean isValidPassword(String password){
+        return password != null && !password.isBlank();
     }
 
 }

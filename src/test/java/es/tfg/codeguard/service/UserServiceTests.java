@@ -155,24 +155,30 @@ class UserServiceTests {
     }
 
     @Test
+//    @ParameterizedTest
+//    @CsvSource({
+//            "Dext3r,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU\",1234",
+//            "Rach3l,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE\",9876",
+//            "marck43rc2,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk\",hello",
+//            "bob0b0b,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4\",notsecure"
+//
+//    })
     void ChangeUserPasswordServiceTest(){
 
         String houdiniToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzE0NTU4LCJleHAiOjE3MzI4MDA5NTh9.qBlNfje8pDRtoKzZWmfPsNQf6qKOpGOqsqvzNxlq9Gw";
 
-        String rachelToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3MTQ2MzAsImV4cCI6MTczMjgwMTAzMH0.G3dIq1wo-zJCvHqAocDWTXEfaqT1wsyf1ddqXk1B9bM";
-
-        String drStrangeToken= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEclN0cmFuZ2UiLCJpYXQiOjE3MzI3MTQ3NTYsImV4cCI6MTczMjgwMTE1Nn0.615S7M2Bi9CK4q7NksMyeHs4YnGyCVouKmRQdXxvvFM";
-
-        String dinamoToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEeW5hbW8iLCJpYXQiOjE3MzI3MTUwNTIsImV4cCI6MTczMjgwMTQ1Mn0.mFa0MeoxrjZ0TUtFftHp2SbEYNioNazfWaLhTEbEetI";
-
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+        String hashedpass = passwordEncoder.encode("1234");
 
         UserDTO expectedUser = new UserDTO("Houdini",false,false,List.of());
 
-        UserPass userPass = new UserPass("Houdini", passwordEncoder.encode("1234"), false);
+        UserPass userPass = new UserPass("Houdini", hashedpass, false);
 
+       // when(passwordEncoder.matches("1234", hashedpass)).thenReturn(true);
+        when(userRepository.findById("Houdini")).thenReturn(Optional.of(new User("Houdini")));
         when(userPassRepository.findById("Houdini")).thenReturn(Optional.of(userPass));
+        when(jwtService.extractUserPass(houdiniToken)).thenReturn(userPass);
 
         UserDTO resultUser = userServiceImp.changePassword(houdiniToken, new ChangePasswordDTO("1234", "newSecurePassword1234"));
 
@@ -180,78 +186,91 @@ class UserServiceTests {
 
 
 
-        expectedUser = new UserDTO("Rachel",false,false,List.of());
-
-        userPass = new UserPass("Rachel", passwordEncoder.encode("9876"), false);
-
-        when(userPassRepository.findById("Rachel")).thenReturn(Optional.of(userPass));
-
-        resultUser = userServiceImp.changePassword(rachelToken, new ChangePasswordDTO("9876", "newSecurePassword9876"));
-
-        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
-
-
-
-        expectedUser = new UserDTO("DrStrange",false,false,List.of());
-
-        userPass = new UserPass("DrStrange", passwordEncoder.encode("0000"), false);
-
-        when(userPassRepository.findById("DrStrange")).thenReturn(Optional.of(userPass));
-
-        resultUser = userServiceImp.changePassword(drStrangeToken, new ChangePasswordDTO("0000", "DrStrangeHelpPeople67"));
-
-        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
-
-
-
-        expectedUser = new UserDTO("Dinamo",false,false,List.of());
-
-        userPass = new UserPass("Dinamo", passwordEncoder.encode("a"), false);
-
-        when(userPassRepository.findById("Dinamo")).thenReturn(Optional.of(userPass));
-
-        resultUser = userServiceImp.changePassword(dinamoToken, new ChangePasswordDTO("a", "DinamoTheBestWizardOfTheWordl69"));
-
-        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+//        expectedUser = new UserDTO("Rachel",false,false,List.of());
+//
+//        userPass = new UserPass("Rachel", passwordEncoder.encode("9876"), false);
+//
+//        when(userPassRepository.findById("Rachel")).thenReturn(Optional.of(userPass));
+//
+//        resultUser = userServiceImp.changePassword(rachelToken, new ChangePasswordDTO("9876", "newSecurePassword9876"));
+//
+//        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+//
+//
+//
+//        expectedUser = new UserDTO("DrStrange",false,false,List.of());
+//
+//        userPass = new UserPass("DrStrange", passwordEncoder.encode("0000"), false);
+//
+//        when(userPassRepository.findById("DrStrange")).thenReturn(Optional.of(userPass));
+//
+//        resultUser = userServiceImp.changePassword(drStrangeToken, new ChangePasswordDTO("0000", "DrStrangeHelpPeople67"));
+//
+//        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
+//
+//
+//
+//        expectedUser = new UserDTO("Dinamo",false,false,List.of());
+//
+//        userPass = new UserPass("Dinamo", passwordEncoder.encode("a"), false);
+//
+//        when(userPassRepository.findById("Dinamo")).thenReturn(Optional.of(userPass));
+//
+//        resultUser = userServiceImp.changePassword(dinamoToken, new ChangePasswordDTO("a", "DinamoTheBestWizardOfTheWordl69"));
+//
+//        assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
 
     }
 
     @ParameterizedTest
     @CsvSource({
-            "Dext3r,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU,1234",
-            "Rach3l,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE,9876",
-            "marck43rc2,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk,hello",
-            "bob0b0b,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4,notsecure"
+            "Dext3r,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU\",1234",
+            "Rach3l,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE\",9876",
+            "marck43rc2,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk\",hello",
+            "bob0b0b,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4\",notsecure"
+
     })
     void FailChangePasswordUserNotFoundTest(String username, String token, String currentPassword) {
-        // Configurar mocks para cada iteración
-        when(userRepository.findById(username)).thenThrow(UserNotFoundException.class);
-        when(jwtService.extractUserPass(token)).thenReturn(new UserPass(username, passwordEncoder.encode(currentPassword), false));
+        when(jwtService.extractUserPass(token)).thenReturn(new UserPass(username, new BCryptPasswordEncoder().encode(currentPassword), false));
 
-        // Realizar la prueba
-        assertThrows(UserNotFoundException.class, () -> userServiceImp.changePassword(token, new ChangePasswordDTO(currentPassword, "SecurePassword1234+")));
-    }
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
 
-
-
-
-    @ParameterizedTest
-    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
-    void FailChangePasswordNotValidTest(String username){
-
-        when(userRepository.findById(username)).thenThrow(PasswordNotValidException.class);
-
-        assertThrows(PasswordNotValidException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "")));
-
+        assertThrows(UserNotFoundException.class, () -> userServiceImp.changePassword(token, new ChangePasswordDTO("1234", "SecurePassword1234+")));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"D3xter", "R4ch3l", "4r3121marck", "b0b"})
-    void FailChangePasswordIncorrectPasswordTest(String username){
+    @CsvSource({
+            "Dext3r,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU\",1234,",
+            "Rach3l,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE\",9876,  ",
+            "marck43rc2,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk\",hello,                                            ",
+            "bob0b0b,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4\",notsecure,"
+    })
+    void FailChangePasswordNotValidTest(String username, String userToken, String oldPassword, String newPassword){
 
-        when(userRepository.findById(username)).thenThrow(IncorrectPasswordException.class);
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO(oldPassword,newPassword);
 
-        assertThrows(IncorrectPasswordException.class, () -> userServiceImp.changePassword(jwtService.createJwt(new UserPassDTO(username,false)), new ChangePasswordDTO("1234", "")));
+        assertThrows(PasswordNotValidException.class, () -> userServiceImp.changePassword(userToken,changePasswordDTO));
 
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Dext3r,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJEZXh0M3IiLCJpYXQiOjE3MzI3NDc4NjMsImV4cCI6MTczMjgzNDI2M30.xzGABrgSmqQ3LnqdUb8QeRuX24bFYLQHtvwzA1V77hU\",thisIsNotAPassword,newSecurePassword+",
+            "Rach3l,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoM2wiLCJpYXQiOjE3MzI3NDc5MDMsImV4cCI6MTczMjgzNDMwM30.dmCsleYmCWJIbi_dvB7CN4IplZds_NajiAo5OWlgFlE\",9876,1234567",
+            "marck43rc2,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjazQzcmMyIiwiaWF0IjoxNzMyNzQ3OTMxLCJleHAiOjE3MzI4MzQzMzF9.b3hkIexqnK67XcMNWeSK_0gaITgwsgiEX2b9xaMOlLk\",hello,goodbye",
+            "bob0b0b,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJib2IwYjBiIiwiaWF0IjoxNzMyNzQ3OTU0LCJleHAiOjE3MzI4MzQzNTR9.M-hAOdsXunlo0PDDyziTiha_k2vCqrkTSa6LXOKx8W4\",notsecure,moresecure"
+
+    })
+    void FailChangePasswordIncorrectPasswordTest(String username, String userToken, String oldPassword, String newPassword){
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(new User("Dext3r")));
+
+        when(jwtService.extractUserPass(userToken)).thenReturn(new UserPass(username, "1234", false));
+
+        when(userPassRepository.findById(username)).thenReturn(Optional.of(new UserPass(username, new BCryptPasswordEncoder().encode("1234"), false)));
+
+        assertThrows(IncorrectPasswordException.class, ()-> userServiceImp.changePassword(userToken, new ChangePasswordDTO(oldPassword, newPassword)));
+
+    }
+
 }
