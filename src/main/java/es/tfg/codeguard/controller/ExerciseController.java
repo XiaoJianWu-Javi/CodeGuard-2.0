@@ -9,12 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/exercise")
 public interface ExerciseController {
-
 
     @PostMapping("/createExercise")
     @Operation(summary = "Create a new exercise")
@@ -23,8 +21,7 @@ public interface ExerciseController {
             @ApiResponse(responseCode = "409", description = "Exercise created yet"),
             @ApiResponse(responseCode = "400", description = "Exercise title or description not valid")
     })
-    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken , String title, String description);
-
+    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken, @RequestParam String title, @RequestParam String description);
 
     @GetMapping("/{exerciseId}")
     @Operation(summary = "Get exercise by name")

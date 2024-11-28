@@ -4,7 +4,10 @@ import es.tfg.codeguard.controller.ExerciseController;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.service.ExerciseService;
+import es.tfg.codeguard.util.ExerciseAlreadyExistException;
+import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
+import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +27,14 @@ public class ExerciseControllerImp implements ExerciseController {
 
     @Override
     public ResponseEntity<ExerciseDTO> createExercise(String userToken, String title, String description) {
-        return null;
+        try {
+            return ResponseEntity.ok(exerciseService.createExercise(userToken, title, description));
+        } catch (ExerciseAlreadyExistException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (ExerciseTitleNotValidException | ExerciseDescriptionNotValid e) {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
     @Override
