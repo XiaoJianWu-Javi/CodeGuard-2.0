@@ -51,18 +51,18 @@ public class RegisterServiceTest {
     }
 
     @Test
-    public void TestFailUserServiceRegisterMethod() {
+    public void registerUserServiceTestUsernameAlreadyExist() {
 
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
 
-        when(userPassRepository.findById("Gandalf")).thenThrow(UsernameAlreadyExistException.class);
+        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
         assertThrows(UsernameAlreadyExistException.class, () -> registerServiceImp.registerUser(jsonParserDTO));
     }
 
     @Test
-    public void TestFineUserServiceRegisterMethod() {
+    public void registerUserServiceTest() {
 
         when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());
