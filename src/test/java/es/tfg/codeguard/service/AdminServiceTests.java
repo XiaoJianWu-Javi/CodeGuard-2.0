@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -71,7 +72,7 @@ class AdminServiceTests {
     }
 
     @Test
-    void TestFailAdminServiceDeleteMethod() {
+    void adminDeleteUserTestUserNotFound() {
 
         when(userRepository.findById("i2udgiqdqi????!=¿!02'31")).thenThrow(UserNotFoundException.class);
 
@@ -80,31 +81,35 @@ class AdminServiceTests {
     }
 
     @Test
-    void TestFineAdminServiceDeleteMethod() {
+    void adminDeleteUserTest() {
         Optional<UserPass> userPassOpt = Optional.of(userPass);
-        //when(userPassRepository.findById("Gandalf")).thenReturn(userPassOpt);
 
         Optional<User> userOpt = Optional.of(user);
         when(userRepository.findById("Gandalf")).thenReturn(userOpt);
 
-        UserDTO deleteUser = adminServiceImp.deleteUser("Gandalf");
+        UserDTO resultDeleteUser = adminServiceImp.deleteUser("Gandalf");
 
-        DeletedUser deletedUserExpected = deletedUser;
+        DeletedUser expectedDeleteUser = deletedUser;
 
-        assertThat(deletedUserExpected).usingRecursiveComparison().isEqualTo(deleteUser);
+        assertThat(expectedDeleteUser).usingRecursiveComparison().isEqualTo(resultDeleteUser);
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "G4ndalf,cantpass",
+            "D3xter,newSecurePassword12",
+            "P0l,9876secure"
+    })
+    void adminChangeUserPasswordTestUserNotFound(String username, String newPassword) {
+        when(userRepository.findById(username)).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> adminServiceImp.updatePassword(username, newPassword));
 
     }
 
     @Test
-    void TestFailAdminServiceUpdatePasswordMethod() {
-        when(userRepository.findById("Gandalf")).thenThrow(UserNotFoundException.class);
-
-        assertThrows(UserNotFoundException.class, () -> adminServiceImp.updatePassword("Gandalf", "cantpass"));
-
-    }
-
-    @Test
-    void TestFineAdminServiceUpdatePasswordMethod() {
+    void adminChangeUserPasswordTest() {
 
         UserPassDTO userExpected = new UserPassDTO("Gandalf", false);
 
@@ -116,48 +121,47 @@ class AdminServiceTests {
         assertThat(userExpected).usingRecursiveComparison().isEqualTo(userOptional);
     }
 
-
     @Test
-    void TestFineAdminServiceUpdateUserPrivilegesTest(){
+    void adminUpdateUserPrivilegesTest() {
 
-        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician",false,true);
+        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician", false, true);
 
         UserDTO expectedUser = new UserDTO(userPrivilegesDTO1.username(), userPrivilegesDTO1.tester(), userPrivilegesDTO1.creator(), List.of());
 
-        when(userRepository.findById(userPrivilegesDTO1.username())).thenReturn(Optional.of(new User(userPrivilegesDTO1.username(), false,false)));
+        when(userRepository.findById(userPrivilegesDTO1.username())).thenReturn(Optional.of(new User(userPrivilegesDTO1.username(), false, false)));
 
         UserDTO resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO1);
 
         assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
 
 
-        UserPrivilegesDTO userPrivilegesDTO2 = new UserPrivilegesDTO("MMM4gic",true,false);
+        UserPrivilegesDTO userPrivilegesDTO2 = new UserPrivilegesDTO("MMM4gic", true, false);
 
         expectedUser = new UserDTO(userPrivilegesDTO2.username(), userPrivilegesDTO2.tester(), userPrivilegesDTO2.creator(), List.of());
 
-        when(userRepository.findById(userPrivilegesDTO2.username())).thenReturn(Optional.of(new User(userPrivilegesDTO2.username(), false,false)));
+        when(userRepository.findById(userPrivilegesDTO2.username())).thenReturn(Optional.of(new User(userPrivilegesDTO2.username(), false, false)));
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO2);
 
         assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
 
 
-        UserPrivilegesDTO userPrivilegesDTO3 = new UserPrivilegesDTO("SSS0ulD3v", true,true);
+        UserPrivilegesDTO userPrivilegesDTO3 = new UserPrivilegesDTO("SSS0ulD3v", true, true);
 
         expectedUser = new UserDTO(userPrivilegesDTO3.username(), userPrivilegesDTO3.tester(), userPrivilegesDTO3.creator(), List.of());
 
-        when(userRepository.findById(userPrivilegesDTO3.username())).thenReturn(Optional.of(new User(userPrivilegesDTO3.username(), false,false)));
+        when(userRepository.findById(userPrivilegesDTO3.username())).thenReturn(Optional.of(new User(userPrivilegesDTO3.username(), false, false)));
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO3);
 
         assertThat(expectedUser).usingRecursiveComparison().isEqualTo(resultUser);
 
 
-        UserPrivilegesDTO userPrivilegesDTO4 = new UserPrivilegesDTO("Noo0bDev",false, false);
+        UserPrivilegesDTO userPrivilegesDTO4 = new UserPrivilegesDTO("Noo0bDev", false, false);
 
         expectedUser = new UserDTO(userPrivilegesDTO4.username(), userPrivilegesDTO4.tester(), userPrivilegesDTO4.creator(), List.of());
 
-        when(userRepository.findById(userPrivilegesDTO4.username())).thenReturn(Optional.of(new User(userPrivilegesDTO4.username(), false,false)));
+        when(userRepository.findById(userPrivilegesDTO4.username())).thenReturn(Optional.of(new User(userPrivilegesDTO4.username(), false, false)));
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO4);
 
@@ -167,13 +171,13 @@ class AdminServiceTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º"})
-    void TestFailAdminServiceUpdateUserPrivilegesTest(String username){
+    void adminUpdateUserPrivilegesTest(String username) {
 
-        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("username",true,true);
+        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("username", true, true);
 
         when(userRepository.findById(userPrivilegesDTO1.username())).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, ()-> adminServiceImp.updateUserPrivileges(userPrivilegesDTO1));
+        assertThrows(UserNotFoundException.class, () -> adminServiceImp.updateUserPrivileges(userPrivilegesDTO1));
 
     }
 

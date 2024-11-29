@@ -26,7 +26,7 @@ public class TestCompilerServiceTests {
 
     //TODO: mirar que todo lo que se persista este bien persistido en el test
     @Test
-    void testingValidSolution(){
+    void validSolutionTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -67,7 +67,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void testingExerciseCompilationError(){
+    void exerciseCompilationErrorTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -108,7 +108,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void testingTestCompilationError(){
+    void testCompilationError() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -149,7 +149,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void testingTestNotPass(){
+    void testingTestNotPass() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -190,7 +190,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void testNotFoundExceptionTest(){
+    void testNotFoundExceptionTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -204,7 +204,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void placeholderNotFoundExceptionTest(){
+    void placeholderNotFoundExceptionTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -230,7 +230,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void classNotFoundExceptionTest(){
+    void classNotFoundExceptionTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -277,7 +277,7 @@ public class TestCompilerServiceTests {
     }
 
     @Test
-    void timeoutExceptionTest(){
+    void timeoutExceptionTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",

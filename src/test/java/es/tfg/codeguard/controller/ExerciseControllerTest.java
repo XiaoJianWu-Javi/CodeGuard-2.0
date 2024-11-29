@@ -8,7 +8,6 @@ import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,137 +42,129 @@ public class ExerciseControllerTest {
     private UserDTO userDTO;
     private UserPassDTO userPassDTO;
 
-    @BeforeEach
-    void setup() {
-
-
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"1", "2", "3", "4"})
-    void GetExerciseByIdTest(String exerciseId) {
+    void getExerciseByIdTest(String exerciseId) {
 
         ExerciseDTO exerciseDTO = new ExerciseDTO(exerciseId, "title" + exerciseId, "description" + exerciseId, "tester" + exerciseId, "creator" + exerciseId);
 
         when(exerciseService.getExerciseById(exerciseId)).thenReturn(exerciseDTO);
 
-        ExerciseDTO resultado = exerciseService.getExerciseById(exerciseId);
+        ExerciseDTO expected = exerciseService.getExerciseById(exerciseId);
 
-        ResponseEntity<ExerciseDTO> esperado = exerciseControllerImp.getExercise(exerciseId);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.getExercise(exerciseId);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"1p", "2ter", "t30", "a4", "54uri"})
-    void NotFoundExerciseById(String exerciseId) {
+    void getExerciseByIdTestExerciseNotFound(String exerciseId) {
 
         when(exerciseService.getExerciseById(exerciseId)).thenThrow(new ExerciseNotFoundException("Exercise not found [" + exerciseId + "]"));
 
-        ResponseEntity<ExerciseDTO> esperado = exerciseControllerImp.getExercise(exerciseId);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.getExercise(exerciseId);
 
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        assertThat(new ResponseEntity<>(HttpStatus.NOT_FOUND)).usingRecursiveComparison().isEqualTo(result);
 
     }
 
     @Test
-    void GetAllExercisesTest() {
+    void getAllExercisesTest() {
 
-        ExerciseDTO exercise1 = new ExerciseDTO("1", "title" + 1, "description" + 1, "tester" + 1, "creator" + 1);
-        ExerciseDTO exercise2 = new ExerciseDTO("2", "title" + 2, "description" + 2, "tester" + 2, "creator" + 2);
-        ExerciseDTO exercise3 = new ExerciseDTO("3", "title" + 3, "description" + 3, "tester" + 3, "creator" + 3);
+        ExerciseDTO exercise1 = new ExerciseDTO("valid-braces", "Valid Braces", "description" + 1, "tester" + 1, "creator" + 1);
+        ExerciseDTO exercise2 = new ExerciseDTO("reverse-words", "Reverse Words" + 2, "description" + 2, "tester" + 2, "creator" + 2);
+        ExerciseDTO exercise3 = new ExerciseDTO("build-square", "Build Square", "description" + 3, "tester" + 3, "creator" + 3);
 
 
         when(exerciseService.getAllExercises()).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList()));
 
-        List<ExerciseDTO> resultado = exerciseService.getAllExercises();
+        List<ExerciseDTO> expected = exerciseService.getAllExercises();
 
-        ResponseEntity<List<ExerciseDTO>> esperado = exerciseControllerImp.getAllExercises();
+        ResponseEntity<List<ExerciseDTO>> result = exerciseControllerImp.getAllExercises();
 
-        Assertions.assertEquals(0, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(0, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
         when(exerciseService.getAllExercises()).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise1)));
 
-        resultado = exerciseService.getAllExercises();
+        expected = exerciseService.getAllExercises();
 
-        esperado = exerciseControllerImp.getAllExercises();
+        result = exerciseControllerImp.getAllExercises();
 
-        Assertions.assertEquals(1, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(1, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
         when(exerciseService.getAllExercises()).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise1, exercise2)));
 
-        resultado = exerciseService.getAllExercises();
+        expected = exerciseService.getAllExercises();
 
-        esperado = exerciseControllerImp.getAllExercises();
+        result = exerciseControllerImp.getAllExercises();
 
-        Assertions.assertEquals(2, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(2, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
         when(exerciseService.getAllExercises()).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise1, exercise2, exercise3)));
 
-        resultado = exerciseService.getAllExercises();
+        expected = exerciseService.getAllExercises();
 
-        esperado = exerciseControllerImp.getAllExercises();
+        result = exerciseControllerImp.getAllExercises();
 
-        Assertions.assertEquals(3, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(3, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
     }
 
     @Test
-    void GetAllExercisesPaginatedTest() {
+    void getAllExercisesPaginatedTest() {
 
         ExerciseDTO exercise1 = new ExerciseDTO("project-euler-9", "Project Euler 9", "description" + 1, "tester" + 1, "creator" + 1);
         ExerciseDTO exercise2 = new ExerciseDTO("saruman-123", "La Traición de Isengard", "description" + 2, "tester" + 2, "creator" + 2);
         ExerciseDTO exercise3 = new ExerciseDTO("magic-music-box", "Magic Music Box", "description" + 3, "tester" + 3, "creator" + 3);
 
+        when(exerciseService.getAllExercisesPaginated("Je", 1, false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList()));
 
-        when(exerciseService.getAllExercisesPaginated("Je",1,false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList()));
+        List<ExerciseDTO> expected = exerciseService.getAllExercisesPaginated("Je", 1, false);
 
-        List<ExerciseDTO> resultado = exerciseService.getAllExercisesPaginated("Je",1,false);
+        ResponseEntity<List<ExerciseDTO>> result = exerciseControllerImp.getAllExercisesPaginated("Je", 1, false);
 
-        ResponseEntity<List<ExerciseDTO>> esperado = exerciseControllerImp.getAllExercisesPaginated("Je",1,false);
-
-        Assertions.assertEquals(0, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
-
-
-        when(exerciseService.getAllExercisesPaginated("je",1,false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise1)));
-
-        resultado = exerciseService.getAllExercisesPaginated("je",1,false);
-
-        esperado = exerciseControllerImp.getAllExercisesPaginated("je",1,false);
-
-        Assertions.assertEquals(1, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(0, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        when(exerciseService.getAllExercisesPaginated("g",0,false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise2, exercise3)));
+        when(exerciseService.getAllExercisesPaginated("je", 1, false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise1)));
 
-        resultado = exerciseService.getAllExercisesPaginated("g",0,false);
+        expected = exerciseService.getAllExercisesPaginated("je", 1, false);
 
-        esperado = exerciseControllerImp.getAllExercisesPaginated("g",0,false);
+        result = exerciseControllerImp.getAllExercisesPaginated("je", 1, false);
 
-        Assertions.assertEquals(2, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(1, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        when(exerciseService.getAllExercisesPaginated("g",0,true)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise3, exercise2)));
+        when(exerciseService.getAllExercisesPaginated("g", 0, false)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise2, exercise3)));
 
-        resultado = exerciseService.getAllExercisesPaginated("g",0,true);
+        expected = exerciseService.getAllExercisesPaginated("g", 0, false);
 
-        esperado = exerciseControllerImp.getAllExercisesPaginated("g",0,true);
+        result = exerciseControllerImp.getAllExercisesPaginated("g", 0, false);
 
-        Assertions.assertEquals(2, resultado.size());
-        assertThat(esperado).usingRecursiveComparison().isEqualTo(new ResponseEntity<>(resultado, HttpStatus.OK));
+        Assertions.assertEquals(2, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
+
+
+        when(exerciseService.getAllExercisesPaginated("g", 0, true)).thenReturn(new ArrayList<ExerciseDTO>(Arrays.asList(exercise3, exercise2)));
+
+        expected = exerciseService.getAllExercisesPaginated("g", 0, true);
+
+        result = exerciseControllerImp.getAllExercisesPaginated("g", 0, true);
+
+        Assertions.assertEquals(2, result.getBody().size());
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
     }
-
 
 }

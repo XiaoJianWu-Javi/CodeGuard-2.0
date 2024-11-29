@@ -24,50 +24,50 @@ public class CompilerControllerTests {
     static final String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyNTMwMjgwfQ.u96ApA5WdZMlD80wfCRs6YvGskOmAXTA3ASwkRuOxQQ";
 
     @Test
-    void validCompileTest(){
+    void validCompileTest() {
 
         CompilerRequestDTO requestDTO = new CompilerRequestDTO(
-                "plural","public class Plural{ public static boolean isPlural(float f){ return f !=1;}}"
+                "plural", "public class Plural{ public static boolean isPlural(float f){ return f !=1;}}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(HttpStatus.OK).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void serverErrorCompileTest(){
+    void serverErrorCompileTest() {
 
         CompilerRequestDTO requestDTO = new CompilerRequestDTO(
-                "singular","public class Plural{ public static boolean isPlural(float f){ return f !=1;}}"
+                "singular", "public class Plural{ public static boolean isPlural(float f){ return f !=1;}}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(HttpStatus.INTERNAL_SERVER_ERROR).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void badRequestCompileTest(){
+    void badRequestCompileTest() {
 
         CompilerRequestDTO requestDTO = new CompilerRequestDTO(
-                "plural","public closs Plural{ public static boolean isPlural(float f){ return f !=1;}}"
+                "plural", "public closs Plural{ public static boolean isPlural(float f){ return f !=1;}}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void requestTimeoutCompileTest(){
+    void requestTimeoutCompileTest() {
 
         CompilerRequestDTO requestDTO = new CompilerRequestDTO(
-                "plural","public class Plural{ public static boolean isPlural(float f){ while(true){int i = 0;}}}"
+                "plural", "public class Plural{ public static boolean isPlural(float f){ while(true){int i = 0;}}}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.REQUEST_TIMEOUT);
+        assertThat(HttpStatus.REQUEST_TIMEOUT).isEqualTo(result.getStatusCode());
     }
 }

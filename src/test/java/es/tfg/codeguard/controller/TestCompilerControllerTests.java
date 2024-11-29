@@ -24,7 +24,7 @@ public class TestCompilerControllerTests {
     static final String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJTYXJ1bWFuIiwiaWF0IjoxNzMyNTMwMjgwfQ.u96ApA5WdZMlD80wfCRs6YvGskOmAXTA3ASwkRuOxQQ";
 
     @Test
-    void validCompileTest(){
+    void validCompileTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -45,13 +45,13 @@ public class TestCompilerControllerTests {
                 "public class Plural{ public static boolean isPlural(float f){ }}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileTestCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileTestCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(HttpStatus.OK).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void noTestGivenCompileTest(){
+    void noTestGivenCompileTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -60,13 +60,13 @@ public class TestCompilerControllerTests {
                 "public class Plural{ public static boolean isPlural(float f){ }}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileTestCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileTestCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void noPlaceholderGivenCompileTest(){
+    void noPlaceholderGivenCompileTest() {
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
                 "public class Plural{ public static boolean isPlural(float f){ return f !=1;}}",
@@ -86,13 +86,13 @@ public class TestCompilerControllerTests {
                 ""
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileTestCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileTestCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(result.getStatusCode());
     }
 
     @Test
-    void badClassNameCompileTest(){
+    void badClassNameCompileTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -113,9 +113,9 @@ public class TestCompilerControllerTests {
                 "public class Plural{ public static boolean isPlural(float f){ }}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileTestCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileTestCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(result.getStatusCode());
 
         CompilerTestRequestDTO requestDTOSecond = new CompilerTestRequestDTO(
                 "plural",
@@ -136,13 +136,13 @@ public class TestCompilerControllerTests {
                 "public class Plural{ public static boolean isPlural(float f){ }}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperadoSecond = compilationController.compileTestCode(jwtToken, requestDTOSecond);
+        ResponseEntity<CompilerResponseDTO> resultSecond = compilationController.compileTestCode(jwtToken, requestDTOSecond);
 
-        assertThat(esperadoSecond.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(HttpStatus.BAD_REQUEST).isEqualTo(resultSecond.getStatusCode());
     }
 
     @Test
-    void requestTimeoutCompileTest(){
+    void requestTimeoutCompileTest() {
 
         CompilerTestRequestDTO requestDTO = new CompilerTestRequestDTO(
                 "plural",
@@ -163,9 +163,9 @@ public class TestCompilerControllerTests {
                 "public class Plural{ public static boolean isPlural(float f){  }}"
         );
 
-        ResponseEntity<CompilerResponseDTO> esperado = compilationController.compileTestCode(jwtToken, requestDTO);
+        ResponseEntity<CompilerResponseDTO> result = compilationController.compileTestCode(jwtToken, requestDTO);
 
-        assertThat(esperado.getStatusCode()).isEqualTo(HttpStatus.REQUEST_TIMEOUT);
+        assertThat(HttpStatus.REQUEST_TIMEOUT).isEqualTo(result.getStatusCode());
     }
 
 }

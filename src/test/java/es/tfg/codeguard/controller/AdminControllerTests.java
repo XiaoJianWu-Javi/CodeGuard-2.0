@@ -5,12 +5,9 @@ import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
-import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
-import org.aspectj.apache.bcel.classfile.Module;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,13 +15,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -43,9 +38,7 @@ class AdminControllerTests {
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
     void deleteUserByIdTest(String username) {
 
-        UserDTO userDTO = new UserDTO(username, false, false, new java.util.ArrayList<>());
-
-        when(adminService.deleteUser(username)).thenReturn(userDTO);
+        when(adminService.deleteUser(username)).thenReturn(new UserDTO(username, false, false, new java.util.ArrayList<>()));
 
         UserDTO esperado = adminService.deleteUser(username);
 
@@ -57,9 +50,9 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
-    void InvalidDeleteUserByIdTest(String username) {
+    void deleteUserByIdTestUserNotFound(String username) {
 
-        when(adminService.deleteUser(username)).thenThrow(new UserNotFoundException("User not found [" + username + "]"));
+        when(adminService.deleteUser(username)).thenThrow(UserNotFoundException.class);
 
         ResponseEntity<UserDTO> resultado = adminControllerImp.deleteUser(username);
 
@@ -68,7 +61,7 @@ class AdminControllerTests {
     }
 
     @Test
-    void UpdatePasswordControllerTest() {
+    void updatePasswordControllerTest() {
 
         AuthDTO authDTOGandalf = new AuthDTO("Gandalf", "newSecurePassword1234");
         UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf", true);
@@ -92,12 +85,12 @@ class AdminControllerTests {
         assertThat(new ResponseEntity<>(esperado, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(resultado);
 
 
-        AuthDTO authDTOMickeyMouse = new AuthDTO("MickeyMouse", "myBestFlight9876");
+        AuthDTO authDTOMickeyMouse = new AuthDTO("MickeyMouse", "MickeyTheWizard87");
         UserPassDTO userPassDTOMickeyMouse = new UserPassDTO("MickeyMouse", true);
 
-        when(adminService.updatePassword(authDTOMickeyMouse.username(), "myBestFlight9876")).thenReturn(userPassDTOMickeyMouse);
+        when(adminService.updatePassword(authDTOMickeyMouse.username(), "MickeyTheWizard87")).thenReturn(userPassDTOMickeyMouse);
 
-        esperado = adminService.updatePassword(authDTOMickeyMouse.username(), "myBestFlight9876");
+        esperado = adminService.updatePassword(authDTOMickeyMouse.username(), "MickeyTheWizard87");
         resultado = adminControllerImp.updatePassword(authDTOMickeyMouse);
 
         assertThat(new ResponseEntity<>(esperado, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(resultado);
@@ -105,7 +98,7 @@ class AdminControllerTests {
     }
 
     @Test
-    void FailedUpdatePasswordControllerTest() {
+    void updatePasswordControllerTestPasswordNotValid() {
 
         AuthDTO authDTOGandalf = new AuthDTO("Gandalf", "");
         UserPassDTO userPassDTOGandalf = new UserPassDTO("Gandalf", true);
@@ -148,11 +141,10 @@ class AdminControllerTests {
 
     }
 
-
     @Test
-    void UpdateUserPrivilegesTest(){
+    void updateUserPrivilegesTest() {
 
-        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician",false,true);
+        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician", false, true);
 
         UserDTO expectedUser = new UserDTO(userPrivilegesDTO1.username(), userPrivilegesDTO1.tester(), userPrivilegesDTO1.creator(), List.of());
 
@@ -163,7 +155,7 @@ class AdminControllerTests {
         assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        UserPrivilegesDTO userPrivilegesDTO2 = new UserPrivilegesDTO("DrStrange",false,true);
+        UserPrivilegesDTO userPrivilegesDTO2 = new UserPrivilegesDTO("DrStrange", false, true);
 
         expectedUser = new UserDTO(userPrivilegesDTO2.username(), userPrivilegesDTO2.tester(), userPrivilegesDTO2.creator(), List.of());
 
@@ -174,7 +166,7 @@ class AdminControllerTests {
         assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        UserPrivilegesDTO userPrivilegesDTO3 = new UserPrivilegesDTO("Damian",false,true);
+        UserPrivilegesDTO userPrivilegesDTO3 = new UserPrivilegesDTO("Damian", false, true);
 
         expectedUser = new UserDTO(userPrivilegesDTO3.username(), userPrivilegesDTO3.tester(), userPrivilegesDTO3.creator(), List.of());
 
@@ -185,7 +177,7 @@ class AdminControllerTests {
         assertThat(new ResponseEntity<>(expectedUser, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
 
-        UserPrivilegesDTO userPrivilegesDTO4 = new UserPrivilegesDTO("Rachel",false,true);
+        UserPrivilegesDTO userPrivilegesDTO4 = new UserPrivilegesDTO("Rachel", false, true);
 
         expectedUser = new UserDTO(userPrivilegesDTO4.username(), userPrivilegesDTO4.tester(), userPrivilegesDTO4.creator(), List.of());
 
@@ -199,9 +191,9 @@ class AdminControllerTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º", ":-)ori"})
-    void FailedUpdateUserPrivilegesTest(){
+    void updateUserPrivilegeTestUserNotFound() {
 
-        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician",false,true);
+        UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("theBestMagician", false, true);
 
         when(adminService.updateUserPrivileges(userPrivilegesDTO1)).thenThrow(UserNotFoundException.class);
 
@@ -210,7 +202,5 @@ class AdminControllerTests {
         assertThat(new ResponseEntity<>(HttpStatus.NOT_FOUND)).usingRecursiveComparison().isEqualTo(result);
 
     }
-
-
 
 }
