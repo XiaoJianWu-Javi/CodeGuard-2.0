@@ -78,7 +78,7 @@ public class User {
 
     public void setExercises(List<String> exercises) {
         checkExercises(exercises);
-        this.exercises = exercises;
+        this.exercises = new ArrayList<>(exercises);
     }
 
     private void checkExercises(List<String> exercises) {

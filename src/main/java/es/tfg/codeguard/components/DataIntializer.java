@@ -111,6 +111,7 @@ public class DataIntializer {
                 "      assertEquals(true,Plural.isPlural(100f));\n" +
                 "    }\n" +
                 "}");
+        firstExercise.setPlaceholder("public class Plural{ public static boolean isPlural(float f){}}");
         exerciseRepository.save(firstExercise);
     }
 

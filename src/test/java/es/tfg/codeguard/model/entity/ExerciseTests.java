@@ -106,4 +106,14 @@ class ExerciseTests {
         assertEquals(original.size(), exercise.getSolutions().size());
         assertArrayEquals(original.entrySet().toArray(), exercise.getSolutions().entrySet().toArray());
     }
+
+    @Test
+    void getSolvedTimesTest() {
+        assertEquals(0, exercise.getSolvedTimes());
+        Map<String, String> originalSolutions = new HashMap<String, String>() {{put("user1", ""); put("user2", "");}};
+        exercise.setSolutions(originalSolutions);
+        assertEquals(originalSolutions.size(), exercise.getSolvedTimes());
+        exercise.addSolution("user3", "");
+        assertEquals(originalSolutions.size() + 1, exercise.getSolvedTimes());
+    }
 }
