@@ -171,6 +171,11 @@ public class CompilerServiceImp implements CompilerService {
         if(!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)){
             testExecutorProcess.destroy();
             logger.info("Execution Timeout");
+            testExecutorProcess.waitFor();
+            //Necesary for the file deletion
+            testExecutorProcess.getInputStream().close();
+            testExecutorProcess.getOutputStream().close();
+            testExecutorProcess.getErrorStream().close();
             FileUtils.deleteDirectory(userFolder);
             throw new TimeoutException("Exceeded the 15 seconds time limit");
         }else{
