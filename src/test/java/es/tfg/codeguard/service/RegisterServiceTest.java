@@ -7,7 +7,7 @@ import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.RegisterServiceImp;
-import es.tfg.codeguard.util.UsernameInUseException;
+import es.tfg.codeguard.util.UsernameAlreadyExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,18 +51,18 @@ public class RegisterServiceTest {
     }
 
     @Test
-    public void TestFailUserServiceRegisterMethod() {
+    public void registerUserServiceTestUsernameAlreadyExist() {
 
         UserPass userPass = new UserPass();
         userPass.setUsername("Gandalf");
 
-        when(userPassRepository.findById("Gandalf")).thenThrow(UsernameInUseException.class);
+        when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
-        assertThrows(UsernameInUseException.class, () -> registerServiceImp.registerUser(jsonParserDTO));
+        assertThrows(UsernameAlreadyExistException.class, () -> registerServiceImp.registerUser(jsonParserDTO));
     }
 
     @Test
-    public void TestFineUserServiceRegisterMethod() {
+    public void registerUserServiceTest() {
 
         when(passwordEncoder.encode("cantpass")).thenReturn(new BCryptPasswordEncoder().encode("cantpass"));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.empty());

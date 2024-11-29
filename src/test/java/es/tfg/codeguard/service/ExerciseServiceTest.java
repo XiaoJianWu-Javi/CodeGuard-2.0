@@ -10,6 +10,9 @@ import es.tfg.codeguard.service.imp.ExerciseServiceImp;
 import es.tfg.codeguard.util.ExerciseNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +48,7 @@ public class ExerciseServiceTest {
     private ExerciseServiceImp exerciseServiceImp;
 
     @Test
-    public void testFineGetAllExercises() {
+    public void getAllExercisesTest() {
 
         Exercise exercise1 = new Exercise();
         exercise1.setTitle("tittle1");
@@ -66,18 +69,18 @@ public class ExerciseServiceTest {
         exercise3.setCreator("creator3");
 
 
-        List<Exercise> exercisesExpected = List.of(exercise1, exercise2, exercise3);
+        List<Exercise> expectedExercises = List.of(exercise1, exercise2, exercise3);
 
-        when(exerciseRepository.findAll()).thenReturn(exercisesExpected);
+        when(exerciseRepository.findAll()).thenReturn(expectedExercises);
 
-        List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercises();
+        List<ExerciseDTO> resultExercises = exerciseServiceImp.getAllExercises();
 
-        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+        assertThat(expectedExercises.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(resultExercises);
 
     }
 
     @Test
-    public void testFineGetAllExercisesPaginated() {
+    public void getAallExercisesPaginated() {
 
         Exercise exercise1 = new Exercise();
         exercise1.setId("project-euler-9");
@@ -101,37 +104,36 @@ public class ExerciseServiceTest {
         exercise3.setCreator("creator3");
 
 
-        List<Exercise> exercisesExpected = List.of(exercise1, exercise2, exercise3);
+        List<Exercise> expectedExercises = List.of(exercise1, exercise2, exercise3);
 
-        when(exerciseRepository.findByTitleContaining("Je", PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(List.of()));
+        when(exerciseRepository.findByTitleContaining("Je", PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(List.of()));
 
-        List<ExerciseDTO> exercises = exerciseServiceImp.getAllExercisesPaginated("Je",0,false);
+        List<ExerciseDTO> resultExercises = exerciseServiceImp.getAllExercisesPaginated("Je", 0, false);
 
-        assertThat(List.of()).usingRecursiveComparison().isEqualTo(exercises);
+        assertThat(List.of()).usingRecursiveComparison().isEqualTo(resultExercises);
 
 
-        exercisesExpected = List.of(exercise1);
+        expectedExercises = List.of(exercise1);
 
-        when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(exercisesExpected));
+        when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(expectedExercises));
 
-        exercises = exerciseServiceImp.getAllExercisesPaginated("je",1,false);
+        resultExercises = exerciseServiceImp.getAllExercisesPaginated("je", 1, false);
 
-        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+        assertThat(expectedExercises.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(resultExercises);
 
-        exercisesExpected = List.of(exercise2,exercise3);
 
-        when(exerciseRepository.findByTitleContaining("g", PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(exercisesExpected));
+        expectedExercises = List.of(exercise2, exercise3);
 
-        exercises = exerciseServiceImp.getAllExercisesPaginated("g",0,false);
+        when(exerciseRepository.findByTitleContaining("g", PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(expectedExercises));
 
-        assertThat(exercisesExpected.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(exercises);
+        resultExercises = exerciseServiceImp.getAllExercisesPaginated("g", 0, false);
 
+        assertThat(expectedExercises.stream().map(ExerciseDTO::new)).usingRecursiveComparison().isEqualTo(resultExercises);
 
     }
 
     @Test
-    public void testFailGetAllExercises() {
-
+    public void getAllExercisesTestExercisesEmpty() {
 
         List<Exercise> exercisesExpected = Collections.emptyList();
 
@@ -143,35 +145,46 @@ public class ExerciseServiceTest {
 
     }
 
-    @Test
-    public void testFailGetExerciseByName() {
-        when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
+    @ParameterizedTest
+    @ValueSource(strings = {"exercise-99", "exercise-100", "exercise-101"})
+    public void getExerciseByIdTestExerciseNotFound(String exerciseId) {
 
-        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getExerciseById("1"));
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+
+        assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getExerciseById(exerciseId));
+
     }
 
-    @Test
-    public void testFineGetExerciseByName() {
+    @ParameterizedTest
+    @CsvSource({
+            "tittle-1,First description,Gandalf,Saruman",
+            "tittle-2,Second description,Saruman,Saruman",
+            "tittle-2,Third description,Houdini,Gandalf",
+    })
+    public void getExerciseByIdTest(String exerciseId, String exerciseDescription, String tester, String creator) {
 
         Exercise exercise = new Exercise();
-        exercise.setTitle("tittle1");
-        exercise.setDescription("description1");
-        exercise.setTest("tester1");
-        exercise.setCreator("creator1");
+        exercise.setTitle(exerciseId);
+        exercise.setDescription(exerciseDescription);
+        exercise.setTest(tester);
+        exercise.setCreator(creator);
 
-
-        when(exerciseRepository.findById("1")).thenReturn(Optional.of(exercise));
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(exercise));
 
         ExerciseDTO expectedExercise = new ExerciseDTO(exercise);
-        ExerciseDTO actualExercise = exerciseServiceImp.getExerciseById("1");
+        ExerciseDTO actualExercise = exerciseServiceImp.getExerciseById(exerciseId);
 
         assertThat(expectedExercise).usingRecursiveComparison().isEqualTo(actualExercise);
+
     }
 
     @Test
-    public void testFineGetAllSolutionsForExercise() {
+    public void getAllSolutionsFromExercise() {
 
-        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{
+            put("user", "solution");
+            put("user2", "solution");
+        }};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
@@ -184,11 +197,12 @@ public class ExerciseServiceTest {
 
         List<SolutionDTO> actualSolutions = exerciseServiceImp.getAllSolutionsForExercise("1");
 
-        assertArrayEquals(expectedSolutions.toArray(),actualSolutions.toArray());
+        assertArrayEquals(expectedSolutions.toArray(), actualSolutions.toArray());
+
     }
 
     @Test
-    public void testFailGetAllSolutionsForExercise() {
+    public void getAllSolutionsForExerciseTestEmptySolutions() {
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
 
@@ -203,9 +217,12 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    public void testGetUserSolutionForExercise() {
+    public void getUserSolutionForExerciseTest() {
 
-        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{
+            put("user", "solution");
+            put("user2", "solution");
+        }};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
@@ -215,20 +232,22 @@ public class ExerciseServiceTest {
         SolutionDTO expectedSolution = new SolutionDTO(exercise.getId(), "user2", solutions.get("user2"));
 
         assertThat(expectedSolution).usingRecursiveComparison().isEqualTo(exerciseServiceImp.getUserSolutionForExercise("user2", "1"));
+
     }
 
     @Test
-    public void testFailGetUserSolutionForExercise() {
+    public void getUserSolutionsForExerciseTestExerciseNotFound() {
         Exercise exercise = new Exercise("1", "titulo", "desc");
         when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
         when(exerciseRepository.findById("2")).thenReturn(Optional.of(exercise));
 
         assertThrows(ExerciseNotFoundException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "1"));
         assertThrows(NoSuchElementException.class, () -> exerciseServiceImp.getUserSolutionForExercise("user", "2"));
+
     }
 
     @Test
-    public void testFailGetTestFromExercise(){
+    public void getTestFromExerciseEmpty() {
         when(exerciseRepository.findById("1")).thenReturn(Optional.empty());
 
         Optional<String> tests = exerciseServiceImp.getTestFromExercise("1");
@@ -237,7 +256,7 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    public void testFineGetTestFromExercise(){
+    public void getTestFromExercise() {
 
         Exercise exerciseExpected = new Exercise();
         exerciseExpected.setTitle("tittle1");

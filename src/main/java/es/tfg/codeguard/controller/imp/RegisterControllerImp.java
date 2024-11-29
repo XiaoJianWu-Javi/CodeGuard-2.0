@@ -1,7 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.util.PasswordNotValidException;
-import es.tfg.codeguard.util.UsernameInUseException;
+import es.tfg.codeguard.util.UsernameAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class RegisterControllerImp implements RegisterController {
             return new ResponseEntity<>(registerService.registerUser(authDTO), HttpStatus.CREATED);
         } catch (UsernameNotValidException | PasswordNotValidException e) {
             return ResponseEntity.badRequest().build();
-        } catch (UsernameInUseException e) {
+        } catch (UsernameAlreadyExistException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }

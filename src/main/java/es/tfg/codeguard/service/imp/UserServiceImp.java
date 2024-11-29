@@ -1,6 +1,11 @@
 package es.tfg.codeguard.service.imp;
 
+import es.tfg.codeguard.model.dto.ChangePasswordDTO;
+import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.util.IncorrectPasswordException;
+import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,6 +33,8 @@ public class UserServiceImp implements UserService {
     private DeletedUserRepository deletedUserRepository;
     @Autowired
     private JWTService jwtService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDTO deleteUser(String userToken) {
@@ -65,6 +72,41 @@ public class UserServiceImp implements UserService {
     public List<UserDTO> getAllUsers() {
 
         return userRepository.findAll().stream().map(UserDTO::new).toList();
+    }
+
+
+    //POSIBLE CAMBIO DEVOLVER UN USERPASSDTO
+    @Override
+    public UserDTO changePassword(String userToken, ChangePasswordDTO changePasswordDTO) {
+
+        if(!isValidPassword(changePasswordDTO.newPassword())){
+            throw new PasswordNotValidException("New password not valid");
+        }
+
+        String username = jwtService.extractUserPass(userToken).getUsername();
+
+        Optional<User> userOptional = userRepository.findById(username);
+
+        if(userOptional.isEmpty()){
+            throw new UserNotFoundException("User not found [ " +username +" ]");
+        }
+
+        UserPass userPass = userPassRepository.findById(username).get();
+
+        if(!passwordEncoder.matches(changePasswordDTO.oldPassword(), userPass.getHashedPass())){
+            throw new IncorrectPasswordException("Incorrect password");
+        }
+
+        userPass.setHashedPass(passwordEncoder.encode(changePasswordDTO.newPassword()));
+
+        userPassRepository.save(userPass);
+
+        return new UserDTO(userOptional.get());
+
+    }
+
+    private boolean isValidPassword(String password){
+        return password != null && !password.isBlank();
     }
 
 }

@@ -2,9 +2,9 @@ package es.tfg.codeguard.service.imp;
 
 import java.util.Optional;
 
+import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +52,7 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    //TODO: Actualizar para permitir cambiar cualquier campo del usuario menos el id
-    public UserPassDTO updateUser(String username, String newUserPass) {
+    public UserPassDTO updatePassword(String username, String newUserPass) {
 
         Optional<User> userOptional = userRepository.findById(username);
 
@@ -77,107 +76,22 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public UserDTO grantTester(String username) {
+    public UserDTO updateUserPrivileges(UserPrivilegesDTO userPrivilegesDTO) {
 
-        Optional<User> userOptional = userRepository.findById(username);
+        Optional<User> userOptional = userRepository.findById(userPrivilegesDTO.username());
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
+        if(userOptional.isEmpty()){
+            throw new UserNotFoundException("User not found [ " +userPrivilegesDTO.username() +" ]");
         }
 
         User user = userOptional.get();
-        user.setTester(true);
+        user.setTester(userPrivilegesDTO.tester());
+        user.setCreator(userPrivilegesDTO.creator());
 
         userRepository.save(user);
 
         return new UserDTO(user);
-    }
 
-    @Override
-    public UserDTO grantCreator(String username) {
-
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
-        }
-
-        User user = userOptional.get();
-        user.setCreator(true);
-
-        userRepository.save(user);
-
-        return new UserDTO(user);
-    }
-
-    @Override
-    public UserDTO revokeTester(String username) {
-
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
-        }
-
-        User user = userOptional.get();
-        user.setTester(false);
-
-        userRepository.save(user);
-
-        return new UserDTO(user);
-    }
-
-    @Override
-    public UserDTO revokeCreator(String username) {
-
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
-        }
-
-        User user = userOptional.get();
-        user.setCreator(false);
-
-        userRepository.save(user);
-
-        return new UserDTO(user);
-    }
-
-    @Override
-    public UserDTO grantAllPrivileges(String username) {
-
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
-        }
-
-        User user = userOptional.get();
-        user.setTester(true);
-        user.setCreator(true);
-
-        userRepository.save(user);
-
-        return new UserDTO(user);
-    }
-
-    @Override
-    public UserDTO revokeAllPrivileges(String username) {
-
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
-        }
-
-        User user = userOptional.get();
-        user.setTester(false);
-        user.setCreator(false);
-
-        userRepository.save(user);
-
-        return new UserDTO(user);
     }
 
     private void checkPassword(String password){
