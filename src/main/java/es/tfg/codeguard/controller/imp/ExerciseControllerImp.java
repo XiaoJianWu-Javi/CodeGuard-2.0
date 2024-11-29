@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.controller.ExerciseController;
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.service.ExerciseService;
@@ -26,9 +27,9 @@ public class ExerciseControllerImp implements ExerciseController {
     }
 
     @Override
-    public ResponseEntity<ExerciseDTO> createExercise(String userToken, String title, String description) {
+    public ResponseEntity<ExerciseDTO> createExercise(String userToken, CreateExerciseDTO createExerciseDTO) {
         try {
-            return ResponseEntity.ok(exerciseService.createExercise(userToken, title, description));
+            return ResponseEntity.ok(exerciseService.createExercise(userToken, createExerciseDTO));
         } catch (ExerciseAlreadyExistException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (ExerciseTitleNotValidException | ExerciseDescriptionNotValid e) {

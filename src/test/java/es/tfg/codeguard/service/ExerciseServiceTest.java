@@ -1,5 +1,6 @@
 package es.tfg.codeguard.service;
 
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
@@ -284,13 +285,13 @@ public class ExerciseServiceTest {
 
     })
     void CreateExerciseServiceTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
-
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(jwtServiceImp.extractUserPass(userToken)).thenReturn(new UserPass(username, "$2a$10$fixedEncodedPassword", false));
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
 
-        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, "", username);
+        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, null, username);
 
-        ExerciseDTO result = exerciseServiceImp.createExercise(userToken, exerciseTitle, exerciseDescription);
+        ExerciseDTO result = exerciseServiceImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(expectedExerciseDTO).usingRecursiveComparison().isEqualTo(result);
 
@@ -304,10 +305,10 @@ public class ExerciseServiceTest {
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
     })
     void CreateExerciseAlredyExistTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
-
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(new Exercise(exerciseId, exerciseTitle, exerciseDescription)));
 
-        assertThrows(ExerciseAlreadyExistException.class, () -> exerciseServiceImp.createExercise(userToken, exerciseTitle, exerciseDescription));
+        assertThrows(ExerciseAlreadyExistException.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
 
     }
 
@@ -319,8 +320,8 @@ public class ExerciseServiceTest {
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
     })
     void CreateExerciseTitleNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
-
-        assertThrows(ExerciseTitleNotValidException.class, () -> exerciseServiceImp.createExercise(userToken, exerciseTitle, exerciseDescription));
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        assertThrows(ExerciseTitleNotValidException.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
 
     }
 
@@ -332,8 +333,8 @@ public class ExerciseServiceTest {
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,,reverse-words"
     })
     void CreateExerciseDescriptionNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
-
-        assertThrows(ExerciseDescriptionNotValid.class, () -> exerciseServiceImp.createExercise(userToken, exerciseTitle, exerciseDescription));
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        assertThrows(ExerciseDescriptionNotValid.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
 
     }
 

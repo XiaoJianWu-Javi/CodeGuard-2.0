@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +22,7 @@ public interface ExerciseController {
             @ApiResponse(responseCode = "409", description = "Exercise created yet"),
             @ApiResponse(responseCode = "400", description = "Exercise title or description not valid")
     })
-    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken, @RequestParam String title, @RequestParam String description);
+    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken, @RequestBody CreateExerciseDTO createExerciseDTO);
 
     @GetMapping("/{exerciseId}")
     @Operation(summary = "Get exercise by name")

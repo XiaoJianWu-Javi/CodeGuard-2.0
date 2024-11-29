@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.controller.imp.ExerciseControllerImp;
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
@@ -45,6 +46,7 @@ public class ExerciseControllerTest {
 
     private UserDTO userDTO;
     private UserPassDTO userPassDTO;
+
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "2", "3", "4"})
@@ -180,12 +182,12 @@ public class ExerciseControllerTest {
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,\"Complete the function that accepts a string parameter, and reverses each word in the string\",reverse-words"
     })
     void CreateExerciseTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        when(exerciseService.createExercise(userToken, createExerciseDTO)).thenReturn(new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, "", username));
 
-        when(exerciseService.createExercise(userToken, exerciseTitle, exerciseDescription)).thenReturn(new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, "", username));
+        ExerciseDTO expectedExercise = exerciseService.createExercise(userToken, createExerciseDTO);
 
-        ExerciseDTO expectedExercise = exerciseService.createExercise(userToken, exerciseTitle, exerciseDescription);
-
-        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, exerciseTitle, exerciseDescription);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(new ResponseEntity<>(expectedExercise, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
 
@@ -199,10 +201,10 @@ public class ExerciseControllerTest {
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"We need a simple function that determines if a plural is needed or not\",plural"
     })
     void CreateExerciseFailTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseTitleNotValidException.class);
 
-        when(exerciseService.createExercise(userToken, exerciseTitle, exerciseDescription)).thenThrow(ExerciseTitleNotValidException.class);
-
-        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, exerciseTitle, exerciseDescription);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).usingRecursiveComparison().isEqualTo(result);
 
@@ -216,10 +218,10 @@ public class ExerciseControllerTest {
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,,reverse-words"
     })
     void CreateExerciseDescriptionNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseDescriptionNotValid.class);
 
-        when(exerciseService.createExercise(userToken, exerciseTitle, exerciseDescription)).thenThrow(ExerciseDescriptionNotValid.class);
-
-        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, exerciseTitle, exerciseDescription);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).usingRecursiveComparison().isEqualTo(result);
 
@@ -233,10 +235,10 @@ public class ExerciseControllerTest {
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"We need a simple function that determines if a plural is needed or not\",plural"
     })
     void CreateExerciseAlredyExistTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseAlreadyExistException.class);
 
-        when(exerciseService.createExercise(userToken, exerciseTitle, exerciseDescription)).thenThrow(ExerciseAlreadyExistException.class);
-
-        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, exerciseTitle, exerciseDescription);
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(new ResponseEntity<>(HttpStatus.CONFLICT)).usingRecursiveComparison().isEqualTo(result);
 

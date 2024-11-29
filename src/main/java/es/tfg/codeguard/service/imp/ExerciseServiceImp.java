@@ -1,5 +1,6 @@
 package es.tfg.codeguard.service.imp;
 
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
@@ -28,25 +29,27 @@ public class ExerciseServiceImp implements ExerciseService {
     private JWTServiceImp jwtServiceImp;
 
     @Override
-    public ExerciseDTO createExercise(String userToken, String title, String description) {
+    public ExerciseDTO createExercise(String userToken, CreateExerciseDTO createExerciseDTO) {
 
-        if (!isValidTitle(title)) {
-            throw new ExerciseTitleNotValidException("Exercise title no valid [ " + title + " ]");
+        if (!isValidTitle(createExerciseDTO.title())) {
+            throw new ExerciseTitleNotValidException("Exercise title no valid [ " + createExerciseDTO.title() + " ]");
         }
 
-        if (!isValidDescription(description)) {
-            throw new ExerciseDescriptionNotValid("Exercise description not valid [ " + description + " ]");
+        if (!isValidDescription(createExerciseDTO.description())) {
+            throw new ExerciseDescriptionNotValid("Exercise description not valid [ " + createExerciseDTO.description() + " ]");
         }
 
-        Optional<Exercise> exerciseOptional = exerciseRepository.findById(getIdFromTitle(title));
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(getIdFromTitle(createExerciseDTO.title()));
 
         if (exerciseOptional.isPresent()) {
-            throw new ExerciseAlreadyExistException("Exercise already exist [ " + title + " ]");
+            throw new ExerciseAlreadyExistException("Exercise already exist [ " + createExerciseDTO.title() + " ]");
         }
 
         String creatorUser = jwtServiceImp.extractUserPass(userToken).getUsername();
 
-        ExerciseDTO exerciseDTO = new ExerciseDTO(getIdFromTitle(title), title, description, "", creatorUser);
+
+
+        ExerciseDTO exerciseDTO = new ExerciseDTO(getIdFromTitle(createExerciseDTO.title()), createExerciseDTO.title(), createExerciseDTO.description(), null, creatorUser);
 
         exerciseRepository.save(new Exercise(exerciseDTO));
 
