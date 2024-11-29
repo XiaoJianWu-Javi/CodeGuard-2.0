@@ -1,24 +1,22 @@
 package es.tfg.codeguard.service.imp;
 
-
-import java.util.List;
-import java.util.Optional;
-
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
+import es.tfg.codeguard.model.dto.ExerciseDTO;
+import es.tfg.codeguard.model.dto.SolutionDTO;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.model.entity.user.User;
+import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
-import es.tfg.codeguard.util.UserNotFoundException;
+import es.tfg.codeguard.service.ExerciseService;
+import es.tfg.codeguard.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import es.tfg.codeguard.model.dto.ExerciseDTO;
-import es.tfg.codeguard.model.dto.SolutionDTO;
-import es.tfg.codeguard.model.entity.exercise.Exercise;
-import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
-import es.tfg.codeguard.service.ExerciseService;
-import es.tfg.codeguard.util.ExerciseNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExerciseServiceImp implements ExerciseService {
@@ -27,6 +25,41 @@ public class ExerciseServiceImp implements ExerciseService {
     private ExerciseRepository exerciseRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JWTServiceImp jwtServiceImp;
+
+    @Override
+    public ExerciseDTO createExercise(String userToken, CreateExerciseDTO createExerciseDTO) {
+
+        if (!isValidTitle(createExerciseDTO.title())) {
+            throw new ExerciseTitleNotValidException("Exercise title no valid [ " + createExerciseDTO.title() + " ]");
+        }
+
+        if (!isValidDescription(createExerciseDTO.description())) {
+            throw new ExerciseDescriptionNotValid("Exercise description not valid [ " + createExerciseDTO.description() + " ]");
+        }
+
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(getIdFromTitle(createExerciseDTO.title()));
+
+        if (exerciseOptional.isPresent()) {
+            throw new ExerciseAlreadyExistException("Exercise already exist [ " + createExerciseDTO.title() + " ]");
+        }
+
+        String creatorUser = jwtServiceImp.extractUserPass(userToken).getUsername();
+
+        User user = userRepository.findById(creatorUser).get();
+
+        if(!user.isCreator()){
+            throw new NotAllowedUserException(user.getUsername());
+        }
+
+        ExerciseDTO exerciseDTO = new ExerciseDTO(getIdFromTitle(createExerciseDTO.title()), createExerciseDTO.title(), createExerciseDTO.description(), null, creatorUser);
+
+        exerciseRepository.save(new Exercise(exerciseDTO));
+
+        return exerciseDTO;
+
+    }
 
     @Override
     public ExerciseDTO getExerciseById(String exerciseId) {
@@ -51,9 +84,6 @@ public class ExerciseServiceImp implements ExerciseService {
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "title"));
         return exerciseRepository.findByTitleContaining(search, pageable).stream().map(ExerciseDTO::new).toList();
-
-
-        //return exerciseRepository.findAll().stream().map(ExerciseDTO::new).toList();
 
     }
 
@@ -127,8 +157,17 @@ public class ExerciseServiceImp implements ExerciseService {
 
         exerciseRepository.save(exercise);
     }
+
+    private String getIdFromTitle(String title) {
+        return title.toLowerCase().replaceAll(" ", "-");
+    }
+
+    private boolean isValidTitle(String title) {
+        return title != null && !title.isBlank();
+    }
+
+    private boolean isValidDescription(String description) {
+        return description != null && !description.isBlank();
+    }
+
 }
-
-
-
-

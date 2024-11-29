@@ -1,5 +1,6 @@
 package es.tfg.codeguard.controller;
 
+import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,22 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/exercise")
 public interface ExerciseController {
 
-
-//    @GetMapping("createExercise")
-//    @Operation(summary = "Create a new exercise from external API")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "New exercise create"),
-//            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
-//            @ApiResponse(responseCode = "400", description = "Exercise name not valid")
-//    })
-//    public ResponseEntity<ExerciseDTO> createExercise();
-
+    @PostMapping("/createExercise")
+    @Operation(summary = "Create a new exercise")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "New exercise create"),
+            @ApiResponse(responseCode = "409", description = "Exercise created yet"),
+            @ApiResponse(responseCode = "400", description = "Exercise title or description not valid")
+    })
+    public ResponseEntity<ExerciseDTO> createExercise(@RequestHeader("Authorization") String userToken, @RequestBody CreateExerciseDTO createExerciseDTO);
 
     @GetMapping("/{exerciseId}")
     @Operation(summary = "Get exercise by name")
