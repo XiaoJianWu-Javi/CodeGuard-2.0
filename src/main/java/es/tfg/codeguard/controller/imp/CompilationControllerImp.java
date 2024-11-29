@@ -6,6 +6,7 @@ import es.tfg.codeguard.model.dto.CompilerResponseDTO;
 import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
 import es.tfg.codeguard.service.CompilerService;
 import es.tfg.codeguard.util.CompilationErrorException;
+import es.tfg.codeguard.util.NotAllowedUserException;
 import es.tfg.codeguard.util.PlaceholderNotFoundException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class CompilationControllerImp implements CompilationController {
         } catch (ClassNotFoundException e){
             //Si no se encuentra el nombre de la clase en el código enviado o en los test
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }catch (CompilationErrorException e) {
+        } catch (CompilationErrorException e) {
             //Si no se puede crear la carpeta para realizar la compilacion
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
@@ -66,7 +67,10 @@ public class CompilationControllerImp implements CompilationController {
         } catch (ClassNotFoundException e){
             //Si no se encuentra el nombre de la clase en el código enviado o en los test
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }catch (CompilationErrorException e) {
+        } catch(NotAllowedUserException e) {
+        	//Si el usuario no tiene los permisos necesarios para compilar tests
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (CompilationErrorException e) {
             //Si no se puede crear la carpeta para realizar la compilacion
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {

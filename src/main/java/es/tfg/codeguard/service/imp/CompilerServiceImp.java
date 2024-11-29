@@ -3,10 +3,11 @@ package es.tfg.codeguard.service.imp;
 import es.tfg.codeguard.model.dto.CompilerResponseDTO;
 import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
-import es.tfg.codeguard.model.repository.user.UserRepository;
+import es.tfg.codeguard.service.UserService;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.util.CompilationErrorException;
+import es.tfg.codeguard.util.NotAllowedUserException;
 import es.tfg.codeguard.model.dto.CompilerRequestDTO;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.CompilerService;
@@ -35,7 +36,7 @@ public class CompilerServiceImp implements CompilerService {
     @Autowired
     private ExerciseRepository exerciseRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     Logger logger = LoggerFactory.getLogger(CompilerServiceImp.class);
 
     @Override
@@ -67,12 +68,15 @@ public class CompilerServiceImp implements CompilerService {
         }
         String javaCode = compileInfo.exerciseSolution();
         String testCode = compileInfo.exerciseTests();
+        String username = jwtService.extractUserPass(userToken).getUsername();
+        
+        if (!userService.getUserById(username).tester()) throw new NotAllowedUserException(username);
 
         CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
 
         if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
             exerciseService.addTestToExercise(new SolutionDTO(compileInfo.exerciseId(),
-                    jwtService.extractUserPass(userToken).getUsername(),
+                    username,
                     javaCode),
                     testCode,
                     compileInfo.exercisePlaceHolder());
