@@ -4,9 +4,11 @@ import es.tfg.codeguard.model.dto.CreateExerciseDTO;
 import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.SolutionDTO;
 import es.tfg.codeguard.model.entity.exercise.Exercise;
+import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
 import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
 import es.tfg.codeguard.service.imp.JWTServiceImp;
@@ -16,8 +18,6 @@ import es.tfg.codeguard.util.ExerciseNotFoundException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -30,12 +30,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.MAP;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -49,6 +47,9 @@ public class ExerciseServiceTest {
 
     @Mock
     private UserPassRepository userPassRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private DeletedUserRepository deletedUserRepository;
@@ -70,19 +71,21 @@ public class ExerciseServiceTest {
         exercise1.setDescription("description1");
         exercise1.setTest("tester1");
         exercise1.setCreator("creator1");
+        exercise1.setSolutions(Map.of());
 
         Exercise exercise2 = new Exercise();
         exercise2.setTitle("tittle2");
         exercise2.setDescription("description2");
         exercise2.setTest("tester2");
         exercise2.setCreator("creator2");
+        exercise2.setSolutions(Map.of());
 
         Exercise exercise3 = new Exercise();
         exercise3.setTitle("tittle3");
         exercise3.setDescription("description3");
         exercise3.setTest("tester3");
         exercise3.setCreator("creator3");
-
+        exercise3.setSolutions(Map.of());
 
         List<Exercise> expectedExercises = List.of(exercise1, exercise2, exercise3);
 
@@ -103,6 +106,7 @@ public class ExerciseServiceTest {
         exercise1.setDescription("description1");
         exercise1.setTest("tester1");
         exercise1.setCreator("creator1");
+        exercise1.setSolutions(Map.of());
 
         Exercise exercise2 = new Exercise();
         exercise2.setId("saruman-123");
@@ -110,6 +114,7 @@ public class ExerciseServiceTest {
         exercise2.setDescription("description2");
         exercise2.setTest("tester2");
         exercise2.setCreator("creator2");
+        exercise2.setSolutions(Map.of());
 
         Exercise exercise3 = new Exercise();
         exercise3.setId("magic-music-box");
@@ -117,6 +122,7 @@ public class ExerciseServiceTest {
         exercise3.setDescription("description3");
         exercise3.setTest("tester3");
         exercise3.setCreator("creator3");
+        exercise3.setSolutions(Map.of());
 
 
         List<Exercise> expectedExercises = List.of(exercise1, exercise2, exercise3);
@@ -131,7 +137,7 @@ public class ExerciseServiceTest {
 
         expectedExercises = List.of(exercise1);
 
-        when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(exercisesExpected));
+        when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(expectedExercises));
         when(exerciseRepository.findByTitleContaining("je", PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "title")))).thenReturn(new PageImpl<>(expectedExercises));
 
         resultExercises = exerciseServiceImp.getAllExercisesPaginated("je", 1, false);
@@ -185,8 +191,10 @@ public class ExerciseServiceTest {
         exercise.setDescription(exerciseDescription);
         exercise.setTest(tester);
         exercise.setCreator(creator);
+        exercise.setSolutions(Map.of());
 
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(exercise));
+        //when(userRepositor)
 
         ExerciseDTO expectedExercise = new ExerciseDTO(exercise);
         ExerciseDTO actualExercise = exerciseServiceImp.getExerciseById(exerciseId);
@@ -297,6 +305,7 @@ public class ExerciseServiceTest {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(jwtServiceImp.extractUserPass(userToken)).thenReturn(new UserPass(username, "$2a$10$fixedEncodedPassword", false));
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+        when(userRepository.findById(username)).thenReturn(Optional.of(new User(username,true,true)));
 
         ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, null, username);
 

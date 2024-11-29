@@ -47,7 +47,11 @@ public class ExerciseServiceImp implements ExerciseService {
 
         String creatorUser = jwtServiceImp.extractUserPass(userToken).getUsername();
 
+        User user = userRepository.findById(creatorUser).get();
 
+        if(!user.isCreator()){
+            throw new NotAllowedUserException(user.getUsername());
+        }
 
         ExerciseDTO exerciseDTO = new ExerciseDTO(getIdFromTitle(createExerciseDTO.title()), createExerciseDTO.title(), createExerciseDTO.description(), null, creatorUser);
 
