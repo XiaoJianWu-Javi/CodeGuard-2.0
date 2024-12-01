@@ -42,7 +42,7 @@ public class CompilerServiceImp implements CompilerService {
     @Override
     public CompilerResponseDTO compileSolution(String userToken, CompilerRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException {
         Optional<String> tests = exerciseService.getTestFromExercise(compileInfo.exerciseId());
-        if(tests.isEmpty()){
+        if (tests.isEmpty()) {
             throw new TestCasesNotFoundException("You can't compile an spell without tests");
         }
         String javaCode = compileInfo.exerciseSolution();
@@ -50,7 +50,7 @@ public class CompilerServiceImp implements CompilerService {
 
         CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
 
-        if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
+        if (compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0) {
             //Se guarda la solucion del usuario
             exerciseService.addSolutionToExercise(new SolutionDTO(compileInfo.exerciseId(),
                     jwtService.extractUserPass(userToken).getUsername(),
@@ -60,60 +60,60 @@ public class CompilerServiceImp implements CompilerService {
     }
 
     public CompilerResponseDTO compileTest(String userToken, CompilerTestRequestDTO compileInfo) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException, TestCasesNotFoundException, PlaceholderNotFoundException {
-        if(compileInfo.exerciseTests().isEmpty()){
+        if (compileInfo.exerciseTests().isEmpty()) {
             throw new TestCasesNotFoundException("No test cases are given");
         }
-        if(compileInfo.exercisePlaceHolder().isEmpty()){
+        if (compileInfo.exercisePlaceHolder().isEmpty()) {
             throw new PlaceholderNotFoundException("No placeholder is given to the exercise");
         }
         String javaCode = compileInfo.exerciseSolution();
         String testCode = compileInfo.exerciseTests();
         String username = jwtService.extractUserPass(userToken).getUsername();
-        
+
         if (!userService.getUserById(username).tester()) throw new NotAllowedUserException(username);
 
         CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
 
-        if(compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0){
+        if (compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0) {
             exerciseService.addTestToExercise(new SolutionDTO(compileInfo.exerciseId(),
-                    username,
-                    javaCode),
+                            username,
+                            javaCode),
                     testCode,
                     compileInfo.exercisePlaceHolder());
         }
         return compilerResponse;
     }
 
-    private CompilerResponseDTO compilator(String userToken, String javaCode, String testCode) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException{
+    private CompilerResponseDTO compilator(String userToken, String javaCode, String testCode) throws ClassNotFoundException, IOException, CompilationErrorException, TimeoutException, InterruptedException {
 
         Pattern javaClassPattern = Pattern.compile("(?:public)(?:\\s+)(?:class)(?:\\s+)(\\w+)");
 
         Matcher appClassNameMatcher = javaClassPattern.matcher(javaCode);
         String javaClassName = "";
-        if(appClassNameMatcher.find()){
+        if (appClassNameMatcher.find()) {
             javaClassName = appClassNameMatcher.group(1);
-        }else{
+        } else {
             throw new ClassNotFoundException("Could not find the class name inside the Java Code");
         }
 
         Matcher testClassNameMatcher = javaClassPattern.matcher(testCode);
         String testClassName = "";
-        if(testClassNameMatcher.find()){
+        if (testClassNameMatcher.find()) {
             testClassName = testClassNameMatcher.group(1);
-        }else{
+        } else {
             throw new ClassNotFoundException("Could not find the class name inside the Test Code");
         }
 
         String folderRoute = "src/main/resources/compilation/" + jwtService.extractUserPass(userToken).getUsername();
 
         File userFolder = new File(folderRoute);
-        if(userFolder.exists()){
+        if (userFolder.exists()) {
             FileUtils.deleteDirectory(userFolder);
         }
-        if(userFolder.mkdirs()){
-            logger.info("User folder " + userFolder.toString() +  " created");
-        }else{
-            logger.error("User folder " + userFolder.toString() +  " could not be created");
+        if (userFolder.mkdirs()) {
+            logger.info("User folder " + userFolder.toString() + " created");
+        } else {
+            logger.error("User folder " + userFolder.toString() + " could not be created");
             throw new CompilationErrorException("Could not create the folder for compilation");
         }
 
@@ -123,10 +123,10 @@ public class CompilerServiceImp implements CompilerService {
         File javaJavaFile = new File(javaFile);
         File testJavaFile = new File(testFile);
 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(javaJavaFile))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(javaJavaFile))) {
             bw.write(javaCode);
         }
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(testJavaFile))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(testJavaFile))) {
             bw.write(testCode);
         }
 
@@ -136,16 +136,16 @@ public class CompilerServiceImp implements CompilerService {
         Process compilationProcess = compilation.start();
 
         StringBuilder compilationErrorMessage = new StringBuilder();
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(compilationProcess.getInputStream()))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(compilationProcess.getInputStream()))) {
             String line;
-            while((line=br.readLine())!=null){
+            while ((line = br.readLine()) != null) {
                 compilationErrorMessage.append("\n" + line);
             }
         }
 
         String compilationExitMessage = "Correct program compilation";
         int compilationExitCode = compilationProcess.waitFor();
-        if(compilationExitCode!=0){
+        if (compilationExitCode != 0) {
             compilationExitMessage = "Compilation Error: " + compilationErrorMessage.toString();
             FileUtils.deleteDirectory(userFolder);
             return new CompilerResponseDTO(compilationExitCode, compilationExitMessage, null, null);
@@ -172,7 +172,7 @@ public class CompilerServiceImp implements CompilerService {
 
         StringBuilder executionMessage = new StringBuilder();
         //Se esperan 15 segundos antes de destruir el proceso para evitar bucles infinitos
-        if(!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)){
+        if (!testExecutorProcess.waitFor(15, TimeUnit.SECONDS)) {
             testExecutorProcess.destroy();
             logger.info("Execution Timeout");
             testExecutorProcess.waitFor();
@@ -182,10 +182,10 @@ public class CompilerServiceImp implements CompilerService {
             testExecutorProcess.getErrorStream().close();
             FileUtils.deleteDirectory(userFolder);
             throw new TimeoutException("Exceeded the 15 seconds time limit");
-        }else{
-            try(BufferedReader br = new BufferedReader(new FileReader(executionOutput))){
+        } else {
+            try (BufferedReader br = new BufferedReader(new FileReader(executionOutput))) {
                 String line;
-                while((line=br.readLine())!=null){
+                while ((line = br.readLine()) != null) {
                     executionMessage.append(line);
                     executionMessage.append("\n");
                 }
@@ -201,13 +201,13 @@ public class CompilerServiceImp implements CompilerService {
         return new CompilerResponseDTO(compilationExitCode, compilationExitMessage, executionExitCode, executionExitMessage);
     }
 
-    private String filterConsoleOutput(String consoleOutput){
+    private String filterConsoleOutput(String consoleOutput) {
         String[] lines = consoleOutput.split("\n");
         StringBuilder output = new StringBuilder();
-        for(int i = 0; i< lines.length; i++){
-            if(i!=0 && i!=1 && i!=5 && i!=6){
-                if(lines[i].startsWith("[")&&lines[i].contains("containers")){}
-                else{
+        for (int i = 0; i < lines.length; i++) {
+            if (i != 0 && i != 1 && i != 5 && i != 6) {
+                if (lines[i].startsWith("[") && lines[i].contains("containers")) {
+                } else {
                     output.append(lines[i]);
                     output.append("\n");
                 }

@@ -7,10 +7,7 @@ import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.ExerciseService;
-import es.tfg.codeguard.util.ExerciseAlreadyExistException;
-import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
-import es.tfg.codeguard.util.ExerciseNotFoundException;
-import es.tfg.codeguard.util.ExerciseTitleNotValidException;
+import es.tfg.codeguard.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +65,7 @@ public class ExerciseControllerTest {
     @ValueSource(strings = {"1p", "2ter", "t30", "a4", "54uri"})
     void getExerciseByIdTestExerciseNotFound(String exerciseId) {
 
-        when(exerciseService.getExerciseById(exerciseId)).thenThrow(new ExerciseNotFoundException("Exercise not found [" + exerciseId + "]"));
+        when(exerciseService.getExerciseById(exerciseId)).thenThrow(ExerciseNotFoundException.class);
 
         ResponseEntity<ExerciseDTO> result = exerciseControllerImp.getExercise(exerciseId);
 
@@ -190,7 +187,7 @@ public class ExerciseControllerTest {
             "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,Delta Bits,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,\"Complete the function that accepts a string parameter, and reverses each word in the string\",reverse-words"
     })
-    void CreateExerciseTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseService.createExercise(userToken, createExerciseDTO)).thenReturn(new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, "", username));
 
@@ -209,7 +206,7 @@ public class ExerciseControllerTest {
             "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,,\"Write a function that takes a string of braces, and determines if the order of the braces is valid\",valid-braces",
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"We need a simple function that determines if a plural is needed or not\",plural"
     })
-    void CreateExerciseFailTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseFailTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseTitleNotValidException.class);
 
@@ -226,7 +223,7 @@ public class ExerciseControllerTest {
             "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,Delta Bits,,delta-bits",
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,Reverse words,,reverse-words"
     })
-    void CreateExerciseDescriptionNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseTestDescriptionNotValid(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseDescriptionNotValid.class);
 
@@ -243,13 +240,30 @@ public class ExerciseControllerTest {
             "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,,\"Write a function that takes a string of braces, and determines if the order of the braces is valid\",valid-braces",
             "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"We need a simple function that determines if a plural is needed or not\",plural"
     })
-    void CreateExerciseAlredyExistTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void CreateExerciseTestExerciseAlreadyExist(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(ExerciseAlreadyExistException.class);
 
         ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
 
         assertThat(new ResponseEntity<>(HttpStatus.CONFLICT)).usingRecursiveComparison().isEqualTo(result);
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w,,\"The Magic Music Box exercise involves simulating a music box\",project-euler-9",
+            "Rachel,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA,,\"I will give you an integer. Give me back a shape that is as long and wide as the integer\",project-euler-2",
+            "Blaise,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw,,\"Write a function that takes a string of braces, and determines if the order of the braces is valid\",valid-braces",
+            "Albus,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk,,\"We need a simple function that determines if a plural is needed or not\",plural"
+    })
+    void createExerciseTestNotAllowedUser(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+        when(exerciseService.createExercise(userToken, createExerciseDTO)).thenThrow(NotAllowedUserException.class);
+
+        ResponseEntity<ExerciseDTO> result = exerciseControllerImp.createExercise(userToken, createExerciseDTO);
+
+        assertThat(new ResponseEntity<>(HttpStatus.FORBIDDEN)).usingRecursiveComparison().isEqualTo(result);
 
     }
 

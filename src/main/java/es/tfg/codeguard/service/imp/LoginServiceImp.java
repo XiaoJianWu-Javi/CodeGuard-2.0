@@ -1,18 +1,18 @@
 package es.tfg.codeguard.service.imp;
 
-import java.util.Optional;
-
-import es.tfg.codeguard.model.repository.user.UserRepository;
-import es.tfg.codeguard.util.IncorrectPasswordException;
-import es.tfg.codeguard.util.UserNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import es.tfg.codeguard.service.LoginService;
+import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
+import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
+import es.tfg.codeguard.service.LoginService;
+import es.tfg.codeguard.util.IncorrectPasswordException;
+import es.tfg.codeguard.util.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class LoginServiceImp implements LoginService {
@@ -25,18 +25,18 @@ public class LoginServiceImp implements LoginService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserPassDTO loginUser(String userName, String userPassword) {
+    public UserPassDTO loginUser(AuthDTO authDTO) {
 
-        if(userRepository.findById(userName).isEmpty()){
-            throw new UserNotFoundException("User not found [" +userName +"]");
+        if (userRepository.findById(authDTO.username()).isEmpty()) {
+            throw new UserNotFoundException("User not found [" + authDTO.username() + "]");
         }
 
-        Optional<UserPass> userOp = userPassRepository.findByUsername(userName);
+        Optional<UserPass> userOp = userPassRepository.findByUsername(authDTO.username());
 
         UserPass user = userOp.get();
 
-        if(!passwordEncoder.matches(userPassword, user.getHashedPass())){
-            throw new IncorrectPasswordException("Incorrect password [" +userPassword +"for user [" +userName +"]");
+        if (!passwordEncoder.matches(authDTO.password(), user.getHashedPass())) {
+            throw new IncorrectPasswordException("Incorrect password" + "for user [" + authDTO.username() + "]");
         }
 
         return new UserPassDTO(user);

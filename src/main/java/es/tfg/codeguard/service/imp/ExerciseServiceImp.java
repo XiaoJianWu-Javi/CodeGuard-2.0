@@ -49,7 +49,7 @@ public class ExerciseServiceImp implements ExerciseService {
 
         User user = userRepository.findById(creatorUser).get();
 
-        if(!user.isCreator()){
+        if (!user.isCreator()) {
             throw new NotAllowedUserException(user.getUsername());
         }
 

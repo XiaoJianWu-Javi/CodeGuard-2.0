@@ -12,10 +12,7 @@ import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.ExerciseServiceImp;
 import es.tfg.codeguard.service.imp.JWTServiceImp;
-import es.tfg.codeguard.util.ExerciseAlreadyExistException;
-import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
-import es.tfg.codeguard.util.ExerciseNotFoundException;
-import es.tfg.codeguard.util.ExerciseTitleNotValidException;
+import es.tfg.codeguard.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
@@ -194,7 +192,6 @@ public class ExerciseServiceTest {
         exercise.setSolutions(Map.of());
 
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(exercise));
-        //when(userRepositor)
 
         ExerciseDTO expectedExercise = new ExerciseDTO(exercise);
         ExerciseDTO actualExercise = exerciseServiceImp.getExerciseById(exerciseId);
@@ -206,7 +203,10 @@ public class ExerciseServiceTest {
     @Test
     public void getAllSolutionsFromExercise() {
 
-        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{
+            put("user", "solution");
+            put("user2", "solution");
+        }};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
@@ -241,7 +241,10 @@ public class ExerciseServiceTest {
     @Test
     public void getUserSolutionForExerciseTest() {
 
-        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{put("user", "solution");put("user2", "solution");}};
+        java.util.Map<String, String> solutions = new java.util.HashMap<String, String>() {{
+            put("user", "solution");
+            put("user2", "solution");
+        }};
 
         Exercise exercise = new Exercise("1", "titulo", "desc");
         exercise.setSolutions(solutions);
@@ -301,11 +304,11 @@ public class ExerciseServiceTest {
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
 
     })
-    void CreateExerciseServiceTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseServiceTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(jwtServiceImp.extractUserPass(userToken)).thenReturn(new UserPass(username, "$2a$10$fixedEncodedPassword", false));
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
-        when(userRepository.findById(username)).thenReturn(Optional.of(new User(username,true,true)));
+        when(userRepository.findById(username)).thenReturn(Optional.of(new User(username, true, true)));
 
         ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exerciseId, exerciseTitle, exerciseDescription, null, username);
 
@@ -322,7 +325,7 @@ public class ExerciseServiceTest {
             "Blaise,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw\",Delta Bits,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
     })
-    void CreateExerciseAlredyExistTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseTestExerciseAlreadyExist(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(new Exercise(exerciseId, exerciseTitle, exerciseDescription)));
 
@@ -337,7 +340,7 @@ public class ExerciseServiceTest {
             "Blaise,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw\",,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
     })
-    void CreateExerciseTitleNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseTestTitleNotValid(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         assertThrows(ExerciseTitleNotValidException.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
 
@@ -350,9 +353,32 @@ public class ExerciseServiceTest {
             "Blaise,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw\",Delta Bits,,delta-bits",
             "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,,reverse-words"
     })
-    void CreateExerciseDescriptionNotValidTest(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+    void createExerciseTestExerciseDescriptionNotValid(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
         CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
         assertThrows(ExerciseDescriptionNotValid.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Houdini,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJIb3VkaW5pIiwiaWF0IjoxNzMyNzc3OTkzLCJleHAiOjE3MzI4NjQzOTN9.BIOCXkd2KpiwBbaiv1lOt-gs5oDFQMF7dmei7MuWw4w\",Magic Music Box,\"The Magic Music Box exercise involves simulating a music box\",magic-music-box",
+            "Rachel,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYWNoZWwiLCJpYXQiOjE3MzI3Nzg1NTEsImV4cCI6MTczMjg2NDk1MX0.Q-hQgnLCHAeLiG2mAjnaXb5ftQLfmis75jbvbLBFMlA\",Build Square,\"I will give you an integer. Give me back a shape that is as long and wide as the integer\",build-square",
+            "Blaise,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCbGFpc2UiLCJpYXQiOjE3MzI3Nzg5OTgsImV4cCI6MTczMjg2NTM5OH0.B2ueU8_beww-gYbobXn2aqdcDvDdxb6xcIsEwuSyEFw\",Delta Bits,\"Complete the function to determine the number of bits required to convert integer A to integer B (where A and B >= 0)\",delta-bits",
+            "Albus,\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBbGJ1cyIsImlhdCI6MTczMjc3OTE3NywiZXhwIjoxNzMyODY1NTc3fQ.9jTa2oHY9-KQlwXzBIIydCaIkimjDBZzomGIPlryYqk\",Reverse words,\"Complete the function that accepts a string parameter and reverses each word in the string\",reverse-words"
+
+    })
+    void createExerciseTestNotAllowedUser(String username, String userToken, String exerciseTitle, String exerciseDescription, String exerciseId) {
+        CreateExerciseDTO createExerciseDTO = new CreateExerciseDTO(exerciseTitle, exerciseDescription);
+
+        String hashedPass = new BCryptPasswordEncoder().encode("1234");
+
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+
+        when(jwtServiceImp.extractUserPass(userToken)).thenReturn(new UserPass(username, hashedPass, false));
+
+        when(userRepository.findById(username)).thenReturn(Optional.of(new User(username, false, false)));
+
+        assertThrows(NotAllowedUserException.class, () -> exerciseServiceImp.createExercise(userToken, createExerciseDTO));
 
     }
 

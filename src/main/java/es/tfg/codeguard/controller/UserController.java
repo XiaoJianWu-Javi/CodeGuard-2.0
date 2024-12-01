@@ -1,17 +1,14 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
+import es.tfg.codeguard.model.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
 
 @RestController
 @RequestMapping("/user")

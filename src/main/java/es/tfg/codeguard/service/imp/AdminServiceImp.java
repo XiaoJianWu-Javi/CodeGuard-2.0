@@ -37,7 +37,7 @@ public class AdminServiceImp implements AdminService {
         Optional<User> userOptional = userRepository.findById(username);
 
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
+            throw new UserNotFoundException("User not found [" + username + "]");
         }
 
         User user = userOptional.get();
@@ -57,16 +57,16 @@ public class AdminServiceImp implements AdminService {
         Optional<User> userOptional = userRepository.findById(username);
 
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" +username +"]");
+            throw new UserNotFoundException("User not found [" + username + "]");
         }
 
         UserPass userPass = userPassRepository.findById(username).get();
 
-        try{
+        try {
             checkPassword(newUserPass);
             userPass.setHashedPass(passwordEncoder.encode(newUserPass));
-        }catch (PasswordNotValidException e){
-            throw new PasswordNotValidException("Password not valid [" +newUserPass +"]");
+        } catch (PasswordNotValidException e) {
+            throw new PasswordNotValidException("Password not valid [" + newUserPass + "]");
         }
 
         userPassRepository.save(userPass);
@@ -80,8 +80,8 @@ public class AdminServiceImp implements AdminService {
 
         Optional<User> userOptional = userRepository.findById(userPrivilegesDTO.username());
 
-        if(userOptional.isEmpty()){
-            throw new UserNotFoundException("User not found [ " +userPrivilegesDTO.username() +" ]");
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found [ " + userPrivilegesDTO.username() + " ]");
         }
 
         User user = userOptional.get();
@@ -94,8 +94,9 @@ public class AdminServiceImp implements AdminService {
 
     }
 
-    private void checkPassword(String password){
-        if(password == null || password.equals("")) throw new PasswordNotValidException("Password not valid [ " +password +" ]");
+    private void checkPassword(String password) {
+        if (password == null || password.equals(""))
+            throw new PasswordNotValidException("Password not valid [ " + password + " ]");
     }
 
 }

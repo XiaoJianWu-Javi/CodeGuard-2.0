@@ -31,10 +31,10 @@ public class CodeWarsAPIService implements ExternalAPIService {
             JSONObject jsonObject = new JSONObject(json);
 
             return new ExerciseDTO(jsonObject.getString("slug"),
-                                    jsonObject.getString("name"),
-                                    jsonObject.getString("description"),
-                                    null, "CodeWars API");
-        } catch(JSONException e) {
+                    jsonObject.getString("name"),
+                    jsonObject.getString("description"),
+                    null, "CodeWars API");
+        } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }

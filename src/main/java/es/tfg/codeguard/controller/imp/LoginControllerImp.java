@@ -5,16 +5,14 @@ import es.tfg.codeguard.model.dto.AuthDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.service.LoginService;
+import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/login")
@@ -32,8 +30,10 @@ public class LoginControllerImp implements LoginController {
         UserPassDTO userPassDTO = null;
 
         try {
-            userPassDTO = loginService.loginUser(authDTO.username(), authDTO.password());
-        }catch (UserNotFoundException e){
+            userPassDTO = loginService.loginUser(authDTO);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IncorrectPasswordException e) {
             return ResponseEntity.badRequest().build();
         }
 

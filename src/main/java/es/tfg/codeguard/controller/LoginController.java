@@ -19,7 +19,8 @@ public interface LoginController {
     @Operation(summary = "Login user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login user successfully"),
-            @ApiResponse(responseCode = "304", description = "Couldn't login")
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Couldn't login")
     })
     public ResponseEntity<UserPassDTO> loginUser(@RequestBody AuthDTO authDTO);
 

@@ -74,7 +74,7 @@ class AdminServiceTests {
     @Test
     void adminDeleteUserTestUserNotFound() {
 
-        when(userRepository.findById("i2udgiqdqi????!=¿!02'31")).thenThrow(UserNotFoundException.class);
+        when(userRepository.findById("i2udgiqdqi????!=¿!02'31")).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> adminServiceImp.deleteUser("i2udgiqdqi????!=¿!02'31"));
 
@@ -102,7 +102,7 @@ class AdminServiceTests {
             "P0l,9876secure"
     })
     void adminChangeUserPasswordTestUserNotFound(String username, String newPassword) {
-        when(userRepository.findById(username)).thenThrow(UserNotFoundException.class);
+        when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> adminServiceImp.updatePassword(username, newPassword));
 
@@ -175,7 +175,7 @@ class AdminServiceTests {
 
         UserPrivilegesDTO userPrivilegesDTO1 = new UserPrivilegesDTO("username", true, true);
 
-        when(userRepository.findById(userPrivilegesDTO1.username())).thenThrow(UserNotFoundException.class);
+        when(userRepository.findById(userPrivilegesDTO1.username())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> adminServiceImp.updateUserPrivileges(userPrivilegesDTO1));
 
