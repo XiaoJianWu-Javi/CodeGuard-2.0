@@ -115,7 +115,7 @@ public class DataIntializer {
         userRepository.save(userNormal);
         userPassRepository.save(userNormalPass);
         User userTryhard = new User("Harry", false, false);
-        userTryhard.setExercises(new java.util.ArrayList<>(){{ add("goldbach"); add("gandalf-1");}});
+        userTryhard.setExercises(new java.util.ArrayList<>(){{ add("reverse-words"); add("square-every-digit");}});
         UserPass userTryhardPass = new UserPass("Harry",
                                                 passwordEncoder.encode("potter"),
                                                 false);
