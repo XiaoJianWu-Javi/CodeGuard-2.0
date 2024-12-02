@@ -37,15 +37,65 @@ public class DataIntializer {
 
     @Bean
     void firstExercise() {
-        Exercise firstExercise = new Exercise("goldbach", "La Conjetura de Goldbach", "Todo número par mayor que 2 puede escribirse como suma de dos números primos.");
-        firstExercise.setCreator("Goldbach"); firstExercise.setTester("Fermat");
+        Exercise firstExercise = new Exercise("reverse-words", "Reverse Words", "Complete the solution so that it reverses all of the words within the string passed in.\n" +
+                "\n" +
+                "Words are separated by exactly one space and there are no leading or trailing spaces.");
+        firstExercise.setCreator("Saruman"); firstExercise.setTester("Merlin");
+        firstExercise.setTest("import org.junit.jupiter.api.Test;\n" +
+                "import static org.junit.jupiter.api.Assertions.assertEquals;\n" +
+                "import java.util.Arrays;\n" +
+                "import java.util.Collections;\n" +
+                "import java.util.concurrent.ThreadLocalRandom;\n" +
+                "import java.util.stream.IntStream;\n" +
+                "import java.util.stream.Collectors;\n" +
+                "\n" +
+                "public class SolutionTest {\n" +
+                "    @Test\n" +
+                "    void fixedTests() {\n" +
+                "        assertEquals(\"world! hello\", ReverseWords.reverseWords(\"hello world!\"));\n" +
+                "        assertEquals(\"this like speak doesn't yoda\", ReverseWords.reverseWords(\"yoda doesn't speak like this\"));\n" +
+                "        assertEquals(\"foobar\", ReverseWords.reverseWords(\"foobar\"));\n" +
+                "        assertEquals(\"editor kata\", ReverseWords.reverseWords(\"kata editor\"));\n" +
+                "        assertEquals(\"boat your row row row\", ReverseWords.reverseWords(\"row row row your boat\"));\n" +
+                "        assertEquals(\"\", ReverseWords.reverseWords(\"\"));\n" +
+                "    }\n" +
+                "  \n" +
+                "    @Test\n" +
+                "    void randomTests() {\n" +
+                "        ThreadLocalRandom rnd = ThreadLocalRandom.current();\n" +
+                "        for(int run = 0; run < 40; ++run) {\n" +
+                "            String input = IntStream.range(0, rnd.nextInt(12)).mapToObj(i -> rnd.ints(rnd.nextInt(1,12), 'a', 'z'+1).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)).collect(Collectors.joining(\" \"));\n" +
+                "            String[] words = input.split(\" \");\n" +
+                "            Collections.reverse(Arrays.asList(words));\n" +
+                "            String expected = String.join(\" \", words);\n" +
+                "            assertEquals(expected, ReverseWords.reverseWords(input), String.format(\"For input \\\"%s\\\"\", input));\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+        firstExercise.setPlaceholder("public class ReverseWords{\n" +
+                "\n" +
+                " public static String reverseWords(String str){\n" +
+                "     return false;\n" +
+                " }\n" +
+                "}");
         exerciseRepository.save(firstExercise);
     }
 
-    //TODO: Eliminar cuando la aplicación suba a producción
+    @Bean
+    void secondExercise() {
+        Exercise secondExercise = new Exercise("square-every-digit", "Square Every Digit", "Welcome. In this exercise, you are asked to square every digit of a number and concatenate them.\n" +
+                "For example, if we run 9119 through the function, 811181 will come out, because 92 is 81 and 12 is 1. (81-1-1-81)\n" +
+                "Example #2: An input of 765 will/should return 493625 because 72 is 49, 62 is 36, and 52 is 25. (49-36-25)\n" +
+                "Note: The function accepts an integer and returns an integer.\n" +
+                "Happy Coding!");
+        secondExercise.setCreator("Saruman"); secondExercise.setTester("Merlin");
+        secondExercise.setTest("import org.junit.jupiter.api.*;import static org.junit.jupiter.api.Assertions.*;import java.util.Random;public class SquareDigitTest {    private void assertSolution(int expected, int n) {            int actual = assertDoesNotThrow(() -> new SquareDigit().squareDigits(n), \"Unexpected exception thrown by user solution for n=\" + n);      assertEquals(expected, actual, \"Incorrect answer for n=\" + n);    }    @Test    public void test() {      assertSolution(811181, 9119);      assertSolution(9414, 3212);      assertSolution(4114, 2112);      assertSolution(0, 0);    }    @Test    public void randomTest() {      Random random = new Random();      for (int i = 0; i < 100; i++) {        int test = 0;        test += random.nextInt(10);        test += random.nextInt(10) * 10;        test += random.nextInt(10) * 10 * 10;        test += random.nextInt(10) * 10 * 10 * 10;        assertSolution(squareDigits(test), test);              }    }    private int squareDigits(int n) {      String strDigits = String.valueOf(n);          String result = \"\";      for (char c : strDigits.toCharArray()) {        int digit = Character.digit(c, 10);        result += digit * digit;      }          return Integer.parseInt(result);    }}");
+        secondExercise.setPlaceholder("public class SquareDigit {  public int squareDigits(int n) {    return 0; // TODO Implement me  }}");
+        exerciseRepository.save(secondExercise);
+    }
+
     @Bean
     void dataInizializerForFrontTesting() {
-        //Users
         User userTester = new User("Merlin", true, false);
         UserPass userTesterPass = new UserPass("Merlin",
                                                 passwordEncoder.encode("merlin"),
@@ -71,33 +121,19 @@ public class DataIntializer {
                                                 false);
         userRepository.save(userTryhard);
         userPassRepository.save(userTryhardPass);
-
-        //Exercises
-        Exercise gandalfExercise = new Exercise("gandalf-1", "La Prueba", "Un mago nunca llega tarde.");
-        gandalfExercise.setCreator("gandalf"); gandalfExercise.setTester("Saruman");
-        exerciseRepository.save(gandalfExercise);
-
-        Exercise sarumanExercise = new Exercise("saruman-123", "La Traición de Isengard", "Si el orgullo es doble... doble es la caída");
-        sarumanExercise.setCreator("Saruman"); sarumanExercise.setTester("Saruman");
-        exerciseRepository.save(sarumanExercise);
-
-        Exercise solvedExercise = new Exercise("saruman-987", "Problema con soluciones :)", "Este problemilla ya \"tiene\" soluciones");
-        solvedExercise.setCreator("Saruman"); sarumanExercise.setTester("Saruman");
-        solvedExercise.addSolution("Saruman", "Mi magnífica solución");
-        exerciseRepository.save(solvedExercise);
     }
 
     @Bean
     void compileExercise() {
-        Exercise firstExercise = new Exercise("plural", "Plural",
+        Exercise thirdExercise = new Exercise("plural", "Plural",
                 "We need a simple function that determines if a plural is needed or not. It should take a number, and return true if a plural should be used with that number or false if not. This would be useful when printing out a string such as 5 minutes, 14 apples, or 1 sun.\n" +
                         "\n" +
                         "You only need to worry about english grammar rules for this kata, where anything that isn't singular (one of something), it is plural (not one of something).\n" +
                         "\n" +
                         "All values will be positive integers or floats, or zero.");
-        firstExercise.setCreator("Saruman");
-        firstExercise.setTester("Saruman");
-        firstExercise.setTest("" +
+        thirdExercise.setCreator("Saruman");
+        thirdExercise.setTester("Saruman");
+        thirdExercise.setTest("" +
                 "import org.junit.jupiter.api.Test;\n" +
                 "import static org.junit.jupiter.api.Assertions.assertEquals;\n" +
                 "\n" +
@@ -111,8 +147,8 @@ public class DataIntializer {
                 "      assertEquals(true,Plural.isPlural(100f));\n" +
                 "    }\n" +
                 "}");
-        firstExercise.setPlaceholder("public class Plural{ public static boolean isPlural(float f){}}");
-        exerciseRepository.save(firstExercise);
+        thirdExercise.setPlaceholder("public class Plural{ public static boolean isPlural(float f){}}");
+        exerciseRepository.save(thirdExercise);
     }
 
 }

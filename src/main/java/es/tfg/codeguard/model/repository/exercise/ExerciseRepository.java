@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, String> {
 
-    //TODO: POSIBLE FUTURA IMPLEMENTACIÓN
     Optional<Exercise> findByTitle(String title);
 
     Page<Exercise> findByTitleContaining(String title, Pageable pageable);

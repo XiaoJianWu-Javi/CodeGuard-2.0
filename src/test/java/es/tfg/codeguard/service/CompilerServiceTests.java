@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 public class CompilerServiceTests {
 
-    //TODO: Don't know how to test CompilationErrorException, IOException and InterruptedException
     @Autowired
     CompilerService compilerService;
 

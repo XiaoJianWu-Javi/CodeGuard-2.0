@@ -28,7 +28,6 @@ public class CompilationControllerImp implements CompilationController {
     @Override
     public ResponseEntity<CompilerResponseDTO> compileCode(@RequestHeader("Authorization") String userToken, @RequestBody CompilerRequestDTO compilerRequestDTO) {
         try {
-            //TODO: crear respuestas con codigos y mensajes personalizados dependiendo de lo que falle
             return  new ResponseEntity<CompilerResponseDTO>(compilerService.compileSolution(userToken, compilerRequestDTO), HttpStatus.OK);
         } catch (TestCasesNotFoundException e) {
             //Si no se encuentran los test para el ejercicio que quieres compilar
@@ -55,8 +54,6 @@ public class CompilationControllerImp implements CompilationController {
     @Override
     public ResponseEntity<CompilerResponseDTO> compileTestCode(@RequestHeader("Authorization") String userToken, @RequestBody CompilerTestRequestDTO compilerTestRequestDTO) {
         try {
-            //TODO: no se controla aqui que mande un ID incorrecto en el compileCode si
-            //TODO: crear respuestas con codigos y mensajes personalizados dependiendo de lo que falle
             return  new ResponseEntity<CompilerResponseDTO>(compilerService.compileTest(userToken, compilerTestRequestDTO), HttpStatus.OK);
         } catch (TestCasesNotFoundException e) {
             //Si no mandas tests para que compilen
