@@ -3,6 +3,7 @@ package es.tfg.codeguard.service;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -92,6 +94,58 @@ class UserServiceTests {
 
     }
 
+    @Test
+    public void restoreUserServiceTestNotFound() {
+    	UserRestoreDTO userRestoreDTO=new UserRestoreDTO("Javi", "password");
+    	when(deletedUserRepository.findByUsername("Javi")).thenReturn(Optional.empty());
+    	
+    	assertThrows(UserNotFoundException.class, ()-> userServiceImp.restoreUser(userRestoreDTO.userName(), userRestoreDTO.password()));
+    }
+    
+    @Test
+    public void restoreUserServiceTestInvalidPass() {
+    	String passwordHash="lklkhdskfkdfd298392";
+    	
+    	UserRestoreDTO userRestoreDTO=new UserRestoreDTO("Javi", "password");
+
+    	DeletedUser user=new DeletedUser();
+    	user.setUsername("Javi");
+    	
+    	UserPass pass=new UserPass();
+    	pass.setUsername("Javi");
+    	pass.setHashedPass(passwordHash);
+    	
+    	when(deletedUserRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    	
+    	when(userPassRepository.findById("Javi")).thenReturn(Optional.of(pass));
+    	
+    	when(passwordEncoder.matches("password", pass.getHashedPass())).thenReturn(false);
+    	
+    	assertThrows(IncorrectPasswordException.class, ()-> userServiceImp.restoreUser(userRestoreDTO.userName(), userRestoreDTO.password()));
+    }
+    
+    @Test
+    public void restoreUserServiceTest() {
+    	String passwordHash="lklkhdskfkdfd298392";
+    	
+    	UserRestoreDTO userRestoreDTO=new UserRestoreDTO("Javi", "password");
+
+    	DeletedUser user=new DeletedUser();
+    	user.setUsername("Javi");
+    	
+    	UserPass pass=new UserPass();
+    	pass.setUsername("Javi");
+    	pass.setHashedPass(passwordHash);
+    	
+    	when(deletedUserRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+    	
+    	when(userPassRepository.findById("Javi")).thenReturn(Optional.of(pass));
+    	
+    	when(passwordEncoder.matches("password", pass.getHashedPass())).thenReturn(true);
+    	
+    	assertEquals(new UserDTO(user), userServiceImp.restoreUser(userRestoreDTO.userName(), userRestoreDTO.password()));
+    }
+    
     @Test
     public void getAllUsersServiceTest() {
 

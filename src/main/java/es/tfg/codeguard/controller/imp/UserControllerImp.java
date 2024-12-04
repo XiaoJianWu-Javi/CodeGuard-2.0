@@ -17,6 +17,7 @@ import java.util.List;
 import es.tfg.codeguard.controller.UserController;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.UserService;
 
@@ -37,6 +38,18 @@ public class UserControllerImp implements UserController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+    
+    @Override
+    public ResponseEntity<UserDTO> restoreUser(UserRestoreDTO restoreDTO) {
+    	
+    	try {
+    		return ResponseEntity.ok(userService.restoreUser(restoreDTO.userName(), restoreDTO.password()));
+    	} catch (UserNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		} catch (IncorrectPasswordException e) {
+			return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
+		}
     }
 
     @Override
