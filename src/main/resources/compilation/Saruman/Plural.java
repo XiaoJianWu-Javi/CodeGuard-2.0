@@ -1,0 +1,1 @@
+public class Plural{ public static boolean isPlural(float f){ while(true){int i = 0;} }}
