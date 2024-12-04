@@ -9,6 +9,8 @@ import es.tfg.codeguard.model.dto.UserDTO;
 public interface UserService {
 
     public abstract UserDTO deleteUser(String userToken);
+    
+    public abstract UserDTO restoreUser(String username, String password);
 
     public abstract UserDTO getUserById(String username);
 

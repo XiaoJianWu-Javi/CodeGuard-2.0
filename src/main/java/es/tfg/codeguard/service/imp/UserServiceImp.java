@@ -55,6 +55,31 @@ public class UserServiceImp implements UserService {
 
         return new UserDTO(user);
     }
+    
+    @Override
+    public UserDTO restoreUser(String username, String password) {
+    	
+    	if(deletedUserRepository.findByUsername(username).isEmpty()) {
+    		throw new UserNotFoundException("User ["+ username+"] not found");
+    	}
+    	
+    	UserPass userPass= userPassRepository.findById(username).get();
+    	
+    	if(!passwordEncoder.matches(password, userPass.getHashedPass())){
+    		throw new IncorrectPasswordException("Invalid password");
+    	}
+    	
+    	DeletedUser userReanimated= deletedUserRepository.findByUsername(username).get();
+    	
+    	deletedUserRepository.delete(userReanimated);
+
+    	User user=new User(userReanimated.getUsername(), userReanimated.isTester(), userReanimated.isCreator());
+    	user.setExercises(userReanimated.getExercises());
+        userRepository.save(user);
+
+    	
+    	return new UserDTO(userReanimated);
+    }
 
     @Override
     public UserDTO getUserById(String username) {
