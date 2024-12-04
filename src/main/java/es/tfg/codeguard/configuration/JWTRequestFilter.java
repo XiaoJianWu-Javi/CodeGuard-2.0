@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import es.tfg.codeguard.model.entity.userpass.UserPass;
-import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
