@@ -3,18 +3,22 @@ package es.tfg.codeguard.service.imp;
 import java.util.Optional;
 
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.util.ExerciceNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
+import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.AdminService;
@@ -30,6 +34,8 @@ public class AdminServiceImp implements AdminService {
     private UserPassRepository userPassRepository;
     @Autowired
     private DeletedUserRepository deletedUserRepository;
+    @Autowired
+    private ExerciseRepository exerciseRepository;
 
     @Override
     public UserDTO deleteUser(String username) {
@@ -93,10 +99,43 @@ public class AdminServiceImp implements AdminService {
         return new UserDTO(user);
 
     }
+    
+    @Override
+    public ExerciseDTO updateTestForExercise(String exerciseId, String test) {
+		Exercise exercise = exerciseRepository.findById(exerciseId)
+				.orElseThrow(() -> new ExerciceNotFoundException("Exercise not found [ " + exerciseId + " ]"));
 
-    private void checkPassword(String password) {
-        if (password == null || password.equals(""))
-            throw new PasswordNotValidException("Password not valid [ " + password + " ]");
+		exercise.setTest(test);
+
+		exerciseRepository.save(exercise);
+
+		return new ExerciseDTO(exercise);
     }
+    
+    @Override
+    public ExerciseDTO deleteTestFromExercise(String exerciseId) {
+    	Exercise exercise = exerciseRepository.findById(exerciseId)
+    			.orElseThrow(() -> new ExerciceNotFoundException("Exercise not found [ " + exerciseId + " ]"));
 
+    	exercise.setTest(null);
+    	
+    	exerciseRepository.save(exercise);
+    	
+    	return new ExerciseDTO(exercise);
+    }
+    
+	@Override
+	public ExerciseDTO deleteExercise(String exerciseId) {
+		Exercise exercise = exerciseRepository.findById(exerciseId)
+				.orElseThrow(() -> new ExerciceNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+		exerciseRepository.delete(exercise);
+
+		return new ExerciseDTO(exercise);
+	}
+	
+	private void checkPassword(String password) {
+		if (password == null || password.equals(""))
+			throw new PasswordNotValidException("Password not valid [ " + password + " ]");
+	}
 }

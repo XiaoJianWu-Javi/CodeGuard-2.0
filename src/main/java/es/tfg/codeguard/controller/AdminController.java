@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.AuthDTO;
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,28 @@ public interface AdminController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<UserDTO> updateUserPrivileges(@RequestBody UserPrivilegesDTO userPrivilegesDTO);
-
+    
+    @DeleteMapping("/deleteExercise")
+    @Operation(summary = "Delete exercise from exercise")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Exercise deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Exercise not found")
+    })
+    public ResponseEntity<ExerciseDTO> deleteExercise(@RequestParam String exerciseId);
+    
+    @PostMapping("/updateTestForExercise")
+    @Operation(summary = "Create test for exercise")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Exercise test updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Exercise not found")
+    })
+    public ResponseEntity<ExerciseDTO> updateTestForExercise(@RequestParam String exerciseId, @RequestBody String test);
+    
+    @DeleteMapping("/deleteTestFromExercise")
+    @Operation(summary = "Delete test from exercise")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Exercise test deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Exercise not found")
+    })
+    public ResponseEntity<ExerciseDTO> deleteTestFromExercise(@RequestParam String exerciseId);
 }
