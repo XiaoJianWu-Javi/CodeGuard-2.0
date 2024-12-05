@@ -158,6 +158,26 @@ public class ExerciseServiceImp implements ExerciseService {
         exerciseRepository.save(exercise);
     }
 
+    @Override
+    public void addTriedUsernameToExercise(String exerciseId, String username) {
+        Exercise exercise = exerciseRepository.findById(exerciseId).orElseThrow(
+                () -> new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+        exercise.addTriedUsername(username);
+
+        exerciseRepository.save(exercise);
+    }
+
+    @Override
+    public void addSolvedUsernameToExercise(String exerciseId, String username) {
+        Exercise exercise = exerciseRepository.findById(exerciseId).orElseThrow(
+                () -> new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+        exercise.addSolvedUsername(username);
+
+        exerciseRepository.save(exercise);
+    }
+
     private String getIdFromTitle(String title) {
         return title.toLowerCase().replaceAll(" ", "-");
     }

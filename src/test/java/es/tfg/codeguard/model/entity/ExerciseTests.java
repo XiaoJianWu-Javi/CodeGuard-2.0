@@ -4,6 +4,8 @@ import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,5 +117,33 @@ class ExerciseTests {
         assertEquals(originalSolutions.size(), exercise.getSolvedTimes());
         exercise.addSolution("user3", "");
         assertEquals(originalSolutions.size() + 1, exercise.getSolvedTimes());
+    }
+
+    @Test
+    void triedUsernameTest() {
+        assertTrue(exercise.getTriedUsernames().isEmpty());
+        exercise.addTriedUsername("user1");
+        assertNotNull(exercise.getTriedUsernames());
+        assertEquals(1, exercise.getTriedUsernames().size());
+        exercise.addTriedUsername("user2");
+        assertEquals(2, exercise.getTriedUsernames().size());
+        exercise.addTriedUsername("user1");
+        assertEquals(2, exercise.getTriedUsernames().size());
+        exercise.removeTriedUsername("user1");
+        assertEquals(1, exercise.getTriedUsernames().size());
+    }
+
+    @Test
+    void solvedUsernameTest() {
+        assertTrue(exercise.getSolvedUsernames().isEmpty());
+        exercise.addSolvedUsername("user1");
+        assertNotNull(exercise.getSolvedUsernames());
+        assertEquals(1, exercise.getSolvedUsernames().size());
+        exercise.addSolvedUsername("user2");
+        assertEquals(2, exercise.getSolvedUsernames().size());
+        exercise.addSolvedUsername("user1");
+        assertEquals(2, exercise.getSolvedUsernames().size());
+        exercise.removeSolvedUsername("user1");
+        assertEquals(1, exercise.getSolvedUsernames().size());
     }
 }

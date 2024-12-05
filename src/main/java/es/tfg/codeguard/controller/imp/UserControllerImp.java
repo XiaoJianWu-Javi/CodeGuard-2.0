@@ -1,6 +1,7 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import es.tfg.codeguard.util.IncorrectPasswordException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;

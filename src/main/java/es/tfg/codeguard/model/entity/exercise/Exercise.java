@@ -1,21 +1,15 @@
 package es.tfg.codeguard.model.entity.exercise;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import es.tfg.codeguard.model.dto.ExerciseDTO;
+import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.util.ExerciseDescriptionNotValid;
 import es.tfg.codeguard.util.ExerciseSolutionNotValidException;
 import es.tfg.codeguard.util.ExerciseTitleNotValidException;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -44,6 +38,20 @@ public class Exercise {
     @Lob
     private String placeholder;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "EXERCISE_TRIED_USERS",
+            joinColumns = @JoinColumn(name = "exercise_id"))
+    @Column(name = "username")
+    private Set<String> triedUsernames;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "EXERCISE_SOLVED_USERS",
+            joinColumns = @JoinColumn(name = "exercise_id"))
+    @Column(name = "username")
+    private Set<String> solvedUsernames;
+    @Column(name = "solution_percentage")
+    private Integer solutionPercentage;
+
     public Exercise() {}
 
     public Exercise(String id, String title, String description) {
@@ -52,6 +60,9 @@ public class Exercise {
         setDescription(description);
         setSolutions(new java.util.HashMap<>());
         setPlaceholder("");
+        setTriedUsernames(new HashSet<>());
+        setSolvedUsernames(new HashSet<>());
+        setSolutionPercentage(0);
     }
 
     public Exercise(ExerciseDTO exerciseDTO) {
@@ -134,6 +145,54 @@ public class Exercise {
 
     public Integer getSolvedTimes() {
         return getSolutions().size();
+    }
+
+    public void addTriedUsername(String username) {
+        triedUsernames.add(username);
+        updateSolutionPercentage();
+    }
+
+    public void removeTriedUsername(String username) {
+        triedUsernames.remove(username);
+    }
+
+    public Set<String> getTriedUsernames() {
+        return new HashSet<>(triedUsernames);
+    }
+
+    public void setTriedUsernames(Set<String> triedUsernames) {
+        this.triedUsernames = triedUsernames;
+    }
+
+    public void addSolvedUsername(String username) {
+        solvedUsernames.add(username);
+        updateSolutionPercentage();
+    }
+
+    public void removeSolvedUsername(String username) {
+        solvedUsernames.remove(username);
+    }
+
+    public Set<String> getSolvedUsernames() {
+        return new HashSet<>(solvedUsernames);
+    }
+
+    public void setSolvedUsernames(Set<String> solvedUsernames) {
+        this.solvedUsernames = solvedUsernames;
+    }
+
+    public Integer getSolutionPercentage() {
+        return this.solutionPercentage;
+    }
+
+    public void setSolutionPercentage(Integer solutionPercentage) {
+        this.solutionPercentage = solutionPercentage;
+    }
+
+    private void updateSolutionPercentage() {
+        if (!this.getTriedUsernames().isEmpty()) {
+            this.solutionPercentage = this.getSolvedUsernames().size() * 100 / this.getTriedUsernames().size();
+        }
     }
 
     private void checkSolutions(Map<String, String> solutions) {
