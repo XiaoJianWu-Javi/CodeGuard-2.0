@@ -4,6 +4,7 @@ import es.tfg.codeguard.controller.imp.UserControllerImp;
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.service.AdminService;
 import es.tfg.codeguard.service.JWTService;
@@ -50,6 +51,7 @@ class UserControllerTests {
     private JWTService jwtService;
 
     private UserDTO userDTO;
+    private UserRestoreDTO restoreDTO;
     private UserPassDTO userPassDTO;
 
     @ParameterizedTest
@@ -77,6 +79,50 @@ class UserControllerTests {
         ResponseEntity<UserDTO> result = userControllerImp.deleteUser(username);
 
         assertThat(new ResponseEntity<>(HttpStatus.NOT_FOUND)).usingRecursiveComparison().isEqualTo(result);
+
+    }
+    
+    @ParameterizedTest
+    @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
+    void restoreUserTest(String username) {
+
+    	restoreDTO= new UserRestoreDTO(username, "password");
+
+        when(userService.restoreUser(restoreDTO.userName(), restoreDTO.password())).thenReturn(userDTO);
+
+        UserDTO expected = userService.restoreUser(restoreDTO.userName(), restoreDTO.password());
+
+        ResponseEntity<UserDTO> result = userControllerImp.restoreUser(restoreDTO);
+
+        assertThat(new ResponseEntity<>(expected, HttpStatus.OK)).usingRecursiveComparison().isEqualTo(result);
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
+    void restoreUserTestUserNotFound(String username) {
+
+    	restoreDTO= new UserRestoreDTO(username, "password");
+
+        when(userService.restoreUser(restoreDTO.userName(), restoreDTO.password())).thenThrow(UserNotFoundException.class);
+
+        ResponseEntity<UserDTO> result = userControllerImp.restoreUser(restoreDTO);
+
+        assertThat(new ResponseEntity<>(HttpStatus.NOT_FOUND)).usingRecursiveComparison().isEqualTo(result);
+
+    }
+    
+    @ParameterizedTest
+    @ValueSource(strings = {"FirstUser", "SecondUser", "ThirdUser", "FourthUser"})
+    void restoreUserTestUserInvalidPassword(String username) {
+
+    	restoreDTO= new UserRestoreDTO(username, "password");
+
+        when(userService.restoreUser(restoreDTO.userName(), restoreDTO.password())).thenThrow(IncorrectPasswordException.class);
+
+        ResponseEntity<UserDTO> result = userControllerImp.restoreUser(restoreDTO);
+
+        assertThat(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).usingRecursiveComparison().isEqualTo(result);
 
     }
 

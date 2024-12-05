@@ -2,6 +2,7 @@ package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.model.dto.ChangePasswordDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,6 +24,15 @@ public interface UserController {
     })
     public ResponseEntity<UserDTO> deleteUser(@RequestHeader("Authorization") String userToken);
 
+    @PostMapping("/restoreUser")
+    @Operation(summary = "Restore user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "User couldn't be found"),
+            @ApiResponse(responseCode = "400", description = "Incorrect password")
+    })
+    public ResponseEntity<UserDTO> restoreUser(@RequestBody UserRestoreDTO restoreDTO);
+    
     @GetMapping("/{username}")
     @Operation(summary = "Get user by name")
     @ApiResponses(value = {

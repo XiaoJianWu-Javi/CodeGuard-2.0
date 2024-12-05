@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/h2-console/**").permitAll(); //SENTENCIADO A SER ELIMINADO
-                    registry.requestMatchers("/register", "/login", "/api/**").permitAll();
+                    registry.requestMatchers("/register", "/login", "/api/**", "/user/restoreUser").permitAll();
                     registry.requestMatchers("/admin/**").hasRole("ADMIN");
                     registry.anyRequest().authenticated();
                 })

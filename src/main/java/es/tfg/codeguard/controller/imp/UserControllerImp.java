@@ -33,6 +33,18 @@ public class UserControllerImp implements UserController {
         }
 
     }
+    
+    @Override
+    public ResponseEntity<UserDTO> restoreUser(UserRestoreDTO restoreDTO) {
+    	
+    	try {
+    		return ResponseEntity.ok(userService.restoreUser(restoreDTO.userName(), restoreDTO.password()));
+    	} catch (UserNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		} catch (IncorrectPasswordException e) {
+			return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
+		}
+    }
 
     @Override
     public ResponseEntity<UserDTO> getUserById(@PathVariable String username) {
