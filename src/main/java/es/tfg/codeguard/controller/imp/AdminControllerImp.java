@@ -1,8 +1,10 @@
 package es.tfg.codeguard.controller.imp;
 
 import es.tfg.codeguard.model.dto.AuthDTO;
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +55,32 @@ public class AdminControllerImp implements AdminController {
         }
 
     }
+
+	@Override
+	public ResponseEntity<ExerciseDTO> updateTestForExercise(String exerciseId, String test) {
+		try {
+			return ResponseEntity.ok(adminService.updateTestForExercise(exerciseId, test));
+		} catch (ExerciseNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	@Override
+	public ResponseEntity<ExerciseDTO> deleteTestFromExercise(String exerciseId) {
+		try {
+            return ResponseEntity.ok(adminService.deleteTestFromExercise(exerciseId));
+        } catch (ExerciseNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+	}
+
+	@Override
+	public ResponseEntity<ExerciseDTO> deleteExercise(String exerciseId) {
+		try {
+			return ResponseEntity.ok(adminService.deleteExercise(exerciseId));
+		} catch (ExerciseNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
 }

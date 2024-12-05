@@ -1,11 +1,11 @@
 package es.tfg.codeguard.controller;
 
 import es.tfg.codeguard.controller.imp.AdminControllerImp;
-import es.tfg.codeguard.model.dto.AuthDTO;
-import es.tfg.codeguard.model.dto.UserDTO;
-import es.tfg.codeguard.model.dto.UserPassDTO;
-import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.model.dto.*;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.service.AdminService;
+import es.tfg.codeguard.util.ExerciceNotFoundException;
+import es.tfg.codeguard.util.ExerciseNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -203,4 +204,117 @@ class AdminControllerTests {
 
     }
 
+    @Test
+    void adminUpdateTestForExerciseTest(){
+        Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+        String newTest = "newTest";
+
+        Exercise expectedExercise = new Exercise();
+        expectedExercise.setId("project-euler-9");
+        expectedExercise.setTitle("Project Euler 9");
+        expectedExercise.setDescription("description1");
+        expectedExercise.setTest(newTest);
+        expectedExercise.setCreator("creator1");
+        expectedExercise.setSolutions(Map.of());
+
+        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(expectedExercise);
+
+        when(adminService.updateTestForExercise(exercise.getId(), "newTest")).thenReturn(expectedExerciseDTO);
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(exercise.getId(), newTest);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().equals(expectedExerciseDTO));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º", ":-)ori"})
+    void adminUpdateTestForExerciseTestNotFound(String exerciseId){
+        when(adminService.updateTestForExercise(exerciseId, "newTest"))
+                .thenThrow(new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(exerciseId, "newTest");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    void adminDeleteTestFromExerciseTest(){
+        Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+        Exercise expectedExercise = new Exercise();
+        expectedExercise.setId("project-euler-9");
+        expectedExercise.setTitle("Project Euler 9");
+        expectedExercise.setDescription("description1");
+        expectedExercise.setTest(null);
+        expectedExercise.setCreator("creator1");
+        expectedExercise.setSolutions(Map.of());
+
+        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(expectedExercise);
+
+        when(adminService.deleteTestFromExercise(exercise.getId())).thenReturn(expectedExerciseDTO);
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.deleteTestFromExercise(exercise.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().equals(expectedExerciseDTO));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º", ":-)ori"})
+    void adminDeleteTestFromExerciseTestNotFound(String exerciseId){
+        when(adminService.deleteTestFromExercise(exerciseId))
+                .thenThrow(new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.deleteTestFromExercise(exerciseId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    void adminDeleteExerciseTest(){
+        Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+        ExerciseDTO expectedExerciseDTO = new ExerciseDTO(exercise);
+
+        when(adminService.deleteExercise(exercise.getId())).thenReturn(expectedExerciseDTO);
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.deleteExercise(exercise.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().equals(expectedExerciseDTO));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º", ":-)ori"})
+    void adminDeleteExerciseTestNotFound(String exerciseId){
+        when(adminService.deleteExercise(exerciseId))
+                .thenThrow(new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
+
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.deleteExercise(exerciseId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isNull();
+    }
 }

@@ -9,7 +9,6 @@ import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.util.CompilationErrorException;
 import es.tfg.codeguard.util.NotAllowedUserException;
 import es.tfg.codeguard.model.dto.CompilerRequestDTO;
-import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.service.CompilerService;
 import es.tfg.codeguard.util.PlaceholderNotFoundException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
@@ -33,8 +32,6 @@ public class CompilerServiceImp implements CompilerService {
     private JWTService jwtService;
     @Autowired
     private ExerciseService exerciseService;
-    @Autowired
-    private ExerciseRepository exerciseRepository;
     @Autowired
     private UserService userService;
     Logger logger = LoggerFactory.getLogger(CompilerServiceImp.class);
