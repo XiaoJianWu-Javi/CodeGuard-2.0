@@ -1,5 +1,6 @@
 package es.tfg.codeguard.model.entity.exercisereport;
 
+import es.tfg.codeguard.util.EmptyReportMessageException;
 import jakarta.persistence.*;
 
 @Entity
@@ -52,7 +53,7 @@ public class ExerciseReport {
 
 	//Setters
 	public void setDescription(String description){
-		if(description==null||description.isBlank()) throw new IllegalArgumentException();
+		if(description==null||description.isBlank()) throw new EmptyReportMessageException("Empty Report Message");
 		this.description = description;
 	}
 
@@ -65,7 +66,7 @@ public class ExerciseReport {
 	}
 
 	public void setUserName(String userName) {
-		if(userName==null||userName.isBlank()) throw new IllegalArgumentException();
+		if(userName==null||userName.isBlank()) throw new EmptyReportMessageException("Empty Report Message");
 		this.userName = userName;
 	}
 

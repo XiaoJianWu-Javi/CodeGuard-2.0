@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import es.tfg.codeguard.model.entity.exercisereport.ExerciseReport;
+import es.tfg.codeguard.util.EmptyReportMessageException;
 
 @SpringBootTest
 public class ReportTest {
@@ -62,8 +63,8 @@ public class ReportTest {
 
     @Test
     void notValidDescription() {
-        assertThrows(IllegalArgumentException.class, () -> report.setDescription(null));
-        assertThrows(IllegalArgumentException.class, () -> report.setDescription(""));
+        assertThrows(EmptyReportMessageException.class, () -> report.setDescription(null));
+        assertThrows(EmptyReportMessageException.class, () -> report.setDescription(""));
     }
 
     @Test
@@ -89,8 +90,8 @@ public class ReportTest {
 
     @Test
     void notValidUserName() {
-        assertThrows(IllegalArgumentException.class, () -> report.setUserName(null));
-        assertThrows(IllegalArgumentException.class, () -> report.setUserName(""));
+        assertThrows(EmptyReportMessageException.class, () -> report.setUserName(null));
+        assertThrows(EmptyReportMessageException.class, () -> report.setUserName(""));
     }
 
     @Test
