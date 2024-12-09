@@ -1,14 +1,12 @@
 package es.tfg.codeguard.service.imp;
 
-import es.tfg.codeguard.model.dto.CompilerResponseDTO;
-import es.tfg.codeguard.model.dto.CompilerTestRequestDTO;
-import es.tfg.codeguard.model.dto.SolutionDTO;
+import es.tfg.codeguard.model.dto.*;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.service.UserService;
 import es.tfg.codeguard.service.ExerciseService;
 import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.util.CompilationErrorException;
 import es.tfg.codeguard.util.NotAllowedUserException;
-import es.tfg.codeguard.model.dto.CompilerRequestDTO;
 import es.tfg.codeguard.service.CompilerService;
 import es.tfg.codeguard.util.PlaceholderNotFoundException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
@@ -47,11 +45,21 @@ public class CompilerServiceImp implements CompilerService {
 
         CompilerResponseDTO compilerResponse = compilator(userToken, javaCode, testCode);
 
+        String username = jwtService.extractUserPass(userToken).getUsername();
+
+        if (compilerResponse.exerciseCompilationCode() == 0) {
+            // Se añade el usuario a la lista de intentos
+            exerciseService.addTriedUsernameToExercise(compileInfo.exerciseId(), username);
+        }
+
         if (compilerResponse.exerciseCompilationCode() == 0 && compilerResponse.executionCode() == 0) {
             //Se guarda la solucion del usuario
             exerciseService.addSolutionToExercise(new SolutionDTO(compileInfo.exerciseId(),
                     jwtService.extractUserPass(userToken).getUsername(),
                     javaCode));
+
+            //Se añade el usuario a la lista de aciertos
+            exerciseService.addSolvedUsernameToExercise(compileInfo.exerciseId(), username);
         }
         return compilerResponse;
     }

@@ -29,4 +29,8 @@ public interface ExerciseService {
     public void addSolutionToExercise(SolutionDTO solution);
 
     public void addTestToExercise(SolutionDTO solution, String test, String placeholder);
+
+    public void addTriedUsernameToExercise(String exerciseId, String username);
+
+    public void addSolvedUsernameToExercise(String exerciseIdm, String username);
 }
