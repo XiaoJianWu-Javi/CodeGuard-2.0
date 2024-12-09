@@ -113,7 +113,7 @@ class AdminServiceTests {
             "P0l,9876secure"
     })
     void adminChangeUserPasswordTestUserNotFound(String username, String newPassword) {
-        when(userRepository.findById(username)).thenReturn(Optional.empty());
+//        when(userRepository.findById(username)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> adminServiceImp.updatePassword(username, newPassword));
 
@@ -123,8 +123,7 @@ class AdminServiceTests {
     void adminChangeUserPasswordTest() {
 
         UserPassDTO userExpected = new UserPassDTO("Gandalf", false);
-
-        when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
+        
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
         UserPassDTO userOptional = adminServiceImp.updatePassword("Gandalf", "cantpass");
