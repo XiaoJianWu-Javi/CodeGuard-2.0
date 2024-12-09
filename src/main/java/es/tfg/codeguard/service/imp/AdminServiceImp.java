@@ -147,10 +147,11 @@ public class AdminServiceImp implements AdminService {
 	}
 
     private void checkAdmin(String username) {
-        UserPass userPass = userPassRepository.findById(username).get();
+        UserPass userPass = userPassRepository.findById(username).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + username + " ]"));
+
         if (userPass.isAdmin()) {
             throw new CanNotModidyAdministratorException("Not allowed to modify administrator [ " + username + " ]");
         }
-
     }
 }
