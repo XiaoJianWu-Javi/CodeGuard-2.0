@@ -1,15 +1,19 @@
 package es.tfg.codeguard.service;
 
+import es.tfg.codeguard.model.dto.ExerciseDTO;
 import es.tfg.codeguard.model.dto.UserDTO;
 import es.tfg.codeguard.model.dto.UserPassDTO;
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
 import es.tfg.codeguard.model.entity.deleteduser.DeletedUser;
+import es.tfg.codeguard.model.entity.exercise.Exercise;
 import es.tfg.codeguard.model.entity.user.User;
 import es.tfg.codeguard.model.entity.userpass.UserPass;
 import es.tfg.codeguard.model.repository.deleteduser.DeletedUserRepository;
+import es.tfg.codeguard.model.repository.exercise.ExerciseRepository;
 import es.tfg.codeguard.model.repository.user.UserRepository;
 import es.tfg.codeguard.model.repository.userpass.UserPassRepository;
 import es.tfg.codeguard.service.imp.AdminServiceImp;
+import es.tfg.codeguard.util.ExerciceNotFoundException;
 import es.tfg.codeguard.util.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +29,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +53,9 @@ class AdminServiceTests {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private ExerciseRepository exerciseRepository;
 
     @InjectMocks
     private AdminServiceImp adminServiceImp;
@@ -181,4 +191,97 @@ class AdminServiceTests {
 
     }
 
+    @Test
+    void adminUpdateTestForExerciseTest() {
+        Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+        String newTest = "newTest";
+
+        Exercise expectedExercise = new Exercise();
+        expectedExercise.setId("project-euler-9");
+        expectedExercise.setTitle("Project Euler 9");
+        expectedExercise.setDescription("description1");
+        expectedExercise.setTest(newTest);
+        expectedExercise.setCreator("creator1");
+        expectedExercise.setSolutions(Map.of());
+
+		when(exerciseRepository.findById(exercise.getId())).thenReturn(Optional.of(exercise));
+		when(exerciseRepository.save(any(Exercise.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		adminServiceImp.updateTestForExercise(exercise.getId(), newTest);
+
+	    assertThat(exercise.getTest()).isEqualTo(newTest);
+
+	    verify(exerciseRepository).findById(exercise.getId());
+	    verify(exerciseRepository).save(exercise);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º"})
+    void adminUpdateTestForExerciseTestExerciseNotFound(String exerciseId) {
+    	String newTest = "newTest";
+
+    	when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+
+    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.updateTestForExercise(exerciseId, newTest));
+    }
+
+    @Test
+    void adminDeleteTestFromExerciseTest() {
+    	Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+		when(exerciseRepository.findById(exercise.getId())).thenReturn(Optional.of(exercise));
+
+		adminServiceImp.deleteTestFromExercise(exercise.getId());
+
+		verify(exerciseRepository).findById(exercise.getId());
+		verify(exerciseRepository).save(exercise);
+	    assertThat(exerciseRepository.findById(exercise.getId()).get().getTest()).isNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º"})
+    void adminDeleteTestFromExerciseTestExerciseNotFound(String exerciseId) {
+    	when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+
+    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.deleteTestFromExercise(exerciseId));
+    }
+
+    @Test
+    void adminDeleteExerciseTest() {
+    	Exercise exercise = new Exercise();
+        exercise.setId("project-euler-9");
+        exercise.setTitle("Project Euler 9");
+        exercise.setDescription("description1");
+        exercise.setTest("test");
+        exercise.setCreator("creator1");
+        exercise.setSolutions(Map.of());
+
+        when(exerciseRepository.findById(exercise.getId())).thenReturn(Optional.of(exercise));
+
+        adminServiceImp.deleteExercise(exercise.getId());
+
+        verify(exerciseRepository).delete(exercise);
+        assertThat(exerciseRepository.findById(exercise.getId()).equals(Optional.empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º"})
+    void adminDeleteExerciseTestExerciseNotFound(String exerciseId) {
+    	when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
+
+    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.deleteExercise(exerciseId));
+    }
 }

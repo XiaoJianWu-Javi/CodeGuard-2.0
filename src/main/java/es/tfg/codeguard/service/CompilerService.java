@@ -8,7 +8,6 @@ import es.tfg.codeguard.util.PlaceholderNotFoundException;
 import es.tfg.codeguard.util.TestCasesNotFoundException;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public interface CompilerService {
