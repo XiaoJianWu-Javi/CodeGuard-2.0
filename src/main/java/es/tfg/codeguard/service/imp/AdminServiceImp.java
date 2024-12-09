@@ -147,7 +147,8 @@ public class AdminServiceImp implements AdminService {
 	}
 
     private void checkAdmin(String username) {
-        UserPass userPass = userPassRepository.findById(username).orElseThrow(
+        UserPass userPass = userPassRepository.findById(username)
+                .orElseThrow(
                 () -> new UserNotFoundException("User not found [ " + username + " ]"));
 
         if (userPass.isAdmin()) {
