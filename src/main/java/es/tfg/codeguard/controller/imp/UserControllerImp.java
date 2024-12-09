@@ -15,6 +15,7 @@ import java.util.List;
 
 import es.tfg.codeguard.controller.UserController;
 import es.tfg.codeguard.model.dto.UserDTO;
+import es.tfg.codeguard.model.dto.UserRestoreDTO;
 import es.tfg.codeguard.service.UserService;
 
 @RestController
