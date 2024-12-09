@@ -3,6 +3,7 @@ package es.tfg.codeguard.service.imp;
 import java.util.Optional;
 
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.util.CanNotModidyAdministratorException;
 import es.tfg.codeguard.util.ExerciceNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
@@ -46,6 +47,8 @@ public class AdminServiceImp implements AdminService {
             throw new UserNotFoundException("User not found [" + username + "]");
         }
 
+        checkAdmin(username);
+
         User user = userOptional.get();
 
         DeletedUser deletedUser = new DeletedUser(user);
@@ -65,6 +68,8 @@ public class AdminServiceImp implements AdminService {
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("User not found [" + username + "]");
         }
+
+        checkAdmin(username);
 
         UserPass userPass = userPassRepository.findById(username).get();
 
@@ -91,13 +96,15 @@ public class AdminServiceImp implements AdminService {
         }
 
         User user = userOptional.get();
+
+        checkAdmin(user.getUsername());
+
         user.setTester(userPrivilegesDTO.tester());
         user.setCreator(userPrivilegesDTO.creator());
 
         userRepository.save(user);
 
         return new UserDTO(user);
-
     }
     
     @Override
@@ -138,4 +145,12 @@ public class AdminServiceImp implements AdminService {
 		if (password == null || password.equals(""))
 			throw new PasswordNotValidException("Password not valid [ " + password + " ]");
 	}
+
+    private void checkAdmin(String username) {
+        UserPass userPass = userPassRepository.findById(username).get();
+        if (userPass.isAdmin()) {
+            throw new CanNotModidyAdministratorException("Not allowed to modify administrator [ " + username + " ]");
+        }
+
+    }
 }
