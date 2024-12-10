@@ -3,6 +3,7 @@ package es.tfg.codeguard.service.imp;
 import java.util.Optional;
 
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.util.CanNotModidyAdministratorException;
 import es.tfg.codeguard.util.ExerciceNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
 import es.tfg.codeguard.util.UserNotFoundException;
@@ -39,14 +40,13 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public UserDTO deleteUser(String username) {
+        User user = userRepository.findById(username).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + username + " ]"));
 
-        Optional<User> userOptional = userRepository.findById(username);
+        UserPass userPass = userPassRepository.findById(username).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + username + " ]"));
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" + username + "]");
-        }
-
-        User user = userOptional.get();
+        checkAdmin(userPass);
 
         DeletedUser deletedUser = new DeletedUser(user);
 
@@ -59,14 +59,10 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public UserPassDTO updatePassword(String username, String newUserPass) {
+        UserPass userPass = userPassRepository.findById(username).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + username + " ]"));
 
-        Optional<User> userOptional = userRepository.findById(username);
-
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [" + username + "]");
-        }
-
-        UserPass userPass = userPassRepository.findById(username).get();
+        checkAdmin(userPass);
 
         try {
             checkPassword(newUserPass);
@@ -83,21 +79,21 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public UserDTO updateUserPrivileges(UserPrivilegesDTO userPrivilegesDTO) {
+        User user = userRepository.findById(userPrivilegesDTO.username()).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + userPrivilegesDTO.username() + " ]"));
 
-        Optional<User> userOptional = userRepository.findById(userPrivilegesDTO.username());
+        UserPass userPass = userPassRepository.findById(userPrivilegesDTO.username()).orElseThrow(
+                () -> new UserNotFoundException("User not found [ " + userPrivilegesDTO.username() + " ]")
+        );
 
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found [ " + userPrivilegesDTO.username() + " ]");
-        }
+        checkAdmin(userPass);
 
-        User user = userOptional.get();
         user.setTester(userPrivilegesDTO.tester());
         user.setCreator(userPrivilegesDTO.creator());
 
         userRepository.save(user);
 
         return new UserDTO(user);
-
     }
     
     @Override
@@ -135,7 +131,13 @@ public class AdminServiceImp implements AdminService {
 	}
 	
 	private void checkPassword(String password) {
-		if (password == null || password.equals(""))
+		if (password == null || password.isEmpty())
 			throw new PasswordNotValidException("Password not valid [ " + password + " ]");
 	}
+
+    private void checkAdmin(UserPass userPass) {
+        if (userPass.isAdmin()) {
+            throw new CanNotModidyAdministratorException("Not allowed to modify administrator [ " + userPass.getUsername() + " ]");
+        }
+    }
 }
