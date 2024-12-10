@@ -71,6 +71,8 @@ public class ReportServiceImp implements ReportService{
 		rep.setAdminResponse(target.adminResponse());
 		rep.setResolved(true);
 		
+		exerciseReportRepository.save(rep);
+		
 		return new ReportDTO(rep);
 	}
 
