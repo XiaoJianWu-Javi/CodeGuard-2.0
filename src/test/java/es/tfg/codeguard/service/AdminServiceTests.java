@@ -57,6 +57,9 @@ class AdminServiceTests {
     @Mock
     private ExerciseRepository exerciseRepository;
 
+    @Mock
+    private JWTService jwtService;
+
     @InjectMocks
     private AdminServiceImp adminServiceImp;
 
@@ -96,7 +99,7 @@ class AdminServiceTests {
 
         Optional<User> userOpt = Optional.of(user);
         when(userRepository.findById("Gandalf")).thenReturn(userOpt);
-        when(userPassRepository.findById("Gandalf")).thenReturn(userPassOpt);
+//        when(userPassRepository.findById("Gandalf")).thenReturn(userPassOpt);
 
         UserDTO resultDeleteUser = adminServiceImp.deleteUser("Gandalf");
 
@@ -124,6 +127,7 @@ class AdminServiceTests {
 
         UserPassDTO userExpected = new UserPassDTO("Gandalf", false);
         
+        when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
         UserPassDTO userOptional = adminServiceImp.updatePassword("Gandalf", "cantpass");
@@ -139,7 +143,7 @@ class AdminServiceTests {
         UserDTO expectedUser = new UserDTO(userPrivilegesDTO1.username(), userPrivilegesDTO1.tester(), userPrivilegesDTO1.creator(), List.of());
 
         when(userRepository.findById(userPrivilegesDTO1.username())).thenReturn(Optional.of(new User(userPrivilegesDTO1.username(), false, false)));
-        when(userPassRepository.findById("theBestMagician")).thenReturn(Optional.of(new UserPass("theBestMagician", "hashedPass", false)));
+//        when(userPassRepository.findById("theBestMagician")).thenReturn(Optional.of(new UserPass("theBestMagician", "hashedPass", false)));
 
         UserDTO resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO1);
 
@@ -151,7 +155,7 @@ class AdminServiceTests {
         expectedUser = new UserDTO(userPrivilegesDTO2.username(), userPrivilegesDTO2.tester(), userPrivilegesDTO2.creator(), List.of());
 
         when(userRepository.findById(userPrivilegesDTO2.username())).thenReturn(Optional.of(new User(userPrivilegesDTO2.username(), false, false)));
-        when(userPassRepository.findById("MMM4gic")).thenReturn(Optional.of(new UserPass("MMM4gic", "hashedPass", false)));
+//        when(userPassRepository.findById("MMM4gic")).thenReturn(Optional.of(new UserPass("MMM4gic", "hashedPass", false)));
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO2);
 
@@ -163,7 +167,7 @@ class AdminServiceTests {
         expectedUser = new UserDTO(userPrivilegesDTO3.username(), userPrivilegesDTO3.tester(), userPrivilegesDTO3.creator(), List.of());
 
         when(userRepository.findById(userPrivilegesDTO3.username())).thenReturn(Optional.of(new User(userPrivilegesDTO3.username(), false, false)));
-        when(userPassRepository.findById("SSS0ulD3v")).thenReturn(Optional.of(new UserPass("SSS0ulD3v", "hashedPass", false)));
+//        when(userPassRepository.findById("SSS0ulD3v")).thenReturn(Optional.of(new UserPass("SSS0ulD3v", "hashedPass", false)));
 
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO3);
@@ -176,7 +180,7 @@ class AdminServiceTests {
         expectedUser = new UserDTO(userPrivilegesDTO4.username(), userPrivilegesDTO4.tester(), userPrivilegesDTO4.creator(), List.of());
 
         when(userRepository.findById(userPrivilegesDTO4.username())).thenReturn(Optional.of(new User(userPrivilegesDTO4.username(), false, false)));
-        when(userPassRepository.findById("Noo0bDev")).thenReturn(Optional.of(new UserPass("Noo0bDev", "hashedPass", false)));
+//        when(userPassRepository.findById("Noo0bDev")).thenReturn(Optional.of(new UserPass("Noo0bDev", "hashedPass", false)));
 
         resultUser = adminServiceImp.updateUserPrivileges(userPrivilegesDTO4);
 
@@ -218,8 +222,9 @@ class AdminServiceTests {
 
 		when(exerciseRepository.findById(exercise.getId())).thenReturn(Optional.of(exercise));
 		when(exerciseRepository.save(any(Exercise.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(jwtService.extractUserPass(any(String.class))).thenReturn(userPass);
 
-		adminServiceImp.updateTestForExercise(exercise.getId(), newTest);
+		adminServiceImp.updateTestForExercise("token", exercise.getId(), newTest);
 
 	    assertThat(exercise.getTest()).isEqualTo(newTest);
 
@@ -234,7 +239,7 @@ class AdminServiceTests {
 
     	when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
 
-    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.updateTestForExercise(exerciseId, newTest));
+    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.updateTestForExercise(null, exerciseId, newTest));
     }
 
     @Test

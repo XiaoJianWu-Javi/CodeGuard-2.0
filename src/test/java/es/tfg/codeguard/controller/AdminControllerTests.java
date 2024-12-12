@@ -226,9 +226,9 @@ class AdminControllerTests {
 
         ExerciseDTO expectedExerciseDTO = new ExerciseDTO(expectedExercise);
 
-        when(adminService.updateTestForExercise(exercise.getId(), "newTest")).thenReturn(expectedExerciseDTO);
+        when(adminService.updateTestForExercise(null, exercise.getId(), "newTest")).thenReturn(expectedExerciseDTO);
 
-        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(exercise.getId(), newTest);
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(null, exercise.getId(), newTest);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().equals(expectedExerciseDTO));
@@ -237,10 +237,10 @@ class AdminControllerTests {
     @ParameterizedTest
     @ValueSource(strings = {"43ero", "t3rreta", "+´`2marck", "º-º", ":-)ori"})
     void adminUpdateTestForExerciseTestNotFound(String exerciseId){
-        when(adminService.updateTestForExercise(exerciseId, "newTest"))
+        when(adminService.updateTestForExercise(null, exerciseId, "newTest"))
                 .thenThrow(new ExerciseNotFoundException("Exercise not found [ " + exerciseId + " ]"));
 
-        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(exerciseId, "newTest");
+        ResponseEntity<ExerciseDTO> response = adminControllerImp.updateTestForExercise(null, exerciseId, "newTest");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNull();
