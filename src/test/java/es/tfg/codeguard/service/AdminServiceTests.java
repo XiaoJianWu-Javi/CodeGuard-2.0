@@ -57,6 +57,9 @@ class AdminServiceTests {
     @Mock
     private ExerciseRepository exerciseRepository;
 
+    @Mock
+    private JWTService jwtService;
+
     @InjectMocks
     private AdminServiceImp adminServiceImp;
 
@@ -124,6 +127,7 @@ class AdminServiceTests {
 
         UserPassDTO userExpected = new UserPassDTO("Gandalf", false);
         
+//        when(userRepository.findById("Gandalf")).thenReturn(Optional.of(user));
         when(userPassRepository.findById("Gandalf")).thenReturn(Optional.of(userPass));
 
         UserPassDTO userOptional = adminServiceImp.updatePassword("Gandalf", "cantpass");
@@ -218,8 +222,9 @@ class AdminServiceTests {
 
 		when(exerciseRepository.findById(exercise.getId())).thenReturn(Optional.of(exercise));
 		when(exerciseRepository.save(any(Exercise.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(jwtService.extractUserPass(any(String.class))).thenReturn(userPass);
 
-		adminServiceImp.updateTestForExercise(exercise.getId(), newTest);
+		adminServiceImp.updateTestForExercise("token", exercise.getId(), newTest);
 
 	    assertThat(exercise.getTest()).isEqualTo(newTest);
 
@@ -234,7 +239,7 @@ class AdminServiceTests {
 
     	when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
 
-    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.updateTestForExercise(exerciseId, newTest));
+    	assertThrows(ExerciceNotFoundException.class, () -> adminServiceImp.updateTestForExercise(null, exerciseId, newTest));
     }
 
     @Test

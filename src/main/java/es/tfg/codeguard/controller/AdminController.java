@@ -58,7 +58,7 @@ public interface AdminController {
             @ApiResponse(responseCode = "200", description = "Exercise test updated successfully"),
             @ApiResponse(responseCode = "404", description = "Exercise not found")
     })
-    public ResponseEntity<ExerciseDTO> updateTestForExercise(@RequestParam String exerciseId, @RequestBody String test);
+    public ResponseEntity<ExerciseDTO> updateTestForExercise(@RequestHeader("Authorization") String userToken, @RequestParam String exerciseId, @RequestBody String test);
     
     @DeleteMapping("/deleteTestFromExercise")
     @Operation(summary = "Delete test from exercise")

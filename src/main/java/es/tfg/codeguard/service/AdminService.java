@@ -15,7 +15,7 @@ public interface AdminService {
 
 	public abstract ExerciseDTO deleteTestFromExercise(String exerciseId);
 
-	public abstract ExerciseDTO updateTestForExercise(String exerciseId, String test);
+	public abstract ExerciseDTO updateTestForExercise(String userToken, String exerciseId, String test);
 
 	public abstract ExerciseDTO deleteExercise(String exerciseId);
 

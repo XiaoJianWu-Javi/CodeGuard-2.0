@@ -57,9 +57,9 @@ public class AdminControllerImp implements AdminController {
     }
 
 	@Override
-	public ResponseEntity<ExerciseDTO> updateTestForExercise(String exerciseId, String test) {
+	public ResponseEntity<ExerciseDTO> updateTestForExercise(String userToken, String exerciseId, String test) {
 		try {
-			return ResponseEntity.ok(adminService.updateTestForExercise(exerciseId, test));
+			return ResponseEntity.ok(adminService.updateTestForExercise(userToken, exerciseId, test));
 		} catch (ExerciseNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		}

@@ -3,6 +3,7 @@ package es.tfg.codeguard.service.imp;
 import java.util.Optional;
 
 import es.tfg.codeguard.model.dto.UserPrivilegesDTO;
+import es.tfg.codeguard.service.JWTService;
 import es.tfg.codeguard.util.CanNotModidyAdministratorException;
 import es.tfg.codeguard.util.ExerciceNotFoundException;
 import es.tfg.codeguard.util.PasswordNotValidException;
@@ -37,6 +38,8 @@ public class AdminServiceImp implements AdminService {
     private DeletedUserRepository deletedUserRepository;
     @Autowired
     private ExerciseRepository exerciseRepository;
+    @Autowired
+    private JWTService jwtService;
 
     @Override
     public UserDTO deleteUser(String username) {
@@ -94,14 +97,18 @@ public class AdminServiceImp implements AdminService {
         userRepository.save(user);
 
         return new UserDTO(user);
+
     }
     
     @Override
-    public ExerciseDTO updateTestForExercise(String exerciseId, String test) {
+    public ExerciseDTO updateTestForExercise(String userToken, String exerciseId, String test) {
 		Exercise exercise = exerciseRepository.findById(exerciseId)
 				.orElseThrow(() -> new ExerciceNotFoundException("Exercise not found [ " + exerciseId + " ]"));
 
+        String username = jwtService.extractUserPass(userToken).getUsername();
+
 		exercise.setTest(test);
+        exercise.setTester(username);
 
 		exerciseRepository.save(exercise);
 
@@ -114,6 +121,7 @@ public class AdminServiceImp implements AdminService {
     			.orElseThrow(() -> new ExerciceNotFoundException("Exercise not found [ " + exerciseId + " ]"));
 
     	exercise.setTest(null);
+        exercise.setTester(null);
     	
     	exerciseRepository.save(exercise);
     	
@@ -131,7 +139,7 @@ public class AdminServiceImp implements AdminService {
 	}
 	
 	private void checkPassword(String password) {
-		if (password == null || password.isEmpty())
+		if (password == null || password.equals(""))
 			throw new PasswordNotValidException("Password not valid [ " + password + " ]");
 	}
 
